@@ -1,0 +1,25 @@
+[project]
+name = "prototype-transfer"
+version = "0.1.0"
+description = "AudioProtoPNet-5-BirdSet-XCL on BirdSet HSN: focal vs soundscape analysis"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2",
+    "torchaudio>=2.2",
+    # AudioProtoPNet remote code was written for transformers 4.x; 5.x fails with
+    # "'AudioProtoNetForSequenceClassification' has no attribute 'all_tied_weights_keys'".
+    "transformers>=4.44,<5.0",
+    "numpy",
+    "pandas",
+    "pyarrow",
+    "scipy",
+    "scikit-learn",
+    "matplotlib",
+    "seaborn",
+    "soundfile",
+    "tqdm",
+    "pyyaml",
+]
+
+[tool.uv]
+package = false
