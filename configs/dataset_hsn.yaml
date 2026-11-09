@@ -1,0 +1,50 @@
+dataset:
+  name: DBD-research-group/BirdSet
+  subset: HSN
+  description: "BirdSet High Sierra Nevada (HSN) subset with 21 avian species"
+  classes:
+    - gcrfin   # Gray-crowned Rosy-Finch
+    - whcspa   # White-crowned Sparrow
+    - amepip   # American Pipit
+    - sposan   # Spotted Sandpiper
+    - rocwre   # Rock Wren
+    - brebla   # Brewer's Blackbird
+    - daejun   # Dark-eyed Junco
+    - foxspa   # Fox Sparrow
+    - clanut   # Clark's Nutcracker
+    - moublu   # Mountain Bluebird
+    - casfin   # Cassin's Finch
+    - mallar3  # Mallard
+    - herthr   # Hermit Thrush
+    - amerob   # American Robin
+    - yerwar   # Yellow-rumped Warbler
+    - yelwar   # Yellow Warbler
+    - dusfly   # Dusky Flycatcher
+    - mouchi   # Mountain Chickadee
+    - orcwar   # Orange-crowned Warbler
+    - warvir   # Warbling Vireo
+    - norfli   # Northern Flicker
+  num_classes: 21
+
+audio:
+  sample_rate: 32000
+  clip_duration: 5.0
+  num_samples: 160000
+  channels: 1
+
+spectrogram:
+  n_fft: 2048
+  hop_length: 256
+  n_mels: 256
+  n_stft: 1025
+  power: 2.0
+  top_db: 80.0
+  mean: -13.369
+  std: 13.162
+
+paths:
+  raw_dir: "data/HSN/raw"
+  preprocessed_dir: "data/HSN/preprocessed"
+  metadata_dir: "data/HSN/raw/metadata"
+  soundscape_audio_dir: "data/HSN/raw/audio_soundscape"
+  focal_audio_dir: "data/HSN/raw/audio_focal"

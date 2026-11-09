@@ -1,0 +1,18 @@
+model:
+  pretrained_model_name_or_path: "DBD-research-group/AudioProtoPNet-5-BirdSet-XCL"
+  architecture: AudioProtoNetForSequenceClassification
+  prototypes_per_class: 5
+  total_classes: 9736
+  target_classes: 21
+  device: "auto"  # auto = cuda if available, else cpu
+  batch_size: 16
+  threshold: 0.5
+
+evaluation:
+  metrics:
+    - cmAP
+    - macro_roc_auc
+    - top1_acc
+    - f1_macro
+  output_dir: "outputs/results"
+  figures_dir: "outputs/figures"
