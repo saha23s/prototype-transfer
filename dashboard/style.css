@@ -176,3 +176,13 @@ img.zoomable { cursor: zoom-in; }
 #tooltip .zoom-img.focal { border-color: var(--focal); }
 #tooltip .zoom-img.soundscape { border-color: var(--soundscape); }
 svg .leader { stroke: var(--ink-2); stroke-width: 1; }
+
+/* Species activation distributions */
+.sp-dist { background: var(--card); border: 1px solid var(--grid); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; }
+.sp-dist-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.sp-dist-head h3 { margin: 0; }
+.seg { display: inline-flex; border: 1px solid var(--grid); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 0.8rem; padding: 4px 10px; border: 0; border-right: 1px solid var(--grid); background: var(--card); color: var(--ink-2); cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-selected="true"] { background: var(--ink); color: var(--card); }
+.seg button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }

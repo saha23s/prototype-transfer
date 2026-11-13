@@ -78,6 +78,32 @@ def has_auc(p: dict) -> bool:
     return p["focal"]["auc"] is not None and p["soundscape"]["auc"] is not None
 
 
+CDF_GRID = np.round(np.arange(0.0, 0.7 + 1e-9, 0.01), 4)
+
+
+def cdf(vals: np.ndarray, grid: np.ndarray = CDF_GRID) -> list:
+    return [r(v, 3) for v in np.searchsorted(np.sort(vals), grid, side="right") / max(1, len(vals))]
+
+
+def species_activation_cdfs(data: dict, c: int) -> dict:
+    """Per-species CDFs of max activation, clips with / without species c, both domains.
+    Views: 'all' = 5 prototypes pooled, 'max' = strongest prototype per clip, '1'..'5' = single prototype."""
+    out = {"series": {}, "medians": {}, "n": {}}
+    for dom in DOMAINS:
+        d = data[dom]
+        y = d["targets"][:, c]
+        act = d["proto_max"][:, c, :]  # (N, 5)
+        for name, mask in (("pos", y), ("neg", ~y)):
+            key = f"{dom}_{name}"
+            a = act[mask]
+            out["n"][key] = int(mask.sum())
+            views = {"all": a.ravel(), "max": a.max(axis=1), **{str(k + 1): a[:, k] for k in range(a.shape[1])}}
+            for v, vals in views.items():
+                out["series"].setdefault(v, {})[key] = cdf(vals)
+                out["medians"].setdefault(v, {})[key] = r(np.median(vals), 4) if len(vals) else None
+    return out
+
+
 def activation_cdfs(data: dict, species: list[dict], sp_list: list[str], step: float = 0.01) -> dict:
     """Pooled CDFs of per-prototype max activation over the analysed species' prototypes,
     on clips with (positives) and without (negatives) the species, in both domains."""
@@ -307,6 +333,7 @@ def main() -> None:
             "n": {dom: st["domains"][dom]["n_pos"] for dom in DOMAINS},
             "class_auc": {dom: r(st["domains"][dom]["class_auc"]) for dom in DOMAINS},
             "prototypes": protos,
+            "act_cdf": species_activation_cdfs(data, c),
             "patches": None if args.skip_patches else export_patches(data, sp, c, patch_dir, pre, cache, args.top),
         })
         logger.info(f"{sp}: exported")
@@ -319,6 +346,7 @@ def main() -> None:
             "n_clips": stats["n_clips"],
             "min_soundscape_pos": stats["min_soundscape_pos"],
             "activation_quantiles": list(QUANTILES),
+            "cdf_x": CDF_GRID.tolist(),
             "generated": date.today().isoformat(),
         },
         "findings": computed_findings(species, activation_cdfs(data, species, sp_list)) + CURATED_FINDINGS,

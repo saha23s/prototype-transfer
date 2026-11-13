@@ -131,6 +131,21 @@ for (let i = 0; i < data.findings.length; i++) {
     ok(ev.querySelectorAll("svg.ev-chart [data-species]").length >= 14, `finding ${i + 1}: evidence chart plots the data`);
   }
 }
+// Per-species activation distributions in the detail panel, with view switching.
+{
+  const det = d.querySelector("#species-detail");
+  const code = sel.value, sp = S.find((x) => x.code === code);
+  ok(!!sp.act_cdf && ["all", "max", "1", "5"].every((v) => sp.act_cdf.series[v]), "data has per-species act_cdf views");
+  ok(det.querySelectorAll(".sp-dist svg path.cdf").length === 4, "species detail shows 4 activation CDFs");
+  const before = det.querySelector('.sp-dist path.cdf[data-series="soundscape_pos"]')?.getAttribute("d");
+  const b3 = det.querySelector('.sp-dist .seg button[data-view="3"]');
+  ok(!!b3, "distribution view selector has a P3 button");
+  b3?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+  const after = det.querySelector('.sp-dist path.cdf[data-series="soundscape_pos"]')?.getAttribute("d");
+  ok(before && after && before !== after && b3.getAttribute("aria-selected") === "true", "switching to P3 redraws the distributions");
+  ok(det.querySelector(".sp-dist .ev-stats")?.textContent.includes("P3 AUC"), "P3 view shows P3 AUC in stats");
+}
+
 const zimg = d.querySelector("#species-detail img.zoomable");
 const ztip = d.querySelector("#tooltip");
 if (zimg) {

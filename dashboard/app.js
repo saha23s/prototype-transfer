@@ -190,20 +190,28 @@
     return svg;
   }
 
-  function evActivationCdf(ev) {
-    const c = ev.cdf, W = 560, H = 300, box = { left: 50, right: 540, top: 10, bottom: 250 };
-    const x = scale(0, 0.6, box.left, box.right), y = scale(0, 1, box.bottom, box.top);
-    const svg = evSvg(W, H, "Cumulative distribution of prototype activations");
+  // Cumulative distributions: 4 curves (focal/soundscape x with/without species) + median dots.
+  function cdfChart(xs, series, medians, { W = 560, H = 300, xMax = 0.6, label = "Cumulative distribution of activations" } = {}) {
+    const box = { left: 50, right: W - 20, top: 10, bottom: H - 50 };
+    const x = scale(0, xMax, box.left, box.right), y = scale(0, 1, box.bottom, box.top);
+    const svg = evSvg(W, H, label);
+    const xt = []; for (let t = 0; t <= xMax + 1e-9; t += 0.1) xt.push(+t.toFixed(1));
     axes(svg, x, y, "Prototype max activation", "Fraction of entries ≤ x",
-      { xTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], yTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => t.toFixed(1), yFmt: (t) => Math.round(t * 100) + "%", box });
+      { xTicks: xt, yTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => t.toFixed(1), yFmt: (t) => Math.round(t * 100) + "%", box });
     for (const [key, cls] of [["focal_neg", "focal dashed"], ["soundscape_neg", "soundscape dashed"], ["focal_pos", "focal"], ["soundscape_pos", "soundscape"]]) {
-      const pts = c.x.map((v, i) => [v, c.series[key][i]]).filter(([v]) => v <= 0.6);
-      svg.append(sv("path", { class: "cdf " + cls, d: "M" + pts.map(([a, b]) => `${x(a).toFixed(1)},${y(b).toFixed(1)}`).join("L") }));
-      const m = c.medians[key];
-      svg.append(sv("circle", { class: "dot " + cls.split(" ")[0], cx: x(m), cy: y(0.5), r: 4 }));
+      if (!series[key]) continue;
+      const pts = xs.map((v, i) => [v, series[key][i]]).filter(([v]) => v <= xMax + 1e-9);
+      svg.append(sv("path", { class: "cdf " + cls, "data-series": key, d: "M" + pts.map(([a, b]) => `${x(a).toFixed(1)},${y(b).toFixed(1)}`).join("L") }));
+      if (medians[key] != null) svg.append(sv("circle", { class: "dot " + cls.split(" ")[0], cx: x(Math.min(xMax, medians[key])), cy: y(0.5), r: 4 }));
     }
     svg.append(sv("text", { x: box.right, y: y(0.5) - 6, "text-anchor": "end" }, "dots = medians"));
     return svg;
+  }
+  const CDF_LEGEND = [["focal", "Focal, clips with species"], ["soundscape", "Soundscape, clips with species"],
+                      ["focal dash", "Focal, clips without"], ["soundscape dash", "Soundscape, clips without"]];
+
+  function evActivationCdf(ev) {
+    return cdfChart(ev.cdf.x, ev.cdf.series, ev.cdf.medians, { label: "Pooled activation distributions" });
   }
 
   function evScatter(ev, { get, lo, hi, ticks, fmt, log, xt, yt, band }) {
@@ -275,8 +283,7 @@
     else if (ev.kind === "delta_auc") { chart = evDeltaAuc(ev); legendItems = [["sel", "ΔAUC < −0.10 (dashed line)"], ["other", "other prototypes"]]; }
     else if (ev.kind === "activation_cdf") {
       chart = evActivationCdf(ev);
-      legendItems = [["focal", "Focal, clips with species"], ["soundscape", "Soundscape, clips with species"],
-                     ["focal dash", "Focal, clips without (dashed)"], ["soundscape dash", "Soundscape, clips without (dashed)"]];
+      legendItems = CDF_LEGEND;
     } else if (ev.kind === "share_scatter") {
       chart = evScatter(ev, { get: (p) => (p.focal.logit_share != null && p.soundscape.logit_share != null ? [p.focal.logit_share, p.soundscape.logit_share] : null),
         lo: 0, hi: 0.45, ticks: [0, 0.1, 0.2, 0.3, 0.4], fmt: (t) => Math.round(t * 100) + "%", xt: "Share of class evidence · focal", yt: "Share · soundscape" });
@@ -475,6 +482,51 @@
       el("span", { text: "Top-activating patches (activation · kHz)" }));
   }
 
+  let distView = "all";
+  function speciesDist(sp) {
+    const ac = sp.act_cdf;
+    const VIEWS = [["all", "All 5 prototypes"], ["max", "Strongest per clip"], ...[1, 2, 3, 4, 5].map((k) => [String(k), "P" + k])];
+    const panel = el("div", { class: "sp-dist" });
+    const seg = el("div", { class: "seg", role: "tablist", "aria-label": "Distribution view" });
+    const body = el("div", { class: "ev-body" });
+    const draw = () => {
+      seg.querySelectorAll("button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.view === distView)));
+      const med = ac.medians[distView], ser = ac.series[distView];
+      const at = (key, t) => ser[key][Math.round(t / 0.01)];
+      const rows = [
+        ["Median activation, focal with / without", `${fmt(med.focal_pos, 3)} / ${fmt(med.focal_neg, 3)}`],
+        ["Median activation, soundscape with / without", `${fmt(med.soundscape_pos, 3)} / ${fmt(med.soundscape_neg, 3)}`],
+        ["Soundscape clips with species ≤ 0.05", pct(at("soundscape_pos", 0.05))],
+        ["Soundscape clips without species ≤ 0.05", pct(at("soundscape_neg", 0.05))],
+        ["Clips: focal with / without", `${ac.n.focal_pos.toLocaleString()} / ${ac.n.focal_neg.toLocaleString()}`],
+        ["Clips: soundscape with / without", `${ac.n.soundscape_pos.toLocaleString()} / ${ac.n.soundscape_neg.toLocaleString()}`],
+      ];
+      if (/^[1-5]$/.test(distView)) {
+        const p = sp.prototypes[+distView - 1];
+        rows.unshift([`P${distView} AUC (focal → soundscape)`, `${fmt(p.focal.auc, 3)} → ${fmt(p.soundscape.auc, 3)}`]);
+      } else if (distView === "max") {
+        rows.unshift(["Class AUC (focal → soundscape)", `${fmt(sp.class_auc.focal, 3)} → ${fmt(sp.class_auc.soundscape, 3)}`]);
+      }
+      const lg = el("div", { class: "legend" });
+      for (const [cls, text] of CDF_LEGEND) lg.append(el("span", {}, el("i", { class: "swatch " + cls }), text));
+      body.replaceChildren(
+        el("div", { class: "ev-chart-wrap" }, lg, cdfChart(DATA.meta.cdf_x, ser, med, { label: `${sp.code} activation distributions`, H: 280 })),
+        el("div", { class: "ev-side" }, el("table", { class: "ev-stats" }, el("tbody", {}, ...rows.map(([k, v]) => el("tr", {}, el("td", { text: k }), el("td", { text: v }))))),
+          el("p", { class: "ev-method", text: distView === "all"
+            ? "Each entry is one prototype's max activation on one clip, pooled over the species' 5 prototypes."
+            : distView === "max" ? "Per clip, the strongest of the species' 5 prototype activations (the evidence the class decision mostly rests on)."
+            : `Max activation of P${distView} on each clip.` })));
+    };
+    for (const [v, label] of VIEWS) {
+      const b = el("button", { type: "button", role: "tab", "data-view": v, text: label });
+      b.addEventListener("click", () => { distView = v; draw(); });
+      seg.append(b);
+    }
+    panel.append(el("div", { class: "sp-dist-head" }, el("h3", { text: "Activation distributions" }), seg), body);
+    draw();
+    return panel;
+  }
+
   function renderDetail(code) {
     const sp = bySp[code];
     const box = document.getElementById("species-detail");
@@ -483,6 +535,7 @@
         `<strong>${sp.code}</strong> · ${sp.n.focal} focal / ${sp.n.soundscape} soundscape positives · ` +
         `class AUC <strong>${fmt(sp.class_auc.focal, 3)}</strong> focal → <strong>${fmt(sp.class_auc.soundscape, 3)}</strong> soundscape` +
         (sp.n.soundscape < 30 ? " · <em>few soundscape positives: noisy</em>" : "") }),
+      speciesDist(sp),
       el("div", { class: "detail-key" },
         el("span", {}, el("i", { class: "swatch focal" }), "Focal"),
         el("span", {}, el("i", { class: "swatch soundscape" }), "Soundscape"),
