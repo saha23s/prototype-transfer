@@ -239,38 +239,48 @@
     return svg;
   }
 
+  // One horizontal row per prototype: [name + AUCs] [activation] [share + peak] [patches]
   function protoCard(sp, p) {
     const d = hasBoth(p) ? p.soundscape.auc - p.focal.auc : null;
-    const card = el("div", { class: "proto-card", "data-proto": String(p.k) },
+    const metrics = el("div", { class: "col col-metrics" },
       el("h3", {}, `P${p.k}`, el("small", { text: `weight ${fmt(p.weight)}` })),
-      el("div", { class: "row" }, "AUC focal", el("b", { text: fmt(p.focal.auc) })),
-      el("div", { class: "row" }, "AUC soundscape", el("b", { text: fmt(p.soundscape.auc) })),
-      el("div", { class: "row" }, "Change", el("b", { class: "delta" + (d != null && d < -0.1 ? " neg" : ""), text: signed(d) })),
-      el("div", { class: "sub", text: "Activation on positives" }),
-      boxPlot(p),
-      el("div", { class: "sub", text: "Share of class evidence" }),
-    );
+      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch focal" }), " AUC focal"), el("b", { text: fmt(p.focal.auc) })),
+      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch soundscape" }), " AUC soundscape"), el("b", { text: fmt(p.soundscape.auc) })),
+      el("div", { class: "row" }, "Change", el("b", { class: "delta" + (d != null && d < -0.1 ? " neg" : ""), text: signed(d) })));
+    const act = el("div", { class: "col col-act" }, boxPlot(p));
+    const share = el("div", { class: "col col-share" });
     for (const dm of DOMAINS) {
       const v = p[dm].logit_share;
-      card.append(el("div", { class: "share" }, LABEL[dm],
+      share.append(el("div", { class: "share" }, LABEL[dm],
         el("div", {}, el("div", { class: "bar " + dm, style: `width:${Math.max(2, (v || 0) * 100)}%` })),
         el("span", { class: "pct", text: pct(v) })));
     }
-    card.append(el("div", { class: "row" }, "Peak frequency",
+    const low = p.soundscape.peak_khz != null && p.soundscape.peak_khz < 0.5 && p.focal.peak_khz > 1.0;
+    share.append(el("div", { class: "row peak" }, "Peak freq.",
       el("b", { text: `${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz` })));
+    if (low) share.append(el("div", { class: "flag", text: "soundscape peak in noise band" }));
+    const pcol = el("div", { class: "col col-patches" });
     const patches = sp.patches && sp.patches[String(p.k)];
     if (patches) {
-      card.append(el("div", { class: "sub", text: "Top-activating patches" }));
       for (const dm of DOMAINS) {
         const row = el("div", { class: "patches" }, el("span", { text: LABEL[dm] }));
         for (const it of patches[dm]) {
           const cap = `${LABEL[dm]} · activation ${fmt(it.act)} · ${fmt(it.khz, 1)} kHz · ${it.clip}`;
-          row.append(el("img", { class: dm, src: it.src, alt: cap, title: cap, loading: "lazy" }));
+          row.append(el("figure", {}, el("img", { class: dm, src: it.src, alt: cap, title: cap, loading: "lazy" }),
+            el("figcaption", { text: `${fmt(it.act)} · ${fmt(it.khz, 1)}` })));
         }
-        card.append(row);
+        pcol.append(row);
       }
     }
-    return card;
+    return el("div", { class: "proto-card", "data-proto": String(p.k) }, metrics, act, share, pcol);
+  }
+
+  function detailHeader() {
+    return el("div", { class: "proto-head", "aria-hidden": "true" },
+      el("span", { text: "Prototype · detection AUC" }),
+      el("span", { text: "Activation on positives (0–0.6)" }),
+      el("span", { text: "Share of class evidence · peak" }),
+      el("span", { text: "Top-activating patches (activation · kHz)" }));
   }
 
   function renderDetail(code) {
@@ -286,7 +296,7 @@
         el("span", {}, el("i", { class: "swatch soundscape" }), "Soundscape"),
         el("span", { text: "Box = q25–q75, whiskers = q10–q90, white tick = median" }),
         el("span", {}, el("i", { class: "tick-key" }), "median on clips without the species")),
-      el("div", { class: "cards" }, ...sp.prototypes.map((p) => protoCard(sp, p))),
+      el("div", { class: "cards" }, detailHeader(), ...sp.prototypes.map((p) => protoCard(sp, p))),
     );
   }
 
