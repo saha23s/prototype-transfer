@@ -37,6 +37,7 @@ Run on a compute node (a GPU is used automatically if available; CPU works but i
 | Full manifests (no caps) | `scripts/preprocess_hsn.py --full` | `data/HSN/preprocessed/*_full.parquet` |
 | Per-prototype responses | `scripts/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
 | Prototype-transfer figures | `scripts/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
+| Dashboard data | `scripts/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
 
 ### Prototype transfer (focal -> soundscape)
 
@@ -63,6 +64,17 @@ scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/pipeline.sbat
 
 `run_inference.py` reads its defaults (device, batch size, output dir) from
 `configs/model_protonet.yaml`; any of them can be overridden on the command line.
+
+### Dashboard
+
+`dashboard/index.html` is a static, offline dashboard of the main findings: summary stats, findings,
+class- and prototype-level AUC charts, per-species prototype cards with top-activating patches,
+and a data table. Open it directly in a browser (no server needed). Rebuild its data after
+re-running the analysis (needs the audio for the patch crops):
+
+```bash
+python scripts/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
+```
 
 ## Environment (uv)
 
