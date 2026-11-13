@@ -16,6 +16,10 @@ from transformers import AutoConfig, AutoModelForSequenceClassification
 
 logger = logging.getLogger("model")
 
+# Pinned Hugging Face commit of DBD-research-group/AudioProtoPNet-5-BirdSet-XCL. The model is
+# loaded with trust_remote_code=True, so pinning fixes both the weights and the modeling code.
+MODEL_REVISION = "9877d4a7f549efe1519f0c9080780a40b9710468"
+
 HSN_SPECIES_LIST: list[str] = [
     "gcrfin", "whcspa", "amepip", "sposan", "rocwre",
     "brebla", "daejun", "foxspa", "clanut", "moublu",
@@ -32,17 +36,20 @@ class HSNProtoPNetClassifier(nn.Module):
         pretrained_model_name_or_path: str = "DBD-research-group/AudioProtoPNet-5-BirdSet-XCL",
         device: str | torch.device = "cpu",
         species_list: Sequence[str] = HSN_SPECIES_LIST,
+        revision: str = MODEL_REVISION,
     ) -> None:
         super().__init__()
         self.device = torch.device(device)
         self.species_list = list(species_list)
         self.num_target_classes = len(self.species_list)
 
-        logger.info(f"Loading pretrained AudioProtoPNet from {pretrained_model_name_or_path}...")
-        self.config = AutoConfig.from_pretrained(pretrained_model_name_or_path, trust_remote_code=True)
+        logger.info(f"Loading pretrained AudioProtoPNet from {pretrained_model_name_or_path}@{revision}...")
+        self.config = AutoConfig.from_pretrained(
+            pretrained_model_name_or_path, revision=revision, trust_remote_code=True)
         self.model = AutoModelForSequenceClassification.from_pretrained(
             pretrained_model_name_or_path,
             config=self.config,
+            revision=revision,
             trust_remote_code=True,
         )
         self.model.to(self.device)
@@ -142,3 +149,63 @@ class HSNProtoPNetClassifier(nn.Module):
                 result["prototype_activations"] = hsn_proto_act
 
         return result
+
+    # ------------------------------------------------------------------
+    # Prototype-level responses (used by the prototype-transfer analysis)
+    # ------------------------------------------------------------------
+    @property
+    def head(self) -> nn.Module:
+        return self.model.head
+
+    def hsn_prototype_vectors(self) -> torch.Tensor:
+        """Prototype vectors of the 105 HSN prototypes, L2-normalized: (21, 5, 1024)."""
+        protos = self.head.prototype_vectors[self.target_prototype_tensor].flatten(1)  # (105, 1024)
+        protos = nn.functional.normalize(protos, dim=-1)
+        return protos.view(self.num_target_classes, self.prototypes_per_class, -1)
+
+    def hsn_last_layer_weights(self) -> torch.Tensor:
+        """Non-negative prototype -> class weights for the 21 HSN classes: (21, 5).
+
+        The head uses LinearLayerWithoutNegativeConnections: each class only sees its own
+        5 prototypes, logit_c = sum_k relu(w_ck) * max_act_ck + b_c.
+        """
+        w = self.head.last_layer.weight[self.target_class_tensor]
+        return torch.relu(w) if getattr(self.head.last_layer, "non_negative", True) else w
+
+    @torch.no_grad()
+    def prototype_responses(self, input_values: torch.Tensor) -> dict[str, torch.Tensor]:
+        """Per-prototype responses for all 105 HSN prototypes.
+
+        Returns:
+            probs:        (B, 21)          sigmoid probabilities
+            proto_max:    (B, 21, 5)       max activation of each prototype over the grid
+            peak_freq:    (B, 21, 5) long  frequency-row index of the max (0 = lowest mel band)
+            peak_time:    (B, 21, 5) long  time-column index of the max
+            heatmaps:     (B, 21, 5, H, W) full activation maps (H=16 freq rows, W=38 time cols)
+            peak_feats:   (B, 21, 5, D)    L2-normalized latent patch at each prototype's peak
+        """
+        input_values = input_values.to(self.device)
+        out = self.model(input_values=input_values, output_prototypical_activations=True)
+        acts = out.prototype_activations[:, self.target_prototype_tensor]  # (B, 105, H, W)
+        B, P, H, W = acts.shape
+
+        # Latent patches the prototypes are compared against (backbone -> add-on upsampling).
+        feats = self.head.add_on_layers(out.last_hidden_state)  # (B, D, H, W)
+        assert feats.shape[-2:] == (H, W), f"feature grid {feats.shape} != activation grid {(H, W)}"
+        D = feats.shape[1]
+
+        flat = acts.view(B, P, H * W)
+        proto_max, arg = flat.max(dim=-1)  # (B, 105)
+        feats_flat = feats.view(B, D, H * W)
+        peak_feats = torch.gather(feats_flat, 2, arg[:, None, :].expand(B, D, P))  # (B, D, 105)
+        peak_feats = nn.functional.normalize(peak_feats.transpose(1, 2), dim=-1)  # (B, 105, D)
+
+        C, K = self.num_target_classes, self.prototypes_per_class
+        return {
+            "probs": torch.sigmoid(out.logits[:, self.target_class_tensor]),
+            "proto_max": proto_max.view(B, C, K),
+            "peak_freq": (arg // W).view(B, C, K),
+            "peak_time": (arg % W).view(B, C, K),
+            "heatmaps": acts.view(B, C, K, H, W),
+            "peak_feats": peak_feats.view(B, C, K, D),
+        }

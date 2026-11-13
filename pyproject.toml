@@ -2,10 +2,13 @@
 name = "prototype-transfer"
 version = "0.1.0"
 description = "AudioProtoPNet-5-BirdSet-XCL on BirdSet HSN: focal vs soundscape analysis"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 dependencies = [
-    "torch>=2.2",
-    "torchaudio>=2.2",
+    # Pinned to the CUDA 12.1 build on Linux (see [tool.uv.sources]): filo's NVIDIA
+    # driver (535, CUDA 12.2) cannot run newer cu12.4+/cu13 wheels. Bump together
+    # with the index below only after checking `nvidia-smi` on the target machines.
+    "torch==2.5.1",
+    "torchaudio==2.5.1",
     # AudioProtoPNet remote code was written for transformers 4.x; 5.x fails with
     # "'AudioProtoNetForSequenceClassification' has no attribute 'all_tied_weights_keys'".
     "transformers>=4.44,<5.0",
@@ -23,3 +26,15 @@ dependencies = [
 
 [tool.uv]
 package = false
+required-version = ">=0.11"
+# Only resolve for the platforms we actually use (Linux GPU boxes, macOS laptops).
+environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu121", marker = "sys_platform == 'linux'" }]
+torchaudio = [{ index = "pytorch-cu121", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu121"
+url = "https://download.pytorch.org/whl/cu121"
+explicit = true

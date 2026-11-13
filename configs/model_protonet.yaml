@@ -1,5 +1,6 @@
 model:
   pretrained_model_name_or_path: "DBD-research-group/AudioProtoPNet-5-BirdSet-XCL"
+  revision: "9877d4a7f549efe1519f0c9080780a40b9710468"  # pinned HF commit (weights + remote code); keep in sync with src/model.py MODEL_REVISION
   architecture: AudioProtoNetForSequenceClassification
   prototypes_per_class: 5
   total_classes: 9736

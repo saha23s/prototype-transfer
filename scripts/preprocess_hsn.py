@@ -42,8 +42,10 @@ def build_focal_manifest(
     logger.info(f"Reading focal metadata from {metadata_path}...")
     df = pd.read_parquet(metadata_path)
 
-    # Check which audio files actually exist
+    # Archives are extracted flat, but some metadata filepaths carry a directory prefix
+    # (e.g. "data/xeno-canto/update_1/.../XC872431.ogg"): match on the basename.
     existing_files = {p.name: p for p in audio_dir.glob("*.ogg")}
+    df["filepath"] = df["filepath"].map(lambda f: Path(f).name)
     df = df[df["filepath"].isin(existing_files)].copy()
     logger.info(f"Focal records with existing audio: {len(df)}")
 
@@ -165,6 +167,9 @@ def parse_args() -> argparse.Namespace:
                         help="Max focal samples per species for evaluation (default: 50)")
     parser.add_argument("--soundscape-samples", type=int, default=1000,
                         help="Max soundscape samples for evaluation (default: 1000)")
+    parser.add_argument("--full", action="store_true",
+                        help="Also write uncapped manifests (focal_manifest_full / soundscape_manifest_full) "
+                             "used by the prototype-transfer analysis")
     parser.add_argument("--cache-tensors", action="store_true",
                         help="Precompute and save spectrogram .pt files to scratch")
     return parser.parse_args()
@@ -201,6 +206,21 @@ def main() -> None:
     )
 
     logger.info(f"Preprocessed manifests ready: Focal={len(df_focal)}, Soundscape={len(df_soundscape)}")
+
+    if args.full:
+        df_focal_full = build_focal_manifest(
+            metadata_path=metadata_train,
+            audio_dir=focal_audio_dir,
+            output_manifest_path=preprocessed_dir / "focal_manifest_full.parquet",
+            max_samples_per_class=None,
+        )
+        df_sc_full = build_soundscape_manifest(
+            metadata_path=metadata_test_5s,
+            audio_dir=soundscape_audio_dir,
+            output_manifest_path=preprocessed_dir / "soundscape_manifest_full.parquet",
+            max_samples=None,
+        )
+        logger.info(f"Full manifests ready: Focal={len(df_focal_full)}, Soundscape={len(df_sc_full)}")
 
     if args.cache_tensors:
         precompute_spectrogram_features(df_focal, preprocessed_dir / "focal_features", is_soundscape=False)
