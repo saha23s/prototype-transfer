@@ -20,45 +20,622 @@
  "findings": [
   {
    "title": "Species-level detection mostly survives",
-   "text": "Mean class AUC 0.985 on focal vs 0.930 on soundscape across 14 species; foxspa collapses (AUC drops by 0.33).",
+   "text": "Mean class AUC 0.985 on focal vs 0.930 on soundscape; 13 of 14 species keep AUC \u2265 0.90 on soundscapes. foxspa collapses (AUC drops by 0.33).",
    "species": "foxspa",
-   "prototype": null
+   "prototype": null,
+   "evidence": {
+    "kind": "class_auc_drop",
+    "highlight": [
+     "foxspa"
+    ],
+    "stats": [
+     [
+      "Mean class AUC, focal",
+      "0.985"
+     ],
+     [
+      "Mean class AUC, soundscape",
+      "0.930"
+     ],
+     [
+      "Species with soundscape AUC \u2265 0.90",
+      "13 / 14"
+     ],
+     [
+      "Largest drop",
+      "foxspa: 0.33"
+     ],
+     [
+      "Median drop",
+      "0.032"
+     ]
+    ],
+    "method": "Class ROC-AUC of the model's sigmoid output for the species, on all focal clips (negatives = other species) and all 12,000 soundscape clips."
+   }
   },
   {
    "title": "Prototypes transfer unevenly",
-   "text": "29 of 70 prototypes lose more than 0.1 detection AUC on soundscapes, while 9 improve; within a species, some prototypes hold up and others don't.",
+   "text": "29 of 70 prototypes lose more than 0.1 detection AUC on soundscapes while 9 improve; in 8 of 14 species the best- and worst-transferring prototypes differ by \u2265 0.15 AUC.",
    "species": null,
-   "prototype": null
+   "prototype": null,
+   "evidence": {
+    "kind": "delta_auc",
+    "threshold": -0.1,
+    "spread": {
+     "whcspa": 0.194,
+     "amepip": 0.157,
+     "rocwre": 0.135,
+     "gcrfin": 0.111,
+     "clanut": 0.174,
+     "herthr": 0.34,
+     "daejun": 0.143,
+     "amerob": 0.23,
+     "mouchi": 0.094,
+     "foxspa": 0.173,
+     "moublu": 0.137,
+     "sposan": 0.456,
+     "yerwar": 0.159,
+     "casfin": 0.136
+    },
+    "stats": [
+     [
+      "Prototypes with \u0394AUC < \u22120.10",
+      "29 / 70"
+     ],
+     [
+      "Prototypes with \u0394AUC > +0.02",
+      "9 / 70"
+     ],
+     [
+      "Median \u0394AUC",
+      "-0.071"
+     ],
+     [
+      "Species with within-species spread \u2265 0.15",
+      "8 / 14"
+     ]
+    ],
+    "method": "\u0394AUC = soundscape \u2212 focal ROC-AUC of each prototype's max activation as a detector of its own species. Spread = max \u2212 min \u0394AUC among a species' prototypes."
+   }
   },
   {
    "title": "Activations shrink, ranking survives",
-   "text": "On positive clips, the median soundscape activation is 39% of the focal one, but activations on clips without the species stay near zero, so detection ranking mostly holds.",
+   "text": "On clips with the species, the median soundscape activation is 39% of the focal one (pooled medians 0.27 \u2192 0.10). On clips without it, activations stay near zero (84% \u2264 0.05), so positives still rank above negatives: median prototype AUC on soundscapes is 0.87.",
    "species": null,
-   "prototype": null
+   "prototype": null,
+   "evidence": {
+    "kind": "activation_cdf",
+    "cdf": {
+     "x": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12,
+      0.13,
+      0.14,
+      0.15,
+      0.16,
+      0.17,
+      0.18,
+      0.19,
+      0.2,
+      0.21,
+      0.22,
+      0.23,
+      0.24,
+      0.25,
+      0.26,
+      0.27,
+      0.28,
+      0.29,
+      0.3,
+      0.31,
+      0.32,
+      0.33,
+      0.34,
+      0.35,
+      0.36,
+      0.37,
+      0.38,
+      0.39,
+      0.4,
+      0.41,
+      0.42,
+      0.43,
+      0.44,
+      0.45,
+      0.46,
+      0.47,
+      0.48,
+      0.49,
+      0.5,
+      0.51,
+      0.52,
+      0.53,
+      0.54,
+      0.55,
+      0.56,
+      0.57,
+      0.58,
+      0.59,
+      0.6,
+      0.61,
+      0.62,
+      0.63,
+      0.64,
+      0.65,
+      0.66,
+      0.67,
+      0.68,
+      0.69,
+      0.7
+     ],
+     "series": {
+      "focal_pos": [
+       0.0302,
+       0.0396,
+       0.0495,
+       0.0616,
+       0.0742,
+       0.0889,
+       0.1046,
+       0.1192,
+       0.1338,
+       0.1477,
+       0.1606,
+       0.1733,
+       0.1861,
+       0.2006,
+       0.2148,
+       0.2284,
+       0.2432,
+       0.262,
+       0.2799,
+       0.2999,
+       0.3208,
+       0.3423,
+       0.3663,
+       0.3895,
+       0.4181,
+       0.4478,
+       0.4769,
+       0.5039,
+       0.5325,
+       0.5591,
+       0.5874,
+       0.6153,
+       0.6438,
+       0.6722,
+       0.6996,
+       0.7262,
+       0.7554,
+       0.7809,
+       0.8079,
+       0.8341,
+       0.86,
+       0.8851,
+       0.9072,
+       0.9269,
+       0.943,
+       0.9573,
+       0.97,
+       0.9789,
+       0.9866,
+       0.9917,
+       0.9943,
+       0.996,
+       0.9972,
+       0.9982,
+       0.9986,
+       0.9991,
+       0.9994,
+       0.9995,
+       0.9995,
+       0.9995,
+       0.9997,
+       0.9997,
+       0.9999,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ],
+      "focal_neg": [
+       0.0944,
+       0.1417,
+       0.2135,
+       0.3088,
+       0.4203,
+       0.5323,
+       0.6329,
+       0.7157,
+       0.7802,
+       0.8295,
+       0.8659,
+       0.8936,
+       0.9146,
+       0.9311,
+       0.9435,
+       0.9532,
+       0.961,
+       0.9674,
+       0.9727,
+       0.9774,
+       0.981,
+       0.9839,
+       0.9863,
+       0.9884,
+       0.9901,
+       0.9916,
+       0.9927,
+       0.9938,
+       0.9947,
+       0.9954,
+       0.996,
+       0.9965,
+       0.9969,
+       0.9973,
+       0.9976,
+       0.9979,
+       0.9981,
+       0.9983,
+       0.9985,
+       0.9988,
+       0.9989,
+       0.9991,
+       0.9992,
+       0.9994,
+       0.9995,
+       0.9995,
+       0.9996,
+       0.9997,
+       0.9998,
+       0.9998,
+       0.9998,
+       0.9999,
+       0.9999,
+       0.9999,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ],
+      "soundscape_pos": [
+       0.1746,
+       0.2044,
+       0.2391,
+       0.275,
+       0.3129,
+       0.3493,
+       0.3857,
+       0.4196,
+       0.4507,
+       0.4793,
+       0.5085,
+       0.5376,
+       0.5641,
+       0.5887,
+       0.6104,
+       0.6334,
+       0.6563,
+       0.6766,
+       0.6965,
+       0.7154,
+       0.733,
+       0.7507,
+       0.7677,
+       0.783,
+       0.7986,
+       0.8132,
+       0.8277,
+       0.8411,
+       0.8544,
+       0.8663,
+       0.8783,
+       0.8897,
+       0.9009,
+       0.9122,
+       0.9218,
+       0.931,
+       0.9397,
+       0.947,
+       0.9541,
+       0.9608,
+       0.9678,
+       0.9733,
+       0.978,
+       0.9827,
+       0.9864,
+       0.9897,
+       0.9924,
+       0.9941,
+       0.9953,
+       0.9961,
+       0.9969,
+       0.9976,
+       0.9982,
+       0.9985,
+       0.9988,
+       0.999,
+       0.9993,
+       0.9994,
+       0.9996,
+       0.9997,
+       0.9998,
+       0.9999,
+       0.9999,
+       0.9999,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ],
+      "soundscape_neg": [
+       0.4264,
+       0.531,
+       0.6339,
+       0.7186,
+       0.7843,
+       0.8375,
+       0.8765,
+       0.9054,
+       0.9273,
+       0.9441,
+       0.9568,
+       0.9663,
+       0.9734,
+       0.9788,
+       0.983,
+       0.9865,
+       0.9891,
+       0.9914,
+       0.9931,
+       0.9945,
+       0.9955,
+       0.9965,
+       0.9972,
+       0.9978,
+       0.9982,
+       0.9986,
+       0.9989,
+       0.9991,
+       0.9993,
+       0.9994,
+       0.9995,
+       0.9996,
+       0.9997,
+       0.9997,
+       0.9998,
+       0.9998,
+       0.9999,
+       0.9999,
+       0.9999,
+       0.9999,
+       0.9999,
+       0.9999,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0,
+       1.0
+      ]
+     },
+     "medians": {
+      "focal_pos": 0.2684,
+      "focal_neg": 0.047,
+      "soundscape_pos": 0.097,
+      "soundscape_neg": 0.007
+     },
+     "n": {
+      "focal_pos": 15520,
+      "focal_neg": 366680,
+      "soundscape_pos": 31125,
+      "soundscape_neg": 808875
+     }
+    },
+    "stats": [
+     [
+      "Median activation, focal positives",
+      "0.268"
+     ],
+     [
+      "Median activation, soundscape positives",
+      "0.097"
+     ],
+     [
+      "Median activation, focal negatives",
+      "0.047"
+     ],
+     [
+      "Median activation, soundscape negatives",
+      "0.007"
+     ],
+     [
+      "Soundscape negatives \u2264 0.05",
+      "84%"
+     ],
+     [
+      "Soundscape positives \u2264 0.05",
+      "35%"
+     ],
+     [
+      "Median per-prototype ratio (soundscape / focal median)",
+      "39%"
+     ],
+     [
+      "Median prototype AUC, soundscape",
+      "0.875"
+     ]
+    ],
+    "method": "Each entry is one prototype's max activation on one clip, pooled over the 70 prototypes of the analysed species. Positives = clips labelled with the prototype's species. n = focal_pos 15,520, focal_neg 366,680, soundscape_pos 31,125, soundscape_neg 808,875."
+   }
   },
   {
-   "title": "The decisive prototype mostly stays the same",
-   "text": "Shares of class evidence are similar across domains; largest shifts: foxspa P1 20%\u219240%, moublu P1 22%\u219236%, whcspa P3 19%\u219230%.",
+   "title": "Evidence shares are stable, but the top prototype often changes",
+   "text": "Each prototype's share of the class evidence correlates across domains (r = 0.81, mean change 4.6 points), yet the top prototype is the same in only 6 of 14 species. Largest shifts: foxspa P1 20%\u219240%, moublu P1 22%\u219236%, whcspa P3 19%\u219230%.",
    "species": "foxspa",
-   "prototype": 1
+   "prototype": 1,
+   "evidence": {
+    "kind": "share_scatter",
+    "highlight": [
+     [
+      "foxspa",
+      1
+     ],
+     [
+      "moublu",
+      1
+     ],
+     [
+      "whcspa",
+      3
+     ]
+    ],
+    "stats": [
+     [
+      "Correlation of shares (focal vs soundscape)",
+      "0.81"
+     ],
+     [
+      "Mean |share change|",
+      "4.6 points"
+     ],
+     [
+      "Species with the same top prototype",
+      "6 / 14"
+     ]
+    ],
+    "method": "Share = mean over positive clips of w_k\u00b7a_k / \u03a3_j w_j\u00b7a_j (w = non-negative last-layer weight, a = max activation): the fraction of the class logit (minus bias) from prototype k."
+   }
   },
   {
    "title": "Failing prototypes drift to the noise floor",
    "text": "5 prototypes that fire at bird-song frequencies (> 1 kHz) on focal clips peak in the lowest band (~0.1 kHz, wind/ambient) on soundscapes: whcspa P1, whcspa P5, clanut P5, herthr P4, daejun P2. Their AUC changes by -0.17 on average vs -0.08 for the rest.",
    "species": "whcspa",
-   "prototype": 1
+   "prototype": 1,
+   "evidence": {
+    "kind": "peak_scatter",
+    "highlight": [
+     [
+      "whcspa",
+      1
+     ],
+     [
+      "whcspa",
+      5
+     ],
+     [
+      "clanut",
+      5
+     ],
+     [
+      "herthr",
+      4
+     ],
+     [
+      "daejun",
+      2
+     ]
+    ],
+    "stats": [
+     [
+      "Prototypes drifting to < 0.5 kHz",
+      "5 / 70"
+     ],
+     [
+      "Mean \u0394AUC, drifting",
+      "-0.172"
+     ],
+     [
+      "Mean \u0394AUC, others",
+      "-0.077"
+     ]
+    ],
+    "method": "Peak = median (over positive clips) of the frequency row where the prototype's activation map is maximal; rows are 16 mel bins wide (lowest row centred at ~0.1 kHz)."
+   }
   },
   {
    "title": "Some prototypes match the same acoustic part in both domains",
-   "text": "whcspa P3 and P5 fire on the same pure-tone note, and P4 on the same trill, in focal and soundscape clips: these prototypes transfer as intended.",
+   "text": "whcspa P3 (a pure-tone note) and P4 (a trill) fire on the same structures in focal and soundscape clips and keep soundscape AUC above 0.9. P5's best soundscape matches also resemble its focal ones, but they are rare: its median soundscape activation is ~0 and its AUC drops to 0.67.",
    "species": "whcspa",
-   "prototype": 3
+   "prototype": 3,
+   "evidence": {
+    "kind": "patches",
+    "species": "whcspa",
+    "prototypes": [
+     3,
+     4,
+     5
+    ],
+    "method": "Visual inspection of the top-3 activating patches per domain (crop = peak cell \u00b1 2 grid cells), checked against each prototype's AUC and median activation on all positive clips (table)."
+   }
   },
   {
    "title": "Others latch onto noise in soundscapes",
    "text": "whcspa P2's top soundscape matches are broadband noise bursts around 6 kHz rather than song: high activation there is likely spurious.",
    "species": "whcspa",
-   "prototype": 2
+   "prototype": 2,
+   "evidence": {
+    "kind": "patches",
+    "species": "whcspa",
+    "prototypes": [
+     2
+    ],
+    "method": "Visual inspection of the top-3 activating patches per domain. Note P2 still has soundscape AUC 0.91: the spurious matches are among its strongest activations, not the majority of its detections."
+   }
   }
  ],
  "caveats": [

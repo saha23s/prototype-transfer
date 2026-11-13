@@ -40,15 +40,24 @@ QUANTILES = (10, 25, 50, 75, 90)
 CURATED_FINDINGS = [
     {
         "title": "Some prototypes match the same acoustic part in both domains",
-        "text": "whcspa P3 and P5 fire on the same pure-tone note, and P4 on the same trill, "
-                "in focal and soundscape clips: these prototypes transfer as intended.",
+        "text": "whcspa P3 (a pure-tone note) and P4 (a trill) fire on the same structures in focal and soundscape "
+                "clips and keep soundscape AUC above 0.9. P5's best soundscape matches also resemble its focal "
+                "ones, but they are rare: its median soundscape activation is ~0 and its AUC drops to 0.67.",
         "species": "whcspa", "prototype": 3,
+        "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [3, 4, 5],
+                     "method": "Visual inspection of the top-3 activating patches per domain (crop = peak cell "
+                               "± 2 grid cells), checked against each prototype's AUC and median activation "
+                               "on all positive clips (table)."},
     },
     {
         "title": "Others latch onto noise in soundscapes",
         "text": "whcspa P2's top soundscape matches are broadband noise bursts around 6 kHz rather "
                 "than song: high activation there is likely spurious.",
         "species": "whcspa", "prototype": 2,
+        "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [2],
+                     "method": "Visual inspection of the top-3 activating patches per domain. Note P2 still has "
+                               "soundscape AUC 0.91: the spurious matches are among its strongest activations, "
+                               "not the majority of its detections."},
     },
 ]
 
@@ -65,62 +74,167 @@ def r(x, nd=4):
     return None if x is None else round(float(x), nd)
 
 
-def computed_findings(species: list[dict]) -> list[dict]:
-    drops = [(s["code"], s["class_auc"]["focal"] - s["class_auc"]["soundscape"]) for s in species]
-    worst_sp, worst_drop = max(drops, key=lambda t: t[1])
+def has_auc(p: dict) -> bool:
+    return p["focal"]["auc"] is not None and p["soundscape"]["auc"] is not None
+
+
+def activation_cdfs(data: dict, species: list[dict], sp_list: list[str], step: float = 0.01) -> dict:
+    """Pooled CDFs of per-prototype max activation over the analysed species' prototypes,
+    on clips with (positives) and without (negatives) the species, in both domains."""
+    grid = np.round(np.arange(0.0, 0.7 + 1e-9, step), 4)
+    out = {"x": grid.tolist(), "series": {}, "medians": {}, "n": {}}
+    cols = [sp_list.index(s["code"]) for s in species]
+    for dom in DOMAINS:
+        d = data[dom]
+        y = d["targets"][:, cols]                 # (N, S)
+        act = d["proto_max"][:, cols, :]          # (N, S, 5)
+        for name, mask in (("pos", y), ("neg", ~y)):
+            vals = act[mask].ravel()              # every (clip, species, prototype) entry
+            key = f"{dom}_{name}"
+            out["series"][key] = [r(v, 4) for v in np.searchsorted(np.sort(vals), grid, side="right") / len(vals)]
+            out["medians"][key] = r(np.median(vals), 4)
+            out["n"][key] = int(len(vals))
+    return out
+
+
+def computed_findings(species: list[dict], dists: dict) -> list[dict]:
+    """Findings whose text AND evidence are computed from the same numbers."""
+    protos = [(s["code"], p) for s in species for p in s["prototypes"] if has_auc(p)]
+    dauc = {(sp, p["k"]): p["soundscape"]["auc"] - p["focal"]["auc"] for sp, p in protos}
+    out = []
+
+    # 1. Species-level detection
+    drops = sorted(((s["code"], s["class_auc"]["focal"] - s["class_auc"]["soundscape"]) for s in species),
+                   key=lambda t: -t[1])
+    worst_sp, worst_drop = drops[0]
     mean_f = np.mean([s["class_auc"]["focal"] for s in species])
     mean_s = np.mean([s["class_auc"]["soundscape"] for s in species])
-    protos = [(s["code"], p) for s in species for p in s["prototypes"]
-              if p["focal"]["auc"] is not None and p["soundscape"]["auc"] is not None]
-    n_drop = sum(p["focal"]["auc"] - p["soundscape"]["auc"] > 0.1 for _, p in protos)
-    n_gain = sum(p["soundscape"]["auc"] - p["focal"]["auc"] > 0.02 for _, p in protos)
-    ratio = np.median([p["soundscape"]["act_q"][2] / p["focal"]["act_q"][2] for _, p in protos
-                       if p["focal"]["act_q"][2] and p["focal"]["act_q"][2] > 0.05])
-    shifts = []
-    for s in species:
-        for p in s["prototypes"]:
-            fs, ss = p["focal"]["logit_share"], p["soundscape"]["logit_share"]
-            if fs is not None and ss is not None:
-                shifts.append((abs(ss - fs), s["code"], p["k"], fs, ss))
-    shifts.sort(reverse=True)
-    top_shift = ", ".join(f"{sp} P{k} {fs:.0%}→{ss:.0%}" for _, sp, k, fs, ss in shifts[:3])
-    # Prototypes whose activation peak collapses to the lowest band (wind / ambient floor)
-    # on soundscapes although they fire on bird-song frequencies in focal recordings.
-    low = [(s["code"], p) for s in species for p in s["prototypes"]
+    n_above_09 = sum(s["class_auc"]["soundscape"] >= 0.9 for s in species)
+    out.append({
+        "title": "Species-level detection mostly survives",
+        "text": f"Mean class AUC {mean_f:.3f} on focal vs {mean_s:.3f} on soundscape; {n_above_09} of "
+                f"{len(species)} species keep AUC ≥ 0.90 on soundscapes. {worst_sp} collapses "
+                f"(AUC drops by {worst_drop:.2f}).",
+        "species": worst_sp, "prototype": None,
+        "evidence": {
+            "kind": "class_auc_drop", "highlight": [worst_sp],
+            "stats": [["Mean class AUC, focal", f"{mean_f:.3f}"], ["Mean class AUC, soundscape", f"{mean_s:.3f}"],
+                      ["Species with soundscape AUC ≥ 0.90", f"{n_above_09} / {len(species)}"],
+                      ["Largest drop", f"{worst_sp}: {worst_drop:.2f}"],
+                      ["Median drop", f"{np.median([d for _, d in drops]):.3f}"]],
+            "method": "Class ROC-AUC of the model's sigmoid output for the species, on all focal clips "
+                      "(negatives = other species) and all 12,000 soundscape clips.",
+        },
+    })
+
+    # 2. Prototype-level unevenness
+    n_drop = sum(v < -0.1 for v in dauc.values())
+    n_gain = sum(v > 0.02 for v in dauc.values())
+    ranges = {}
+    for sp, p in protos:
+        ranges.setdefault(sp, []).append(dauc[(sp, p["k"])])
+    spread = {sp: max(v) - min(v) for sp, v in ranges.items()}
+    n_spread = sum(v >= 0.15 for v in spread.values())
+    out.append({
+        "title": "Prototypes transfer unevenly",
+        "text": f"{n_drop} of {len(protos)} prototypes lose more than 0.1 detection AUC on soundscapes while "
+                f"{n_gain} improve; in {n_spread} of {len(spread)} species the best- and worst-transferring "
+                f"prototypes differ by ≥ 0.15 AUC.",
+        "species": None, "prototype": None,
+        "evidence": {
+            "kind": "delta_auc", "threshold": -0.1,
+            "spread": {sp: r(v, 3) for sp, v in spread.items()},
+            "stats": [["Prototypes with ΔAUC < −0.10", f"{n_drop} / {len(protos)}"],
+                      ["Prototypes with ΔAUC > +0.02", f"{n_gain} / {len(protos)}"],
+                      ["Median ΔAUC", f"{np.median(list(dauc.values())):+.3f}"],
+                      ["Species with within-species spread ≥ 0.15", f"{n_spread} / {len(spread)}"]],
+            "method": "ΔAUC = soundscape − focal ROC-AUC of each prototype's max activation as a detector of its "
+                      "own species. Spread = max − min ΔAUC among a species' prototypes.",
+        },
+    })
+
+    # 3. Distributional: activations shrink, ranking survives
+    m = dists["medians"]
+    ratios = [p["soundscape"]["act_q"][2] / p["focal"]["act_q"][2] for _, p in protos
+              if p["focal"]["act_q"][2] and p["focal"]["act_q"][2] > 0.05]
+    ratio = float(np.median(ratios))
+    med_sauc = float(np.median([p["soundscape"]["auc"] for _, p in protos]))
+    x = np.array(dists["x"])
+    frac_neg_low = dists["series"]["soundscape_neg"][int(np.searchsorted(x, 0.05))]
+    frac_pos_low = dists["series"]["soundscape_pos"][int(np.searchsorted(x, 0.05))]
+    out.append({
+        "title": "Activations shrink, ranking survives",
+        "text": f"On clips with the species, the median soundscape activation is {ratio:.0%} of the focal one "
+                f"(pooled medians {m['focal_pos']:.2f} → {m['soundscape_pos']:.2f}). On clips without it, "
+                f"activations stay near zero ({frac_neg_low:.0%} ≤ 0.05), so positives still rank above "
+                f"negatives: median prototype AUC on soundscapes is {med_sauc:.2f}.",
+        "species": None, "prototype": None,
+        "evidence": {
+            "kind": "activation_cdf", "cdf": dists,
+            "stats": [["Median activation, focal positives", f"{m['focal_pos']:.3f}"],
+                      ["Median activation, soundscape positives", f"{m['soundscape_pos']:.3f}"],
+                      ["Median activation, focal negatives", f"{m['focal_neg']:.3f}"],
+                      ["Median activation, soundscape negatives", f"{m['soundscape_neg']:.3f}"],
+                      ["Soundscape negatives ≤ 0.05", f"{frac_neg_low:.0%}"],
+                      ["Soundscape positives ≤ 0.05", f"{frac_pos_low:.0%}"],
+                      ["Median per-prototype ratio (soundscape / focal median)", f"{ratio:.0%}"],
+                      ["Median prototype AUC, soundscape", f"{med_sauc:.3f}"]],
+            "method": "Each entry is one prototype's max activation on one clip, pooled over the 70 prototypes of the "
+                      "analysed species. Positives = clips labelled with the prototype's species. "
+                      f"n = {', '.join(f'{k} {v:,}' for k, v in dists['n'].items())}.",
+        },
+    })
+
+    # 4. Evidence shares: broadly stable, but the top prototype often changes
+    pairs = [(sp, p["k"], p["focal"]["logit_share"], p["soundscape"]["logit_share"]) for sp, p in protos]
+    fs, ss = np.array([t[2] for t in pairs]), np.array([t[3] for t in pairs])
+    corr = float(np.corrcoef(fs, ss)[0, 1])
+    mad = float(np.mean(np.abs(ss - fs)))
+    top_same = sum(
+        max(s["prototypes"], key=lambda p: p["focal"]["logit_share"])["k"]
+        == max(s["prototypes"], key=lambda p: p["soundscape"]["logit_share"])["k"] for s in species)
+    shifts = sorted(pairs, key=lambda t: -abs(t[3] - t[2]))[:3]
+    out.append({
+        "title": "Evidence shares are stable, but the top prototype often changes",
+        "text": f"Each prototype's share of the class evidence correlates across domains (r = {corr:.2f}, mean "
+                f"change {mad * 100:.1f} points), yet the top prototype is the same in only {top_same} of "
+                f"{len(species)} species. Largest shifts: "
+                + ", ".join(f"{sp} P{k} {a:.0%}→{b:.0%}" for sp, k, a, b in shifts) + ".",
+        "species": shifts[0][0], "prototype": shifts[0][1],
+        "evidence": {
+            "kind": "share_scatter", "highlight": [[sp, k] for sp, k, _, _ in shifts],
+            "stats": [["Correlation of shares (focal vs soundscape)", f"{corr:.2f}"],
+                      ["Mean |share change|", f"{mad * 100:.1f} points"],
+                      ["Species with the same top prototype", f"{top_same} / {len(species)}"]],
+            "method": "Share = mean over positive clips of w_k·a_k / Σ_j w_j·a_j (w = non-negative last-layer "
+                      "weight, a = max activation): the fraction of the class logit (minus bias) from prototype k.",
+        },
+    })
+
+    # 5. Noise-floor drift
+    low = [(sp, p) for sp, p in protos
            if p["soundscape"]["peak_khz"] is not None and p["soundscape"]["peak_khz"] < 0.5
            and p["focal"]["peak_khz"] is not None and p["focal"]["peak_khz"] > 1.0]
-    low_txt = ", ".join(f"{sp} P{p['k']}" for sp, p in low)
-    low_drop = np.mean([p["soundscape"]["auc"] - p["focal"]["auc"] for _, p in low if hasattr_auc(p)]) if low else 0.0
-    rest_drop = np.mean([p["soundscape"]["auc"] - p["focal"]["auc"] for _, p in protos if (_, p) not in low])
-    findings_low = [{
-        "title": "Failing prototypes drift to the noise floor",
-        "text": f"{len(low)} prototypes that fire at bird-song frequencies (> 1 kHz) on focal clips peak in the "
-                f"lowest band (~0.1 kHz, wind/ambient) on soundscapes: {low_txt}. Their AUC changes by "
-                f"{low_drop:+.2f} on average vs {rest_drop:+.2f} for the rest.",
-        "species": low[0][0], "prototype": low[0][1]["k"],
-    }] if low else []
-    return [
-        {"title": "Species-level detection mostly survives",
-         "text": f"Mean class AUC {mean_f:.3f} on focal vs {mean_s:.3f} on soundscape across "
-                 f"{len(species)} species; {worst_sp} collapses (AUC drops by {worst_drop:.2f}).",
-         "species": worst_sp, "prototype": None},
-        {"title": "Prototypes transfer unevenly",
-         "text": f"{n_drop} of {len(protos)} prototypes lose more than 0.1 detection AUC on soundscapes, "
-                 f"while {n_gain} improve; within a species, some prototypes hold up and others don't.",
-         "species": None, "prototype": None},
-        {"title": "Activations shrink, ranking survives",
-         "text": f"On positive clips, the median soundscape activation is {ratio:.0%} of the focal one, "
-                 "but activations on clips without the species stay near zero, so detection ranking "
-                 "mostly holds.",
-         "species": None, "prototype": None},
-        {"title": "The decisive prototype mostly stays the same",
-         "text": f"Shares of class evidence are similar across domains; largest shifts: {top_shift}.",
-         "species": shifts[0][1], "prototype": shifts[0][2]},
-    ] + findings_low
-
-
-def hasattr_auc(p: dict) -> bool:
-    return p["focal"]["auc"] is not None and p["soundscape"]["auc"] is not None
+    if low:
+        low_keys = {(sp, p["k"]) for sp, p in low}
+        low_d = float(np.mean([dauc[k] for k in low_keys]))
+        rest_d = float(np.mean([v for k, v in dauc.items() if k not in low_keys]))
+        out.append({
+            "title": "Failing prototypes drift to the noise floor",
+            "text": f"{len(low)} prototypes that fire at bird-song frequencies (> 1 kHz) on focal clips peak in the "
+                    f"lowest band (~0.1 kHz, wind/ambient) on soundscapes: "
+                    + ", ".join(f"{sp} P{p['k']}" for sp, p in low)
+                    + f". Their AUC changes by {low_d:+.2f} on average vs {rest_d:+.2f} for the rest.",
+            "species": low[0][0], "prototype": low[0][1]["k"],
+            "evidence": {
+                "kind": "peak_scatter", "highlight": [[sp, p["k"]] for sp, p in low],
+                "stats": [["Prototypes drifting to < 0.5 kHz", f"{len(low)} / {len(protos)}"],
+                          ["Mean ΔAUC, drifting", f"{low_d:+.3f}"], ["Mean ΔAUC, others", f"{rest_d:+.3f}"]],
+                "method": "Peak = median (over positive clips) of the frequency row where the prototype's activation "
+                          "map is maximal; rows are 16 mel bins wide (lowest row centred at ~0.1 kHz).",
+            },
+        })
+    return out
 
 
 def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreprocessor,
@@ -207,7 +321,7 @@ def main() -> None:
             "activation_quantiles": list(QUANTILES),
             "generated": date.today().isoformat(),
         },
-        "findings": computed_findings(species) + CURATED_FINDINGS,
+        "findings": computed_findings(species, activation_cdfs(data, species, sp_list)) + CURATED_FINDINGS,
         "caveats": CAVEATS,
         "species": species,
     }

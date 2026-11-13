@@ -144,3 +144,35 @@ th { color: var(--ink-2); font-weight: 500; }
 .detail-key { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--ink-2); margin: -4px 0 12px; }
 .detail-key span { display: inline-flex; align-items: center; gap: 6px; }
 .tick-key { width: 2px; height: 12px; background: var(--ink); display: inline-block; }
+
+/* Findings -> evidence */
+.finding.active { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.finding .ev-link { display: inline-block; margin-top: 6px; font-size: 0.8rem; color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.evidence { margin-top: 14px; background: var(--card); border: 1px solid var(--grid); border-radius: 8px; padding: 14px 16px; }
+.ev-body { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .ev-body { grid-template-columns: 1fr; } }
+.ev-chart { width: 100%; height: auto; display: block; overflow: visible; }
+.ev-stats { font-size: 0.85rem; }
+.ev-stats td { text-align: left; padding: 4px 6px; }
+.ev-stats td:last-child { text-align: right; font-weight: 600; white-space: nowrap; }
+.ev-method { color: var(--ink-2); font-size: 0.82rem; margin-top: 10px; }
+svg .ev-bar { fill: var(--muted-dot); }
+svg .ev-bar.hl { fill: var(--sel); }
+svg .cdf { fill: none; stroke-width: 2; }
+svg .cdf.focal { stroke: var(--focal); }
+svg .cdf.soundscape { stroke: var(--soundscape); }
+svg .cdf.dashed { stroke-dasharray: 5 4; }
+svg .band { fill: var(--grid); opacity: 0.6; }
+.swatch.dash { border-radius: 0; height: 2px; width: 14px; background: none; border-top: 2px dashed; }
+.swatch.focal.dash { border-color: var(--focal); }
+.swatch.soundscape.dash { border-color: var(--soundscape); }
+.ev-patches .ev-patch-label { margin: 10px 0 4px; font-size: 0.85rem; color: var(--ink-2); }
+.ev-patches .ev-patch-label b { color: var(--ink); }
+
+/* Patch zoom */
+img.zoomable { cursor: zoom-in; }
+#tooltip.zoom-tip { max-width: none; padding: 6px; }
+#tooltip .zoom-img { width: 260px; height: 260px; display: block; border-radius: 4px; border: 3px solid transparent; margin-bottom: 4px; image-rendering: auto; }
+#tooltip .zoom-img.focal { border-color: var(--focal); }
+#tooltip .zoom-img.soundscape { border-color: var(--soundscape); }
+svg .leader { stroke: var(--ink-2); stroke-width: 1; }

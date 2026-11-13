@@ -76,6 +76,11 @@ re-running the analysis (needs the audio for the patch crops):
 python scripts/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
 ```
 
+Every finding is generated together with its evidence (chart data, key numbers, method note), so the
+text and the numbers come from the same computation; open `dashboard/index.html#finding-N` to link
+to a finding's evidence. Acceptance test (renders the page in jsdom and checks structure, evidence
+for every finding, interactions and patch zoom): `npm i jsdom@24 && node dashboard/tests/check.mjs dashboard`.
+
 ## Environment (uv)
 
 Dependencies are managed with uv and locked in `uv.lock`; always install with
