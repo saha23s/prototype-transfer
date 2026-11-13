@@ -258,7 +258,7 @@
         ` · AUC ${fmt(p.focal.auc)} → ${fmt(p.soundscape.auc)} · peak ${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz`));
       if (pt) {
         const row = el("div", { class: "col-patches" });
-        for (const dm of DOMAINS) row.append(patchGroup(pt, dm));
+        row.append(...patchGroups(pt));
         wrap.append(row);
       }
     }
@@ -295,7 +295,7 @@
       legendItems = [["sel", "Drifting to the noise band"], ["other", "Other prototypes"]];
     } else if (ev.kind === "patches") {
       chart = evPatches(ev);
-      legendItems = [["focal", "Focal patches"], ["soundscape", "Soundscape patches"]];
+      legendItems = [["focal", "Focal, with species"], ["soundscape", "Soundscape, with species"], ["soundscape neg", "Soundscape, without species (dashed)"]];
     }
     const lg = el("div", { class: "legend" });
     for (const [cls, text] of legendItems) lg.append(el("span", {}, el("i", { class: "swatch " + cls }), text));
@@ -443,19 +443,27 @@
     if (low) share.append(el("div", { class: "flag", text: "soundscape peak in noise band" }));
     const pcol = el("div", { class: "col col-patches" });
     const patches = sp.patches && sp.patches[String(p.k)];
-    if (patches) for (const dm of DOMAINS) pcol.append(patchGroup(patches, dm));
+    if (patches) pcol.append(...patchGroups(patches));
     return el("div", { class: "proto-card", "data-proto": String(p.k) }, metrics, act, share, pcol);
   }
 
-  function patchGroup(patches, dm) {
-    const row = el("div", { class: "patches" }, el("span", { text: LABEL[dm] }));
-    for (const it of patches[dm]) {
-      const cap = `${LABEL[dm]} · activation ${fmt(it.act)} · ${fmt(it.khz, 1)} kHz · ${it.clip}`;
-      row.append(el("figure", {}, el("img", { class: "zoomable " + dm, src: it.src, alt: cap, "data-caption": cap, loading: "lazy" }),
+  const PATCH_GROUPS = [
+    ["focal", "Focal", "focal"],
+    ["soundscape", "Soundscape", "soundscape"],
+    ["soundscape_neg", "Soundscape, without species", "soundscape neg"],
+  ];
+  function patchGroup(patches, key) {
+    const [, label, cls] = PATCH_GROUPS.find((g) => g[0] === key);
+    const row = el("div", { class: "patches" + (key === "soundscape_neg" ? " neg" : "") }, el("span", { text: label }));
+    for (const it of patches[key] || []) {
+      const what = it.labels != null ? ` · clip contains: ${it.labels === "background" ? "no target species" : it.labels}` : "";
+      const cap = `${label} · activation ${fmt(it.act)} · ${fmt(it.khz, 1)} kHz${what} · ${it.clip}`;
+      row.append(el("figure", {}, el("img", { class: "zoomable " + cls, src: it.src, alt: cap, "data-caption": cap, loading: "lazy" }),
         el("figcaption", { text: `${fmt(it.act)} · ${fmt(it.khz, 1)}` })));
     }
     return row;
   }
+  const patchGroups = (patches) => PATCH_GROUPS.filter(([k]) => patches[k]).map(([k]) => patchGroup(patches, k));
 
   // Hover any patch to see it enlarged in the shared tooltip.
   function wireZoom() {
@@ -464,7 +472,7 @@
       if (!img) return;
       const t = tip();
       t.classList.add("zoom-tip");
-      showTip(e, `<img class="zoom-img ${img.classList.contains("focal") ? "focal" : "soundscape"}" src="${img.getAttribute("src")}" alt=""><div>${img.dataset.caption}</div>`);
+      showTip(e, `<img class="zoom-img ${img.classList.contains("focal") ? "focal" : "soundscape"}${img.classList.contains("neg") ? " neg" : ""}" src="${img.getAttribute("src")}" alt=""><div>${img.dataset.caption}</div>`);
     });
     document.addEventListener("mousemove", (e) => {
       if (e.target.closest && e.target.closest("img.zoomable") && !tip().hidden) showTip(e, tip().innerHTML);
@@ -479,7 +487,7 @@
       el("span", { text: "Prototype · detection AUC" }),
       el("span", { text: "Activation on positives (0–0.6)" }),
       el("span", { text: "Share of class evidence · peak" }),
-      el("span", { text: "Top-activating patches (activation · kHz)" }));
+      el("span", { text: "Top-activating patches (activation · kHz) · hover to zoom" }));
   }
 
   let distView = "all";

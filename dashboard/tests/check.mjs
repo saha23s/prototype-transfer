@@ -71,7 +71,9 @@ function detailOk(code, label) {
   const sp = S.find((s) => s.code === code);
   if (sp && sp.patches && cards.length === 5) {
     const imgs = cards[0].querySelectorAll("img");
-    const exp = sp.patches["1"].focal.length + sp.patches["1"].soundscape.length;
+    const exp = sp.patches["1"].focal.length + sp.patches["1"].soundscape.length + (sp.patches["1"].soundscape_neg || []).length;
+    ok((sp.patches["1"].soundscape_neg || []).length > 0 && cards[0].querySelectorAll("img.zoomable.neg").length === sp.patches["1"].soundscape_neg.length,
+       `${label}: card P1 shows soundscape-negative patches`);
     ok(imgs.length === exp && [...imgs].every((i) => i.getAttribute("src").startsWith(`patches/${code}_P1_`)),
        `${label}: card P1 shows ${exp} patch images for ${code}`);
     ok(cards[0].querySelectorAll("svg").length >= 1, `${label}: card has an svg box plot`);

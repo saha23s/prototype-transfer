@@ -25,7 +25,7 @@
 
 * { box-sizing: border-box; }
 body {
-  margin: 0 auto; padding: 24px 20px 60px; max-width: 1200px;
+  margin: 0 auto; padding: 24px 20px 60px; max-width: 1440px;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.45;
   background: var(--bg); color: var(--ink);
 }
@@ -92,7 +92,7 @@ select { font: inherit; padding: 4px 8px; border-radius: 6px; border: 1px solid 
 /* Prototype rows: one horizontal row per prototype, columns aligned across rows */
 .cards { display: flex; flex-direction: column; gap: 8px; }
 .proto-head, .proto-card {
-  display: grid; grid-template-columns: 180px 220px 220px auto; gap: 20px; align-items: center;
+  display: grid; grid-template-columns: 170px 200px 200px auto; gap: 18px; align-items: center;
 }
 .proto-head { padding: 0 14px; font-size: 0.75rem; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.04em; }
 .proto-card { background: var(--card); border: 1px solid var(--grid); border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; }
@@ -104,23 +104,23 @@ select { font: inherit; padding: 4px 8px; border-radius: 6px; border: 1px solid 
 .proto-card .delta.neg { color: var(--ink); font-weight: 750; }
 .proto-card .peak { margin-top: 8px; }
 .proto-card .flag { font-size: 0.75rem; color: var(--ink); border: 1px dashed var(--ink-2); border-radius: 10px; padding: 0 8px; width: fit-content; margin-top: 4px; }
-.col-act svg { width: 100%; height: auto; display: block; }
+.col-act svg { width: 100%; max-width: 240px; height: auto; display: block; }
 .share { display: grid; grid-template-columns: 78px 1fr 34px; align-items: center; gap: 6px; margin: 3px 0; color: var(--ink-2); font-size: 0.78rem; }
 .share .bar { height: 6px; border-radius: 3px; }
 .share .bar.focal { background: var(--focal); }
 .share .bar.soundscape { background: var(--soundscape); }
 .share .pct { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
 .col-patches { display: flex; gap: 14px; }
-.patches { display: grid; grid-template-columns: repeat(3, 72px); column-gap: 6px; row-gap: 2px; color: var(--ink-2); font-size: 0.75rem; }
+.patches { display: grid; grid-template-columns: repeat(3, 64px); column-gap: 6px; row-gap: 2px; color: var(--ink-2); font-size: 0.75rem; }
 .patches > span { grid-column: 1 / -1; }
 .patches figure { margin: 0; }
-.patches img { width: 72px; height: 72px; object-fit: cover; border-radius: 4px; border: 2px solid transparent; display: block; }
+.patches img { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; border: 2px solid transparent; display: block; }
 .patches img.focal { border-color: var(--focal); }
 .patches img.soundscape { border-color: var(--soundscape); }
 .patches figcaption { font-size: 0.68rem; color: var(--ink-2); text-align: center; font-variant-numeric: tabular-nums; }
-@media (max-width: 1180px) {
+@media (max-width: 1420px) {
   .proto-head { display: none; }
-  .proto-card { grid-template-columns: 180px 1fr 1fr; }
+  .proto-card { grid-template-columns: 170px 220px 220px; }
   .col-patches { grid-column: 1 / -1; }
 }
 @media (max-width: 640px) { .proto-card { grid-template-columns: 1fr; } }
@@ -186,3 +186,8 @@ svg .leader { stroke: var(--ink-2); stroke-width: 1; }
 .seg button:last-child { border-right: 0; }
 .seg button[aria-selected="true"] { background: var(--ink); color: var(--card); }
 .seg button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+
+/* Soundscape negatives: dashed border distinguishes "without the species" */
+.patches img.neg, #tooltip .zoom-img.neg { border-style: dashed; }
+.patches.neg > span { white-space: nowrap; }
+.swatch.soundscape.neg { background: none; border: 2px dashed var(--soundscape); width: 12px; height: 12px; border-radius: 3px; }

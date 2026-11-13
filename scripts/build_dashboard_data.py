@@ -263,15 +263,22 @@ def computed_findings(species: list[dict], dists: dict) -> list[dict]:
     return out
 
 
+# Patch groups: (key, domain, use clips WITH the species?)
+PATCH_GROUPS = (("focal", "focal", True), ("soundscape", "soundscape", True), ("soundscape_neg", "soundscape", False))
+
+
 def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreprocessor,
                    cache: dict, top: int) -> dict:
+    """Top-activating spectrogram crops per prototype for: focal and soundscape clips containing the
+    species, and soundscape clips NOT containing it (what the prototype fires on by mistake)."""
     row_khz = grid_row_centers_khz()
     patches: dict[str, dict] = {}
     for k in range(5):
         patches[str(k + 1)] = {}
-        for dom in DOMAINS:
+        for key, dom, positive in PATCH_GROUPS:
             d = data[dom]
-            idx = np.nonzero(d["targets"][:, c])[0]
+            mask = d["targets"][:, c] if positive else ~d["targets"][:, c]
+            idx = np.nonzero(mask)[0]
             order = idx[np.argsort(-d["proto_max"][idx, c, k])][:top]
             items = []
             for rank, i in enumerate(order):
@@ -281,11 +288,14 @@ def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreproc
                 spec = cache[path]
                 row, col = int(d["peak_freq"][i, c, k]), int(d["peak_time"][i, c, k])
                 fs, ts = grid_cell_to_spec_slice(row, col, n_frames=spec.shape[1])
-                name = f"{sp}_P{k + 1}_{dom}_{rank + 1}.png"
+                name = f"{sp}_P{k + 1}_{key}_{rank + 1}.png"
                 plt.imsave(out_dir / name, spec[fs, ts], cmap="magma", origin="lower")
-                items.append({"src": f"patches/{name}", "act": r(d["proto_max"][i, c, k], 3),
-                              "khz": r(row_khz[row], 2), "clip": Path(path).name})
-            patches[str(k + 1)][dom] = items
+                item = {"src": f"patches/{name}", "act": r(d["proto_max"][i, c, k], 3),
+                        "khz": r(row_khz[row], 2), "clip": Path(path).name}
+                if not positive:
+                    item["labels"] = d["species"][i]  # species annotated in that clip ("background" if none)
+                items.append(item)
+            patches[str(k + 1)][key] = items
     return patches
 
 

@@ -3032,6 +3032,29 @@
        "khz": 4.91,
        "clip": "HSN_065_20150711_074805_330_335.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/whcspa_P1_soundscape_neg_1.png",
+       "act": 0.146,
+       "khz": 6.14,
+       "clip": "HSN_061_20150711_071805_255_260.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/whcspa_P1_soundscape_neg_2.png",
+       "act": 0.117,
+       "khz": 6.14,
+       "clip": "HSN_061_20150711_071805_260_265.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/whcspa_P1_soundscape_neg_3.png",
+       "act": 0.11,
+       "khz": 6.14,
+       "clip": "HSN_061_20150711_071805_240_245.ogg",
+       "labels": "amepip"
+      }
      ]
     },
     "2": {
@@ -3073,6 +3096,29 @@
        "act": 0.502,
        "khz": 6.14,
        "clip": "HSN_007_20150709_064805_440_445.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/whcspa_P2_soundscape_neg_1.png",
+       "act": 0.441,
+       "khz": 6.14,
+       "clip": "HSN_053_20150711_065105_555_560.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/whcspa_P2_soundscape_neg_2.png",
+       "act": 0.391,
+       "khz": 6.14,
+       "clip": "HSN_033_20150710_072105_295_300.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/whcspa_P2_soundscape_neg_3.png",
+       "act": 0.391,
+       "khz": 7.63,
+       "clip": "HSN_078_20150712_063805_140_145.ogg",
+       "labels": "clanut"
       }
      ]
     },
@@ -3116,6 +3162,29 @@
        "khz": 3.91,
        "clip": "HSN_064_20150711_074105_005_010.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/whcspa_P3_soundscape_neg_1.png",
+       "act": 0.488,
+       "khz": 3.91,
+       "clip": "HSN_036_20150710_080105_230_235.ogg",
+       "labels": "clanut"
+      },
+      {
+       "src": "patches/whcspa_P3_soundscape_neg_2.png",
+       "act": 0.483,
+       "khz": 3.91,
+       "clip": "HSN_082_20150712_071105_545_550.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/whcspa_P3_soundscape_neg_3.png",
+       "act": 0.461,
+       "khz": 3.08,
+       "clip": "HSN_063_20150711_073105_570_575.ogg",
+       "labels": "herthr"
+      }
      ]
     },
     "4": {
@@ -3158,6 +3227,29 @@
        "khz": 4.91,
        "clip": "HSN_071_20150711_083805_240_245.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/whcspa_P4_soundscape_neg_1.png",
+       "act": 0.441,
+       "khz": 3.91,
+       "clip": "HSN_004_20150709_061805_450_455.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/whcspa_P4_soundscape_neg_2.png",
+       "act": 0.342,
+       "khz": 4.91,
+       "clip": "HSN_061_20150711_071805_250_255.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/whcspa_P4_soundscape_neg_3.png",
+       "act": 0.34,
+       "khz": 6.14,
+       "clip": "HSN_061_20150711_071805_255_260.ogg",
+       "labels": "amepip"
+      }
      ]
     },
     "5": {
@@ -3199,6 +3291,29 @@
        "act": 0.499,
        "khz": 3.91,
        "clip": "HSN_001_20150708_061805_435_440.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/whcspa_P5_soundscape_neg_1.png",
+       "act": 0.475,
+       "khz": 3.91,
+       "clip": "HSN_033_20150710_072105_220_225.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/whcspa_P5_soundscape_neg_2.png",
+       "act": 0.453,
+       "khz": 4.91,
+       "clip": "HSN_033_20150710_072105_545_550.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/whcspa_P5_soundscape_neg_3.png",
+       "act": 0.439,
+       "khz": 3.91,
+       "clip": "HSN_049_20150711_062805_390_395.ogg",
+       "labels": "amepip"
       }
      ]
     }
@@ -5519,6 +5634,29 @@
        "khz": 7.63,
        "clip": "HSN_014_20150709_081105_040_045.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amepip_P1_soundscape_neg_1.png",
+       "act": 0.361,
+       "khz": 7.63,
+       "clip": "HSN_065_20150711_074805_275_280.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P1_soundscape_neg_2.png",
+       "act": 0.341,
+       "khz": 7.63,
+       "clip": "HSN_065_20150711_074805_075_080.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P1_soundscape_neg_3.png",
+       "act": 0.318,
+       "khz": 7.63,
+       "clip": "HSN_035_20150710_075805_130_135.ogg",
+       "labels": "background"
+      }
      ]
     },
     "2": {
@@ -5560,6 +5698,29 @@
        "act": 0.437,
        "khz": 4.91,
        "clip": "HSN_066_20150711_075105_230_235.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amepip_P2_soundscape_neg_1.png",
+       "act": 0.425,
+       "khz": 4.91,
+       "clip": "HSN_069_20150711_082805_185_190.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P2_soundscape_neg_2.png",
+       "act": 0.403,
+       "khz": 4.91,
+       "clip": "HSN_069_20150711_082805_190_195.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P2_soundscape_neg_3.png",
+       "act": 0.335,
+       "khz": 6.14,
+       "clip": "HSN_015_20150709_081805_245_250.ogg",
+       "labels": "background"
       }
      ]
     },
@@ -5603,6 +5764,29 @@
        "khz": 6.14,
        "clip": "HSN_035_20150710_075805_055_060.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amepip_P3_soundscape_neg_1.png",
+       "act": 0.432,
+       "khz": 4.91,
+       "clip": "HSN_069_20150711_082805_190_195.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P3_soundscape_neg_2.png",
+       "act": 0.362,
+       "khz": 6.14,
+       "clip": "HSN_035_20150710_075805_080_085.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amepip_P3_soundscape_neg_3.png",
+       "act": 0.315,
+       "khz": 6.14,
+       "clip": "HSN_015_20150709_081805_490_495.ogg",
+       "labels": "background"
+      }
      ]
     },
     "4": {
@@ -5645,6 +5829,29 @@
        "khz": 6.14,
        "clip": "HSN_089_20150712_075805_570_575.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amepip_P4_soundscape_neg_1.png",
+       "act": 0.313,
+       "khz": 4.91,
+       "clip": "HSN_001_20150708_061805_000_005.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/amepip_P4_soundscape_neg_2.png",
+       "act": 0.303,
+       "khz": 4.91,
+       "clip": "HSN_061_20150711_071805_290_295.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amepip_P4_soundscape_neg_3.png",
+       "act": 0.301,
+       "khz": 3.91,
+       "clip": "HSN_071_20150711_083805_220_225.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "5": {
@@ -5686,6 +5893,29 @@
        "act": 0.346,
        "khz": 7.63,
        "clip": "HSN_029_20150710_064806_260_265.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amepip_P5_soundscape_neg_1.png",
+       "act": 0.322,
+       "khz": 9.45,
+       "clip": "HSN_035_20150710_075805_130_135.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amepip_P5_soundscape_neg_2.png",
+       "act": 0.31,
+       "khz": 9.45,
+       "clip": "HSN_035_20150710_075805_490_495.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amepip_P5_soundscape_neg_3.png",
+       "act": 0.297,
+       "khz": 7.63,
+       "clip": "HSN_071_20150711_083805_120_125.ogg",
+       "labels": "whcspa"
       }
      ]
     }
@@ -8006,6 +8236,29 @@
        "khz": 1.02,
        "clip": "HSN_090_20150712_080105_520_525.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/rocwre_P1_soundscape_neg_1.png",
+       "act": 0.258,
+       "khz": 0.46,
+       "clip": "HSN_028_20150710_064105_560_565.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P1_soundscape_neg_2.png",
+       "act": 0.255,
+       "khz": 0.46,
+       "clip": "HSN_028_20150710_064105_550_555.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P1_soundscape_neg_3.png",
+       "act": 0.255,
+       "khz": 1.02,
+       "clip": "HSN_013_20150709_080105_530_535.ogg",
+       "labels": "daejun"
+      }
      ]
     },
     "2": {
@@ -8047,6 +8300,29 @@
        "act": 0.344,
        "khz": 3.08,
        "clip": "HSN_059_20150711_070805_580_585.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/rocwre_P2_soundscape_neg_1.png",
+       "act": 0.273,
+       "khz": 3.08,
+       "clip": "HSN_028_20150710_064105_560_565.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P2_soundscape_neg_2.png",
+       "act": 0.192,
+       "khz": 6.14,
+       "clip": "HSN_015_20150709_081805_225_230.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/rocwre_P2_soundscape_neg_3.png",
+       "act": 0.192,
+       "khz": 4.91,
+       "clip": "HSN_060_20150711_071105_410_415.ogg",
+       "labels": "daejun"
       }
      ]
     },
@@ -8090,6 +8366,29 @@
        "khz": 3.08,
        "clip": "HSN_072_20150711_083805_370_375.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/rocwre_P3_soundscape_neg_1.png",
+       "act": 0.306,
+       "khz": 3.91,
+       "clip": "HSN_070_20150711_082805_575_580.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P3_soundscape_neg_2.png",
+       "act": 0.294,
+       "khz": 3.08,
+       "clip": "HSN_070_20150711_082805_580_585.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P3_soundscape_neg_3.png",
+       "act": 0.293,
+       "khz": 3.08,
+       "clip": "HSN_041_20150710_085105_445_450.ogg",
+       "labels": "mouchi"
+      }
      ]
     },
     "4": {
@@ -8132,6 +8431,29 @@
        "khz": 14.36,
        "clip": "HSN_072_20150711_083805_275_280.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/rocwre_P4_soundscape_neg_1.png",
+       "act": 0.171,
+       "khz": 14.36,
+       "clip": "HSN_013_20150709_080105_560_565.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P4_soundscape_neg_2.png",
+       "act": 0.163,
+       "khz": 14.36,
+       "clip": "HSN_099_20150712_091105_570_575.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/rocwre_P4_soundscape_neg_3.png",
+       "act": 0.134,
+       "khz": 14.36,
+       "clip": "HSN_046_20150711_061805_260_265.ogg",
+       "labels": "background"
+      }
      ]
     },
     "5": {
@@ -8173,6 +8495,29 @@
        "act": 0.423,
        "khz": 3.08,
        "clip": "HSN_072_20150711_083805_505_510.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/rocwre_P5_soundscape_neg_1.png",
+       "act": 0.287,
+       "khz": 3.91,
+       "clip": "HSN_028_20150710_064105_560_565.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P5_soundscape_neg_2.png",
+       "act": 0.279,
+       "khz": 3.91,
+       "clip": "HSN_070_20150711_082805_575_580.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/rocwre_P5_soundscape_neg_3.png",
+       "act": 0.273,
+       "khz": 3.91,
+       "clip": "HSN_070_20150711_082805_580_585.ogg",
+       "labels": "background"
       }
      ]
     }
@@ -10493,6 +10838,29 @@
        "khz": 3.91,
        "clip": "HSN_008_20150709_064805_355_360.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/gcrfin_P1_soundscape_neg_1.png",
+       "act": 0.373,
+       "khz": 4.91,
+       "clip": "HSN_092_20150712_084105_040_045.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/gcrfin_P1_soundscape_neg_2.png",
+       "act": 0.303,
+       "khz": 6.14,
+       "clip": "HSN_039_20150710_084105_045_050.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/gcrfin_P1_soundscape_neg_3.png",
+       "act": 0.299,
+       "khz": 3.91,
+       "clip": "HSN_022_20150709_084805_550_555.ogg",
+       "labels": "whcspa,rocwre"
+      }
      ]
     },
     "2": {
@@ -10534,6 +10902,29 @@
        "act": 0.519,
        "khz": 14.36,
        "clip": "HSN_032_20150710_071105_080_085.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/gcrfin_P2_soundscape_neg_1.png",
+       "act": 0.442,
+       "khz": 14.36,
+       "clip": "HSN_020_20150709_084105_125_130.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/gcrfin_P2_soundscape_neg_2.png",
+       "act": 0.439,
+       "khz": 14.36,
+       "clip": "HSN_092_20150712_084105_040_045.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/gcrfin_P2_soundscape_neg_3.png",
+       "act": 0.423,
+       "khz": 14.36,
+       "clip": "HSN_058_20150711_070105_260_265.ogg",
+       "labels": "background"
       }
      ]
     },
@@ -10577,6 +10968,29 @@
        "khz": 3.08,
        "clip": "HSN_016_20150709_081805_110_115.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/gcrfin_P3_soundscape_neg_1.png",
+       "act": 0.595,
+       "khz": 3.08,
+       "clip": "HSN_016_20150709_081805_060_065.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/gcrfin_P3_soundscape_neg_2.png",
+       "act": 0.571,
+       "khz": 3.08,
+       "clip": "HSN_092_20150712_084105_040_045.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/gcrfin_P3_soundscape_neg_3.png",
+       "act": 0.478,
+       "khz": 3.08,
+       "clip": "HSN_022_20150709_084805_100_105.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "4": {
@@ -10619,6 +11033,29 @@
        "khz": 3.08,
        "clip": "HSN_016_20150709_081805_180_185.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/gcrfin_P4_soundscape_neg_1.png",
+       "act": 0.328,
+       "khz": 2.4,
+       "clip": "HSN_053_20150711_065105_135_140.ogg",
+       "labels": "amerob,herthr"
+      },
+      {
+       "src": "patches/gcrfin_P4_soundscape_neg_2.png",
+       "act": 0.301,
+       "khz": 3.91,
+       "clip": "HSN_075_20150712_060805_505_510.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/gcrfin_P4_soundscape_neg_3.png",
+       "act": 0.261,
+       "khz": 3.08,
+       "clip": "HSN_086_20150712_073105_085_090.ogg",
+       "labels": "herthr"
+      }
      ]
     },
     "5": {
@@ -10660,6 +11097,29 @@
        "act": 0.386,
        "khz": 3.91,
        "clip": "HSN_075_20150712_060805_210_215.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/gcrfin_P5_soundscape_neg_1.png",
+       "act": 0.335,
+       "khz": 2.4,
+       "clip": "HSN_058_20150711_070105_280_285.ogg",
+       "labels": "amerob"
+      },
+      {
+       "src": "patches/gcrfin_P5_soundscape_neg_2.png",
+       "act": 0.326,
+       "khz": 1.85,
+       "clip": "HSN_058_20150711_070105_200_205.ogg",
+       "labels": "amerob,whcspa"
+      },
+      {
+       "src": "patches/gcrfin_P5_soundscape_neg_3.png",
+       "act": 0.303,
+       "khz": 3.08,
+       "clip": "HSN_059_20150711_070805_245_250.ogg",
+       "labels": "rocwre"
       }
      ]
     }
@@ -12980,6 +13440,29 @@
        "khz": 2.4,
        "clip": "HSN_062_20150711_072105_175_180.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/clanut_P1_soundscape_neg_1.png",
+       "act": 0.338,
+       "khz": 2.4,
+       "clip": "HSN_010_20150709_074105_205_210.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P1_soundscape_neg_2.png",
+       "act": 0.335,
+       "khz": 1.39,
+       "clip": "HSN_062_20150711_072105_165_170.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P1_soundscape_neg_3.png",
+       "act": 0.322,
+       "khz": 2.4,
+       "clip": "HSN_031_20150710_065105_555_560.ogg",
+       "labels": "background"
+      }
      ]
     },
     "2": {
@@ -13021,6 +13504,29 @@
        "act": 0.237,
        "khz": 1.85,
        "clip": "HSN_041_20150710_085105_010_015.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/clanut_P2_soundscape_neg_1.png",
+       "act": 0.278,
+       "khz": 3.91,
+       "clip": "HSN_062_20150711_072105_130_135.ogg",
+       "labels": "foxspa"
+      },
+      {
+       "src": "patches/clanut_P2_soundscape_neg_2.png",
+       "act": 0.256,
+       "khz": 4.91,
+       "clip": "HSN_012_20150709_080105_155_160.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/clanut_P2_soundscape_neg_3.png",
+       "act": 0.25,
+       "khz": 3.91,
+       "clip": "HSN_057_20150711_070105_505_510.ogg",
+       "labels": "whcspa"
       }
      ]
     },
@@ -13064,6 +13570,29 @@
        "khz": 1.39,
        "clip": "HSN_031_20150710_065105_115_120.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/clanut_P3_soundscape_neg_1.png",
+       "act": 0.416,
+       "khz": 1.39,
+       "clip": "HSN_031_20150710_065105_555_560.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P3_soundscape_neg_2.png",
+       "act": 0.287,
+       "khz": 1.02,
+       "clip": "HSN_088_20150712_075105_025_030.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P3_soundscape_neg_3.png",
+       "act": 0.286,
+       "khz": 1.39,
+       "clip": "HSN_075_20150712_060805_565_570.ogg",
+       "labels": "whcspa,rocwre"
+      }
      ]
     },
     "4": {
@@ -13106,6 +13635,29 @@
        "khz": 1.85,
        "clip": "HSN_088_20150712_075105_040_045.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/clanut_P4_soundscape_neg_1.png",
+       "act": 0.375,
+       "khz": 1.85,
+       "clip": "HSN_062_20150711_072105_070_075.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P4_soundscape_neg_2.png",
+       "act": 0.274,
+       "khz": 2.4,
+       "clip": "HSN_050_20150711_063105_595_600.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/clanut_P4_soundscape_neg_3.png",
+       "act": 0.259,
+       "khz": 1.85,
+       "clip": "HSN_070_20150711_082805_205_210.ogg",
+       "labels": "background"
+      }
      ]
     },
     "5": {
@@ -13147,6 +13699,29 @@
        "act": 0.512,
        "khz": 0.08,
        "clip": "HSN_060_20150711_071105_120_125.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/clanut_P5_soundscape_neg_1.png",
+       "act": 0.462,
+       "khz": 0.08,
+       "clip": "HSN_031_20150710_065105_555_560.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P5_soundscape_neg_2.png",
+       "act": 0.434,
+       "khz": 0.08,
+       "clip": "HSN_088_20150712_075105_025_030.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/clanut_P5_soundscape_neg_3.png",
+       "act": 0.433,
+       "khz": 0.08,
+       "clip": "HSN_062_20150711_072105_345_350.ogg",
+       "labels": "background"
       }
      ]
     }
@@ -15467,6 +16042,29 @@
        "khz": 4.91,
        "clip": "HSN_053_20150711_065105_520_525.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/herthr_P1_soundscape_neg_1.png",
+       "act": 0.306,
+       "khz": 3.08,
+       "clip": "HSN_082_20150712_071105_165_170.ogg",
+       "labels": "whcspa,gcrfin"
+      },
+      {
+       "src": "patches/herthr_P1_soundscape_neg_2.png",
+       "act": 0.284,
+       "khz": 4.91,
+       "clip": "HSN_083_20150712_072105_090_095.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P1_soundscape_neg_3.png",
+       "act": 0.279,
+       "khz": 3.91,
+       "clip": "HSN_034_20150710_075105_575_580.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "2": {
@@ -15508,6 +16106,29 @@
        "act": 0.407,
        "khz": 3.08,
        "clip": "HSN_063_20150711_073105_385_390.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/herthr_P2_soundscape_neg_1.png",
+       "act": 0.35,
+       "khz": 3.91,
+       "clip": "HSN_083_20150712_072105_035_040.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P2_soundscape_neg_2.png",
+       "act": 0.3,
+       "khz": 3.91,
+       "clip": "HSN_056_20150711_070105_560_565.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P2_soundscape_neg_3.png",
+       "act": 0.298,
+       "khz": 3.08,
+       "clip": "HSN_036_20150710_080105_075_080.ogg",
+       "labels": "whcspa"
       }
      ]
     },
@@ -15551,6 +16172,29 @@
        "khz": 3.08,
        "clip": "HSN_063_20150711_073105_095_100.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/herthr_P3_soundscape_neg_1.png",
+       "act": 0.377,
+       "khz": 3.91,
+       "clip": "HSN_056_20150711_070105_560_565.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P3_soundscape_neg_2.png",
+       "act": 0.35,
+       "khz": 4.91,
+       "clip": "HSN_056_20150711_070105_055_060.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P3_soundscape_neg_3.png",
+       "act": 0.35,
+       "khz": 4.91,
+       "clip": "HSN_036_20150710_080105_090_095.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "4": {
@@ -15593,6 +16237,29 @@
        "khz": 3.08,
        "clip": "HSN_063_20150711_073105_430_435.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/herthr_P4_soundscape_neg_1.png",
+       "act": 0.12,
+       "khz": 1.85,
+       "clip": "HSN_013_20150709_080105_105_110.ogg",
+       "labels": "whcspa,gcrfin"
+      },
+      {
+       "src": "patches/herthr_P4_soundscape_neg_2.png",
+       "act": 0.117,
+       "khz": 6.14,
+       "clip": "HSN_041_20150710_085105_440_445.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P4_soundscape_neg_3.png",
+       "act": 0.106,
+       "khz": 4.91,
+       "clip": "HSN_039_20150710_084105_460_465.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "5": {
@@ -15634,6 +16301,29 @@
        "act": 0.475,
        "khz": 3.91,
        "clip": "HSN_063_20150711_073105_330_335.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/herthr_P5_soundscape_neg_1.png",
+       "act": 0.299,
+       "khz": 4.91,
+       "clip": "HSN_056_20150711_070105_280_285.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P5_soundscape_neg_2.png",
+       "act": 0.274,
+       "khz": 4.91,
+       "clip": "HSN_003_20150708_085105_350_355.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/herthr_P5_soundscape_neg_3.png",
+       "act": 0.268,
+       "khz": 4.91,
+       "clip": "HSN_083_20150712_072105_300_305.ogg",
+       "labels": "whcspa"
       }
      ]
     }
@@ -17954,6 +18644,29 @@
        "khz": 3.91,
        "clip": "HSN_047_20150711_062105_355_360.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/daejun_P1_soundscape_neg_1.png",
+       "act": 0.378,
+       "khz": 6.14,
+       "clip": "HSN_031_20150710_065105_515_520.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/daejun_P1_soundscape_neg_2.png",
+       "act": 0.332,
+       "khz": 6.14,
+       "clip": "HSN_082_20150712_071105_445_450.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/daejun_P1_soundscape_neg_3.png",
+       "act": 0.306,
+       "khz": 6.14,
+       "clip": "HSN_082_20150712_071105_535_540.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "2": {
@@ -17995,6 +18708,29 @@
        "act": 0.189,
        "khz": 7.63,
        "clip": "HSN_100_20150712_091105_360_365.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/daejun_P2_soundscape_neg_1.png",
+       "act": 0.44,
+       "khz": 9.45,
+       "clip": "HSN_100_20150712_091105_580_585.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/daejun_P2_soundscape_neg_2.png",
+       "act": 0.385,
+       "khz": 9.45,
+       "clip": "HSN_010_20150709_074105_590_595.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/daejun_P2_soundscape_neg_3.png",
+       "act": 0.371,
+       "khz": 7.63,
+       "clip": "HSN_100_20150712_091105_525_530.ogg",
+       "labels": "whcspa"
       }
      ]
     },
@@ -18038,6 +18774,29 @@
        "khz": 4.91,
        "clip": "HSN_047_20150711_062105_355_360.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/daejun_P3_soundscape_neg_1.png",
+       "act": 0.354,
+       "khz": 6.14,
+       "clip": "HSN_082_20150712_071105_445_450.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/daejun_P3_soundscape_neg_2.png",
+       "act": 0.351,
+       "khz": 4.91,
+       "clip": "HSN_032_20150710_071105_140_145.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/daejun_P3_soundscape_neg_3.png",
+       "act": 0.279,
+       "khz": 4.91,
+       "clip": "HSN_023_20150709_091105_290_295.ogg",
+       "labels": "background"
+      }
      ]
     },
     "4": {
@@ -18080,6 +18839,29 @@
        "khz": 6.14,
        "clip": "HSN_073_20150711_085105_300_305.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/daejun_P4_soundscape_neg_1.png",
+       "act": 0.331,
+       "khz": 9.45,
+       "clip": "HSN_100_20150712_091105_380_385.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/daejun_P4_soundscape_neg_2.png",
+       "act": 0.324,
+       "khz": 7.63,
+       "clip": "HSN_100_20150712_091105_340_345.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/daejun_P4_soundscape_neg_3.png",
+       "act": 0.317,
+       "khz": 9.45,
+       "clip": "HSN_100_20150712_091105_355_360.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "5": {
@@ -18121,6 +18903,29 @@
        "act": 0.334,
        "khz": 7.63,
        "clip": "HSN_058_20150711_070105_170_175.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/daejun_P5_soundscape_neg_1.png",
+       "act": 0.385,
+       "khz": 7.63,
+       "clip": "HSN_096_20150712_090105_280_285.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/daejun_P5_soundscape_neg_2.png",
+       "act": 0.337,
+       "khz": 9.45,
+       "clip": "HSN_097_20150712_090805_160_165.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/daejun_P5_soundscape_neg_3.png",
+       "act": 0.33,
+       "khz": 9.45,
+       "clip": "HSN_094_20150712_085805_385_390.ogg",
+       "labels": "whcspa"
       }
      ]
     }
@@ -20441,6 +21246,29 @@
        "khz": 3.08,
        "clip": "HSN_058_20150711_070105_210_215.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amerob_P1_soundscape_neg_1.png",
+       "act": 0.24,
+       "khz": 1.85,
+       "clip": "HSN_058_20150711_070105_465_470.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/amerob_P1_soundscape_neg_2.png",
+       "act": 0.231,
+       "khz": 3.08,
+       "clip": "HSN_063_20150711_073105_270_275.ogg",
+       "labels": "yerwar"
+      },
+      {
+       "src": "patches/amerob_P1_soundscape_neg_3.png",
+       "act": 0.213,
+       "khz": 3.91,
+       "clip": "HSN_049_20150711_062805_020_025.ogg",
+       "labels": "amepip"
+      }
      ]
     },
     "2": {
@@ -20482,6 +21310,29 @@
        "act": 0.282,
        "khz": 1.39,
        "clip": "HSN_063_20150711_073105_120_125.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amerob_P2_soundscape_neg_1.png",
+       "act": 0.238,
+       "khz": 9.45,
+       "clip": "HSN_061_20150711_071805_440_445.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/amerob_P2_soundscape_neg_2.png",
+       "act": 0.238,
+       "khz": 1.02,
+       "clip": "HSN_053_20150711_065105_500_505.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/amerob_P2_soundscape_neg_3.png",
+       "act": 0.215,
+       "khz": 1.39,
+       "clip": "HSN_058_20150711_070105_465_470.ogg",
+       "labels": "herthr"
       }
      ]
     },
@@ -20525,6 +21376,29 @@
        "khz": 1.85,
        "clip": "HSN_058_20150711_070105_280_285.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amerob_P3_soundscape_neg_1.png",
+       "act": 0.242,
+       "khz": 4.91,
+       "clip": "HSN_022_20150709_084805_405_410.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/amerob_P3_soundscape_neg_2.png",
+       "act": 0.234,
+       "khz": 4.91,
+       "clip": "HSN_063_20150711_073105_345_350.ogg",
+       "labels": "yerwar,herthr"
+      },
+      {
+       "src": "patches/amerob_P3_soundscape_neg_3.png",
+       "act": 0.225,
+       "khz": 6.14,
+       "clip": "HSN_063_20150711_073105_405_410.ogg",
+       "labels": "whcspa,yerwar,herthr"
+      }
      ]
     },
     "4": {
@@ -20567,6 +21441,29 @@
        "khz": 2.4,
        "clip": "HSN_058_20150711_070105_440_445.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amerob_P4_soundscape_neg_1.png",
+       "act": 0.358,
+       "khz": 2.4,
+       "clip": "HSN_053_20150711_065105_500_505.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/amerob_P4_soundscape_neg_2.png",
+       "act": 0.277,
+       "khz": 1.85,
+       "clip": "HSN_053_20150711_065105_065_070.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amerob_P4_soundscape_neg_3.png",
+       "act": 0.266,
+       "khz": 1.85,
+       "clip": "HSN_058_20150711_070105_465_470.ogg",
+       "labels": "herthr"
+      }
      ]
     },
     "5": {
@@ -20608,6 +21505,29 @@
        "act": 0.167,
        "khz": 7.63,
        "clip": "HSN_058_20150711_070105_430_435.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/amerob_P5_soundscape_neg_1.png",
+       "act": 0.242,
+       "khz": 6.14,
+       "clip": "HSN_092_20150712_084105_545_550.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amerob_P5_soundscape_neg_2.png",
+       "act": 0.194,
+       "khz": 9.45,
+       "clip": "HSN_024_20150709_091105_065_070.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/amerob_P5_soundscape_neg_3.png",
+       "act": 0.159,
+       "khz": 9.45,
+       "clip": "HSN_061_20150711_071805_440_445.ogg",
+       "labels": "amepip"
       }
      ]
     }
@@ -22928,6 +23848,29 @@
        "khz": 3.08,
        "clip": "HSN_067_20150711_080105_065_070.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/mouchi_P1_soundscape_neg_1.png",
+       "act": 0.4,
+       "khz": 3.08,
+       "clip": "HSN_008_20150709_064805_245_250.ogg",
+       "labels": "rocwre,whcspa"
+      },
+      {
+       "src": "patches/mouchi_P1_soundscape_neg_2.png",
+       "act": 0.307,
+       "khz": 3.91,
+       "clip": "HSN_100_20150712_091105_165_170.ogg",
+       "labels": "clanut,whcspa,rocwre"
+      },
+      {
+       "src": "patches/mouchi_P1_soundscape_neg_3.png",
+       "act": 0.298,
+       "khz": 3.91,
+       "clip": "HSN_034_20150710_075105_590_595.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "2": {
@@ -22969,6 +23912,29 @@
        "act": 0.152,
        "khz": 4.91,
        "clip": "HSN_041_20150710_085105_420_425.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/mouchi_P2_soundscape_neg_1.png",
+       "act": 0.262,
+       "khz": 6.14,
+       "clip": "HSN_099_20150712_091105_335_340.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/mouchi_P2_soundscape_neg_2.png",
+       "act": 0.255,
+       "khz": 3.91,
+       "clip": "HSN_050_20150711_063105_350_355.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/mouchi_P2_soundscape_neg_3.png",
+       "act": 0.247,
+       "khz": 3.91,
+       "clip": "HSN_083_20150712_072105_590_595.ogg",
+       "labels": "whcspa"
       }
      ]
     },
@@ -23012,6 +23978,29 @@
        "khz": 7.63,
        "clip": "HSN_041_20150710_085105_320_325.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/mouchi_P3_soundscape_neg_1.png",
+       "act": 0.382,
+       "khz": 9.45,
+       "clip": "HSN_056_20150711_070105_025_030.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/mouchi_P3_soundscape_neg_2.png",
+       "act": 0.357,
+       "khz": 9.45,
+       "clip": "HSN_083_20150712_072105_380_385.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/mouchi_P3_soundscape_neg_3.png",
+       "act": 0.355,
+       "khz": 4.91,
+       "clip": "HSN_034_20150710_075105_590_595.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "4": {
@@ -23054,6 +24043,29 @@
        "khz": 6.14,
        "clip": "HSN_067_20150711_080105_065_070.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/mouchi_P4_soundscape_neg_1.png",
+       "act": 0.412,
+       "khz": 6.14,
+       "clip": "HSN_064_20150711_074105_590_595.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/mouchi_P4_soundscape_neg_2.png",
+       "act": 0.385,
+       "khz": 7.63,
+       "clip": "HSN_041_20150710_085105_520_525.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/mouchi_P4_soundscape_neg_3.png",
+       "act": 0.368,
+       "khz": 6.14,
+       "clip": "HSN_030_20150710_065105_330_335.ogg",
+       "labels": "amepip"
+      }
      ]
     },
     "5": {
@@ -23095,6 +24107,29 @@
        "act": 0.228,
        "khz": 14.36,
        "clip": "HSN_041_20150710_085105_490_495.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/mouchi_P5_soundscape_neg_1.png",
+       "act": 0.32,
+       "khz": 14.36,
+       "clip": "HSN_003_20150708_085105_315_320.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/mouchi_P5_soundscape_neg_2.png",
+       "act": 0.309,
+       "khz": 14.36,
+       "clip": "HSN_058_20150711_070105_040_045.ogg",
+       "labels": "amerob,herthr"
+      },
+      {
+       "src": "patches/mouchi_P5_soundscape_neg_3.png",
+       "act": 0.309,
+       "khz": 14.36,
+       "clip": "HSN_058_20150711_070105_265_270.ogg",
+       "labels": "amerob"
       }
      ]
     }
@@ -25415,6 +26450,29 @@
        "khz": 3.91,
        "clip": "HSN_038_20150710_082105_195_200.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/foxspa_P1_soundscape_neg_1.png",
+       "act": 0.285,
+       "khz": 3.08,
+       "clip": "HSN_057_20150711_070105_115_120.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/foxspa_P1_soundscape_neg_2.png",
+       "act": 0.252,
+       "khz": 4.91,
+       "clip": "HSN_058_20150711_070105_165_170.ogg",
+       "labels": "amerob,daejun,whcspa"
+      },
+      {
+       "src": "patches/foxspa_P1_soundscape_neg_3.png",
+       "act": 0.245,
+       "khz": 3.08,
+       "clip": "HSN_043_20150710_090805_175_180.ogg",
+       "labels": "whcspa,gcrfin"
+      }
      ]
     },
     "2": {
@@ -25456,6 +26514,29 @@
        "act": 0.131,
        "khz": 3.91,
        "clip": "HSN_038_20150710_082105_195_200.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/foxspa_P2_soundscape_neg_1.png",
+       "act": 0.387,
+       "khz": 7.63,
+       "clip": "HSN_007_20150709_064805_410_415.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/foxspa_P2_soundscape_neg_2.png",
+       "act": 0.371,
+       "khz": 7.63,
+       "clip": "HSN_038_20150710_082105_300_305.ogg",
+       "labels": "daejun"
+      },
+      {
+       "src": "patches/foxspa_P2_soundscape_neg_3.png",
+       "act": 0.368,
+       "khz": 7.63,
+       "clip": "HSN_095_20150712_090105_265_270.ogg",
+       "labels": "whcspa"
       }
      ]
     },
@@ -25499,6 +26580,29 @@
        "khz": 3.08,
        "clip": "HSN_038_20150710_082105_195_200.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/foxspa_P3_soundscape_neg_1.png",
+       "act": 0.227,
+       "khz": 3.91,
+       "clip": "HSN_056_20150711_070105_560_565.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/foxspa_P3_soundscape_neg_2.png",
+       "act": 0.221,
+       "khz": 3.08,
+       "clip": "HSN_057_20150711_070105_115_120.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/foxspa_P3_soundscape_neg_3.png",
+       "act": 0.22,
+       "khz": 3.08,
+       "clip": "HSN_056_20150711_070105_280_285.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "4": {
@@ -25541,6 +26645,29 @@
        "khz": 14.36,
        "clip": "HSN_038_20150710_082105_195_200.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/foxspa_P4_soundscape_neg_1.png",
+       "act": 0.267,
+       "khz": 14.36,
+       "clip": "HSN_100_20150712_091105_115_120.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/foxspa_P4_soundscape_neg_2.png",
+       "act": 0.255,
+       "khz": 14.36,
+       "clip": "HSN_006_20150709_063805_340_345.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/foxspa_P4_soundscape_neg_3.png",
+       "act": 0.25,
+       "khz": 14.36,
+       "clip": "HSN_056_20150711_070105_275_280.ogg",
+       "labels": "rocwre"
+      }
      ]
     },
     "5": {
@@ -25582,6 +26709,29 @@
        "act": 0.122,
        "khz": 3.91,
        "clip": "HSN_067_20150711_080105_510_515.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/foxspa_P5_soundscape_neg_1.png",
+       "act": 0.222,
+       "khz": 3.91,
+       "clip": "HSN_056_20150711_070105_275_280.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/foxspa_P5_soundscape_neg_2.png",
+       "act": 0.217,
+       "khz": 3.08,
+       "clip": "HSN_053_20150711_065105_200_205.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/foxspa_P5_soundscape_neg_3.png",
+       "act": 0.213,
+       "khz": 3.91,
+       "clip": "HSN_053_20150711_065105_260_265.ogg",
+       "labels": "herthr"
       }
      ]
     }
@@ -27902,6 +29052,29 @@
        "khz": 1.85,
        "clip": "HSN_041_20150710_085105_165_170.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/moublu_P1_soundscape_neg_1.png",
+       "act": 0.359,
+       "khz": 1.85,
+       "clip": "HSN_074_20150711_090105_475_480.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/moublu_P1_soundscape_neg_2.png",
+       "act": 0.321,
+       "khz": 2.4,
+       "clip": "HSN_075_20150712_060805_285_290.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/moublu_P1_soundscape_neg_3.png",
+       "act": 0.307,
+       "khz": 1.85,
+       "clip": "HSN_067_20150711_080105_125_130.ogg",
+       "labels": "background"
+      }
      ]
     },
     "2": {
@@ -27943,6 +29116,29 @@
        "act": 0.36,
        "khz": 1.85,
        "clip": "HSN_041_20150710_085105_230_235.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/moublu_P2_soundscape_neg_1.png",
+       "act": 0.251,
+       "khz": 1.85,
+       "clip": "HSN_031_20150710_065105_410_415.ogg",
+       "labels": "amerob"
+      },
+      {
+       "src": "patches/moublu_P2_soundscape_neg_2.png",
+       "act": 0.242,
+       "khz": 1.85,
+       "clip": "HSN_058_20150711_070105_390_395.ogg",
+       "labels": "amerob"
+      },
+      {
+       "src": "patches/moublu_P2_soundscape_neg_3.png",
+       "act": 0.206,
+       "khz": 1.85,
+       "clip": "HSN_058_20150711_070105_350_355.ogg",
+       "labels": "amerob"
       }
      ]
     },
@@ -27986,6 +29182,29 @@
        "khz": 1.85,
        "clip": "HSN_078_20150712_063805_595_600.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/moublu_P3_soundscape_neg_1.png",
+       "act": 0.378,
+       "khz": 3.08,
+       "clip": "HSN_005_20150709_063105_190_195.ogg",
+       "labels": "amepip,gcrfin"
+      },
+      {
+       "src": "patches/moublu_P3_soundscape_neg_2.png",
+       "act": 0.366,
+       "khz": 3.08,
+       "clip": "HSN_033_20150710_072105_040_045.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/moublu_P3_soundscape_neg_3.png",
+       "act": 0.345,
+       "khz": 2.4,
+       "clip": "HSN_075_20150712_060805_445_450.ogg",
+       "labels": "whcspa,gcrfin"
+      }
      ]
     },
     "4": {
@@ -28028,6 +29247,29 @@
        "khz": 0.08,
        "clip": "HSN_041_20150710_085105_255_260.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/moublu_P4_soundscape_neg_1.png",
+       "act": 0.268,
+       "khz": 4.91,
+       "clip": "HSN_100_20150712_091105_365_370.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/moublu_P4_soundscape_neg_2.png",
+       "act": 0.251,
+       "khz": 4.91,
+       "clip": "HSN_079_20150712_065105_545_550.ogg",
+       "labels": "whcspa,amepip"
+      },
+      {
+       "src": "patches/moublu_P4_soundscape_neg_3.png",
+       "act": 0.234,
+       "khz": 6.14,
+       "clip": "HSN_039_20150710_084105_205_210.ogg",
+       "labels": "whcspa"
+      }
      ]
     },
     "5": {
@@ -28069,6 +29311,29 @@
        "act": 0.329,
        "khz": 1.85,
        "clip": "HSN_078_20150712_063805_395_400.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/moublu_P5_soundscape_neg_1.png",
+       "act": 0.222,
+       "khz": 1.85,
+       "clip": "HSN_010_20150709_074105_150_155.ogg",
+       "labels": "rocwre,clanut"
+      },
+      {
+       "src": "patches/moublu_P5_soundscape_neg_2.png",
+       "act": 0.199,
+       "khz": 1.39,
+       "clip": "HSN_046_20150711_061805_395_400.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/moublu_P5_soundscape_neg_3.png",
+       "act": 0.183,
+       "khz": 1.85,
+       "clip": "HSN_099_20150712_091105_215_220.ogg",
+       "labels": "gcrfin,amepip"
       }
      ]
     }
@@ -30389,6 +31654,29 @@
        "khz": 1.85,
        "clip": "HSN_001_20150708_061805_230_235.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/sposan_P1_soundscape_neg_1.png",
+       "act": 0.241,
+       "khz": 4.91,
+       "clip": "HSN_013_20150709_080105_100_105.ogg",
+       "labels": "whcspa,daejun"
+      },
+      {
+       "src": "patches/sposan_P1_soundscape_neg_2.png",
+       "act": 0.2,
+       "khz": 4.91,
+       "clip": "HSN_063_20150711_073105_285_290.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/sposan_P1_soundscape_neg_3.png",
+       "act": 0.197,
+       "khz": 3.91,
+       "clip": "HSN_063_20150711_073105_235_240.ogg",
+       "labels": "whcspa,herthr"
+      }
      ]
     },
     "2": {
@@ -30430,6 +31718,29 @@
        "act": 0.432,
        "khz": 3.91,
        "clip": "HSN_088_20150712_075105_495_500.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/sposan_P2_soundscape_neg_1.png",
+       "act": 0.339,
+       "khz": 3.91,
+       "clip": "HSN_007_20150709_064805_110_115.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/sposan_P2_soundscape_neg_2.png",
+       "act": 0.323,
+       "khz": 3.08,
+       "clip": "HSN_086_20150712_073105_025_030.ogg",
+       "labels": "amepip,herthr"
+      },
+      {
+       "src": "patches/sposan_P2_soundscape_neg_3.png",
+       "act": 0.263,
+       "khz": 3.08,
+       "clip": "HSN_060_20150711_071105_565_570.ogg",
+       "labels": "background"
       }
      ]
     },
@@ -30473,6 +31784,29 @@
        "khz": 4.91,
        "clip": "HSN_001_20150708_061805_520_525.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/sposan_P3_soundscape_neg_1.png",
+       "act": 0.354,
+       "khz": 7.63,
+       "clip": "HSN_046_20150711_061805_485_490.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/sposan_P3_soundscape_neg_2.png",
+       "act": 0.344,
+       "khz": 4.91,
+       "clip": "HSN_091_20150712_081105_320_325.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/sposan_P3_soundscape_neg_3.png",
+       "act": 0.329,
+       "khz": 4.91,
+       "clip": "HSN_092_20150712_084105_095_100.ogg",
+       "labels": "background"
+      }
      ]
     },
     "4": {
@@ -30515,6 +31849,29 @@
        "khz": 14.36,
        "clip": "HSN_001_20150708_061805_535_540.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/sposan_P4_soundscape_neg_1.png",
+       "act": 0.37,
+       "khz": 4.91,
+       "clip": "HSN_008_20150709_064805_415_420.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/sposan_P4_soundscape_neg_2.png",
+       "act": 0.305,
+       "khz": 4.91,
+       "clip": "HSN_063_20150711_073105_320_325.ogg",
+       "labels": "herthr,yerwar"
+      },
+      {
+       "src": "patches/sposan_P4_soundscape_neg_3.png",
+       "act": 0.299,
+       "khz": 4.91,
+       "clip": "HSN_073_20150711_085105_310_315.ogg",
+       "labels": "daejun"
+      }
      ]
     },
     "5": {
@@ -30556,6 +31913,29 @@
        "act": 0.408,
        "khz": 3.91,
        "clip": "HSN_001_20150708_061805_535_540.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/sposan_P5_soundscape_neg_1.png",
+       "act": 0.211,
+       "khz": 3.91,
+       "clip": "HSN_007_20150709_064805_110_115.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/sposan_P5_soundscape_neg_2.png",
+       "act": 0.197,
+       "khz": 3.91,
+       "clip": "HSN_044_20150710_091105_330_335.ogg",
+       "labels": "amepip"
+      },
+      {
+       "src": "patches/sposan_P5_soundscape_neg_3.png",
+       "act": 0.182,
+       "khz": 3.08,
+       "clip": "HSN_060_20150711_071105_485_490.ogg",
+       "labels": "rocwre"
       }
      ]
     }
@@ -32876,6 +34256,29 @@
        "khz": 1.02,
        "clip": "HSN_063_20150711_073105_255_260.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/yerwar_P1_soundscape_neg_1.png",
+       "act": 0.431,
+       "khz": 1.39,
+       "clip": "HSN_010_20150709_074105_385_390.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P1_soundscape_neg_2.png",
+       "act": 0.386,
+       "khz": 4.91,
+       "clip": "HSN_100_20150712_091105_200_205.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P1_soundscape_neg_3.png",
+       "act": 0.362,
+       "khz": 6.14,
+       "clip": "HSN_060_20150711_071105_460_465.ogg",
+       "labels": "clanut,rocwre"
+      }
      ]
     },
     "2": {
@@ -32917,6 +34320,29 @@
        "act": 0.239,
        "khz": 4.91,
        "clip": "HSN_063_20150711_073105_260_265.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/yerwar_P2_soundscape_neg_1.png",
+       "act": 0.283,
+       "khz": 6.14,
+       "clip": "HSN_039_20150710_084105_280_285.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P2_soundscape_neg_2.png",
+       "act": 0.272,
+       "khz": 3.91,
+       "clip": "HSN_022_20150709_084805_405_410.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/yerwar_P2_soundscape_neg_3.png",
+       "act": 0.248,
+       "khz": 3.91,
+       "clip": "HSN_077_20150712_062105_570_575.ogg",
+       "labels": "casfin,daejun"
       }
      ]
     },
@@ -32960,6 +34386,29 @@
        "khz": 4.91,
        "clip": "HSN_063_20150711_073105_270_275.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/yerwar_P3_soundscape_neg_1.png",
+       "act": 0.382,
+       "khz": 4.91,
+       "clip": "HSN_063_20150711_073105_195_200.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/yerwar_P3_soundscape_neg_2.png",
+       "act": 0.345,
+       "khz": 6.14,
+       "clip": "HSN_010_20150709_074105_385_390.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P3_soundscape_neg_3.png",
+       "act": 0.32,
+       "khz": 6.14,
+       "clip": "HSN_014_20150709_081105_435_440.ogg",
+       "labels": "amepip,whcspa"
+      }
      ]
     },
     "4": {
@@ -33002,6 +34451,29 @@
        "khz": 6.14,
        "clip": "HSN_063_20150711_073105_405_410.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/yerwar_P4_soundscape_neg_1.png",
+       "act": 0.272,
+       "khz": 14.36,
+       "clip": "HSN_062_20150711_072105_540_545.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P4_soundscape_neg_2.png",
+       "act": 0.267,
+       "khz": 14.36,
+       "clip": "HSN_035_20150710_075805_155_160.ogg",
+       "labels": "background"
+      },
+      {
+       "src": "patches/yerwar_P4_soundscape_neg_3.png",
+       "act": 0.234,
+       "khz": 14.36,
+       "clip": "HSN_014_20150709_081105_135_140.ogg",
+       "labels": "background"
+      }
      ]
     },
     "5": {
@@ -33043,6 +34515,29 @@
        "act": 0.167,
        "khz": 6.14,
        "clip": "HSN_063_20150711_073105_255_260.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/yerwar_P5_soundscape_neg_1.png",
+       "act": 0.409,
+       "khz": 4.91,
+       "clip": "HSN_010_20150709_074105_385_390.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P5_soundscape_neg_2.png",
+       "act": 0.349,
+       "khz": 4.91,
+       "clip": "HSN_010_20150709_074105_365_370.ogg",
+       "labels": "rocwre"
+      },
+      {
+       "src": "patches/yerwar_P5_soundscape_neg_3.png",
+       "act": 0.296,
+       "khz": 4.91,
+       "clip": "HSN_100_20150712_091105_210_215.ogg",
+       "labels": "rocwre,whcspa"
       }
      ]
     }
@@ -35363,6 +36858,29 @@
        "khz": 3.91,
        "clip": "HSN_067_20150711_080105_460_465.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/casfin_P1_soundscape_neg_1.png",
+       "act": 0.22,
+       "khz": 3.91,
+       "clip": "HSN_023_20150709_091105_055_060.ogg",
+       "labels": "whcspa"
+      },
+      {
+       "src": "patches/casfin_P1_soundscape_neg_2.png",
+       "act": 0.218,
+       "khz": 3.91,
+       "clip": "HSN_023_20150709_091105_060_065.ogg",
+       "labels": "whcspa,gcrfin"
+      },
+      {
+       "src": "patches/casfin_P1_soundscape_neg_3.png",
+       "act": 0.211,
+       "khz": 3.91,
+       "clip": "HSN_033_20150710_072105_040_045.ogg",
+       "labels": "gcrfin"
+      }
      ]
     },
     "2": {
@@ -35404,6 +36922,29 @@
        "act": 0.225,
        "khz": 3.91,
        "clip": "HSN_032_20150710_071105_030_035.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/casfin_P2_soundscape_neg_1.png",
+       "act": 0.223,
+       "khz": 3.08,
+       "clip": "HSN_039_20150710_084105_315_320.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/casfin_P2_soundscape_neg_2.png",
+       "act": 0.223,
+       "khz": 3.91,
+       "clip": "HSN_099_20150712_091105_530_535.ogg",
+       "labels": "gcrfin"
+      },
+      {
+       "src": "patches/casfin_P2_soundscape_neg_3.png",
+       "act": 0.211,
+       "khz": 3.91,
+       "clip": "HSN_099_20150712_091105_565_570.ogg",
+       "labels": "gcrfin"
       }
      ]
     },
@@ -35447,6 +36988,29 @@
        "khz": 4.91,
        "clip": "HSN_032_20150710_071105_030_035.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/casfin_P3_soundscape_neg_1.png",
+       "act": 0.33,
+       "khz": 3.91,
+       "clip": "HSN_077_20150712_062105_065_070.ogg",
+       "labels": "warvir"
+      },
+      {
+       "src": "patches/casfin_P3_soundscape_neg_2.png",
+       "act": 0.278,
+       "khz": 4.91,
+       "clip": "HSN_063_20150711_073105_105_110.ogg",
+       "labels": "herthr"
+      },
+      {
+       "src": "patches/casfin_P3_soundscape_neg_3.png",
+       "act": 0.268,
+       "khz": 3.91,
+       "clip": "HSN_072_20150711_083805_385_390.ogg",
+       "labels": "rocwre"
+      }
      ]
     },
     "4": {
@@ -35489,6 +37053,29 @@
        "khz": 3.91,
        "clip": "HSN_067_20150711_080105_465_470.ogg"
       }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/casfin_P4_soundscape_neg_1.png",
+       "act": 0.283,
+       "khz": 3.08,
+       "clip": "HSN_023_20150709_091105_060_065.ogg",
+       "labels": "whcspa,gcrfin"
+      },
+      {
+       "src": "patches/casfin_P4_soundscape_neg_2.png",
+       "act": 0.253,
+       "khz": 3.91,
+       "clip": "HSN_077_20150712_062105_065_070.ogg",
+       "labels": "warvir"
+      },
+      {
+       "src": "patches/casfin_P4_soundscape_neg_3.png",
+       "act": 0.195,
+       "khz": 3.91,
+       "clip": "HSN_027_20150710_063805_335_340.ogg",
+       "labels": "rocwre"
+      }
      ]
     },
     "5": {
@@ -35530,6 +37117,29 @@
        "act": 0.274,
        "khz": 4.91,
        "clip": "HSN_077_20150712_062105_560_565.ogg"
+      }
+     ],
+     "soundscape_neg": [
+      {
+       "src": "patches/casfin_P5_soundscape_neg_1.png",
+       "act": 0.235,
+       "khz": 6.14,
+       "clip": "HSN_073_20150711_085105_570_575.ogg",
+       "labels": "daejun"
+      },
+      {
+       "src": "patches/casfin_P5_soundscape_neg_2.png",
+       "act": 0.231,
+       "khz": 4.91,
+       "clip": "HSN_039_20150710_084105_075_080.ogg",
+       "labels": "daejun"
+      },
+      {
+       "src": "patches/casfin_P5_soundscape_neg_3.png",
+       "act": 0.228,
+       "khz": 4.91,
+       "clip": "HSN_023_20150709_091105_280_285.ogg",
+       "labels": "daejun"
       }
      ]
     }
