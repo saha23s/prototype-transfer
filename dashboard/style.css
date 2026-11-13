@@ -191,3 +191,6 @@ svg .leader { stroke: var(--ink-2); stroke-width: 1; }
 .patches img.neg, #tooltip .zoom-img.neg { border-style: dashed; }
 .patches.neg > span { white-space: nowrap; }
 .swatch.soundscape.neg { background: none; border: 2px dashed var(--soundscape); width: 12px; height: 12px; border-radius: 3px; }
+.proto-card .conf { font-size: 0.75rem; color: var(--ink-2); margin-top: 8px; line-height: 1.35; }
+.proto-card .conf b { color: var(--ink); font-weight: 600; }
+.proto-card .conf-label { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.68rem; }

@@ -681,6 +681,135 @@
    }
   },
   {
+   "title": "False matches are often other birds, not noise",
+   "text": "Among each prototype's top 20 soundscape false matches, a median of 85% contain another annotated species, vs 44% of all clips without the species; 61 of 70 prototypes are enriched by > 10 points. 50 prototypes concentrate on one other species, e.g. mouchi P5 \u2192 amerob (16/20 top false matches vs a 1% base rate).",
+   "species": "mouchi",
+   "prototype": 5,
+   "evidence": {
+    "kind": "confusion",
+    "top_n": 20,
+    "pairs": [
+     {
+      "species": "mouchi",
+      "proto": 5,
+      "other": "amerob",
+      "frac": 0.8,
+      "base": 0.01
+     },
+     {
+      "species": "rocwre",
+      "proto": 3,
+      "other": "mouchi",
+      "frac": 0.35,
+      "base": 0.005
+     },
+     {
+      "species": "casfin",
+      "proto": 5,
+      "other": "daejun",
+      "frac": 0.8,
+      "base": 0.014
+     },
+     {
+      "species": "moublu",
+      "proto": 2,
+      "other": "amerob",
+      "frac": 0.55,
+      "base": 0.011
+     },
+     {
+      "species": "gcrfin",
+      "proto": 5,
+      "other": "amerob",
+      "frac": 0.5,
+      "base": 0.011
+     },
+     {
+      "species": "whcspa",
+      "proto": 1,
+      "other": "clanut",
+      "frac": 0.5,
+      "base": 0.031
+     },
+     {
+      "species": "casfin",
+      "proto": 2,
+      "other": "gcrfin",
+      "frac": 0.8,
+      "base": 0.056
+     },
+     {
+      "species": "yerwar",
+      "proto": 5,
+      "other": "rocwre",
+      "frac": 0.85,
+      "base": 0.061
+     },
+     {
+      "species": "moublu",
+      "proto": 3,
+      "other": "gcrfin",
+      "frac": 0.7,
+      "base": 0.056
+     },
+     {
+      "species": "yerwar",
+      "proto": 1,
+      "other": "rocwre",
+      "frac": 0.65,
+      "base": 0.061
+     },
+     {
+      "species": "amerob",
+      "proto": 2,
+      "other": "amepip",
+      "frac": 0.7,
+      "base": 0.091
+     },
+     {
+      "species": "casfin",
+      "proto": 3,
+      "other": "rocwre",
+      "frac": 0.45,
+      "base": 0.061
+     },
+     {
+      "species": "sposan",
+      "proto": 2,
+      "other": "amepip",
+      "frac": 0.65,
+      "base": 0.09
+     },
+     {
+      "species": "amerob",
+      "proto": 4,
+      "other": "gcrfin",
+      "frac": 0.4,
+      "base": 0.056
+     }
+    ],
+    "stats": [
+     [
+      "Median share of top-20 false matches with another species",
+      "85%"
+     ],
+     [
+      "Median base rate (all clips without the species)",
+      "44%"
+     ],
+     [
+      "Prototypes enriched by > 10 points",
+      "61 / 70"
+     ],
+     [
+      "Prototypes concentrating on one species (\u2265 30% of top matches, \u2265 2\u00d7 base)",
+      "50 / 70"
+     ]
+    ],
+    "method": "For each prototype, its 20 highest-activating soundscape clips not labelled with its species. 'Contains another species' uses the BirdSet HSN multi-label annotations (21 species). Base rate = fraction of all soundscape clips without the species that contain the other species (or any species). Caveats: some top 'false' matches may be unannotated calls of the species itself, and any bird vocalisation resembles a prototype more than silence does, so enrichment for 'any species' is partly expected; concentration on one specific species is the stronger signal of confusion."
+   }
+  },
+  {
    "title": "Some prototypes match the same acoustic part in both domains",
    "text": "whcspa P3 (a pure-tone note) and P4 (a trill) fire on the same structures in focal and soundscape clips and keep soundscape AUC above 0.9. P5's best soundscape matches also resemble its focal ones, but they are rare: its median soundscape activation is ~0 and its AUC drops to 0.67.",
    "species": "whcspa",
@@ -2991,6 +3120,48 @@
      "soundscape_neg": 9324
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.29,
+     "top_species": "clanut",
+     "top_count": 10,
+     "top_base": 0.031
+    },
+    {
+     "n": 20,
+     "frac_other": 0.3,
+     "base_other": 0.29,
+     "top_species": "gcrfin",
+     "top_count": 2,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.45,
+     "base_other": 0.29,
+     "top_species": "gcrfin",
+     "top_count": 3,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.75,
+     "base_other": 0.29,
+     "top_species": "amepip",
+     "top_count": 10,
+     "top_base": 0.099
+    },
+    {
+     "n": 20,
+     "frac_other": 0.25,
+     "base_other": 0.29,
+     "top_species": "herthr",
+     "top_count": 2,
+     "top_base": 0.023
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -5593,6 +5764,48 @@
      "soundscape_neg": 10918
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.6,
+     "base_other": 0.393,
+     "top_species": "whcspa",
+     "top_count": 11,
+     "top_base": 0.231
+    },
+    {
+     "n": 20,
+     "frac_other": 0.6,
+     "base_other": 0.393,
+     "top_species": "whcspa",
+     "top_count": 8,
+     "top_base": 0.231
+    },
+    {
+     "n": 20,
+     "frac_other": 0.2,
+     "base_other": 0.393,
+     "top_species": "whcspa",
+     "top_count": 4,
+     "top_base": 0.231
+    },
+    {
+     "n": 20,
+     "frac_other": 0.75,
+     "base_other": 0.393,
+     "top_species": "whcspa",
+     "top_count": 13,
+     "top_base": 0.231
+    },
+    {
+     "n": 20,
+     "frac_other": 0.4,
+     "base_other": 0.393,
+     "top_species": "whcspa",
+     "top_count": 8,
+     "top_base": 0.231
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -8195,6 +8408,48 @@
      "soundscape_neg": 11265
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.65,
+     "base_other": 0.412,
+     "top_species": "amepip",
+     "top_count": 6,
+     "top_base": 0.095
+    },
+    {
+     "n": 20,
+     "frac_other": 0.7,
+     "base_other": 0.412,
+     "top_species": "amepip",
+     "top_count": 7,
+     "top_base": 0.095
+    },
+    {
+     "n": 20,
+     "frac_other": 0.5,
+     "base_other": 0.412,
+     "top_species": "mouchi",
+     "top_count": 7,
+     "top_base": 0.005
+    },
+    {
+     "n": 20,
+     "frac_other": 0.65,
+     "base_other": 0.412,
+     "top_species": "amepip",
+     "top_count": 10,
+     "top_base": 0.095
+    },
+    {
+     "n": 20,
+     "frac_other": 0.75,
+     "base_other": 0.412,
+     "top_species": "whcspa",
+     "top_count": 8,
+     "top_base": 0.223
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -10797,6 +11052,48 @@
      "soundscape_neg": 11329
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.5,
+     "base_other": 0.415,
+     "top_species": "whcspa",
+     "top_count": 5,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.55,
+     "base_other": 0.415,
+     "top_species": "amepip",
+     "top_count": 5,
+     "top_base": 0.091
+    },
+    {
+     "n": 20,
+     "frac_other": 0.8,
+     "base_other": 0.415,
+     "top_species": "whcspa",
+     "top_count": 7,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.8,
+     "base_other": 0.415,
+     "top_species": "whcspa",
+     "top_count": 8,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.415,
+     "top_species": "amerob",
+     "top_count": 10,
+     "top_base": 0.011
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -13399,6 +13696,48 @@
      "soundscape_neg": 11680
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.15,
+     "base_other": 0.433,
+     "top_species": "amerob",
+     "top_count": 2,
+     "top_base": 0.011
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.433,
+     "top_species": "whcspa",
+     "top_count": 16,
+     "top_base": 0.226
+    },
+    {
+     "n": 20,
+     "frac_other": 0.6,
+     "base_other": 0.433,
+     "top_species": "whcspa",
+     "top_count": 9,
+     "top_base": 0.226
+    },
+    {
+     "n": 20,
+     "frac_other": 0.15,
+     "base_other": 0.433,
+     "top_species": "rocwre",
+     "top_count": 2,
+     "top_base": 0.06
+    },
+    {
+     "n": 20,
+     "frac_other": 0.3,
+     "base_other": 0.433,
+     "top_species": "whcspa",
+     "top_count": 2,
+     "top_base": 0.226
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -16001,6 +16340,48 @@
      "soundscape_neg": 11734
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.436,
+     "top_species": "whcspa",
+     "top_count": 17,
+     "top_base": 0.224
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.436,
+     "top_species": "whcspa",
+     "top_count": 16,
+     "top_base": 0.224
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.436,
+     "top_species": "whcspa",
+     "top_count": 18,
+     "top_base": 0.224
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.436,
+     "top_species": "whcspa",
+     "top_count": 19,
+     "top_base": 0.224
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.436,
+     "top_species": "whcspa",
+     "top_count": 19,
+     "top_base": 0.224
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -18603,6 +18984,48 @@
      "soundscape_neg": 11825
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.6,
+     "base_other": 0.44,
+     "top_species": "whcspa",
+     "top_count": 6,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.44,
+     "top_species": "whcspa",
+     "top_count": 17,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.65,
+     "base_other": 0.44,
+     "top_species": "whcspa",
+     "top_count": 6,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.44,
+     "top_species": "whcspa",
+     "top_count": 17,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.75,
+     "base_other": 0.44,
+     "top_species": "whcspa",
+     "top_count": 14,
+     "top_base": 0.223
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -21205,6 +21628,48 @@
      "soundscape_neg": 11874
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.442,
+     "top_species": "whcspa",
+     "top_count": 6,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.442,
+     "top_species": "amepip",
+     "top_count": 14,
+     "top_base": 0.091
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.442,
+     "top_species": "whcspa",
+     "top_count": 9,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.442,
+     "top_species": "gcrfin",
+     "top_count": 8,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.6,
+     "base_other": 0.442,
+     "top_species": "amepip",
+     "top_count": 6,
+     "top_base": 0.091
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -23807,6 +24272,48 @@
      "soundscape_neg": 11938
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.445,
+     "top_species": "whcspa",
+     "top_count": 15,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.445,
+     "top_species": "whcspa",
+     "top_count": 16,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.445,
+     "top_species": "whcspa",
+     "top_count": 15,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.8,
+     "base_other": 0.445,
+     "top_species": "amepip",
+     "top_count": 13,
+     "top_base": 0.091
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.445,
+     "top_species": "amerob",
+     "top_count": 16,
+     "top_base": 0.01
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -26409,6 +26916,48 @@
      "soundscape_neg": 11972
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 15,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 1.0,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 16,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 1.0,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 17,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.75,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 12,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 13,
+     "top_base": 0.223
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -29011,6 +29560,48 @@
      "soundscape_neg": 11973
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.65,
+     "base_other": 0.447,
+     "top_species": "gcrfin",
+     "top_count": 8,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.447,
+     "top_species": "amerob",
+     "top_count": 11,
+     "top_base": 0.011
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.447,
+     "top_species": "gcrfin",
+     "top_count": 14,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 15,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.65,
+     "base_other": 0.447,
+     "top_species": "gcrfin",
+     "top_count": 4,
+     "top_base": 0.056
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -31613,6 +32204,48 @@
      "soundscape_neg": 11978
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 10,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "amepip",
+     "top_count": 13,
+     "top_base": 0.09
+    },
+    {
+     "n": 20,
+     "frac_other": 0.8,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 13,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 15,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "amepip",
+     "top_count": 10,
+     "top_base": 0.09
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -34215,6 +34848,48 @@
      "soundscape_neg": 11982
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.7,
+     "base_other": 0.447,
+     "top_species": "rocwre",
+     "top_count": 13,
+     "top_base": 0.061
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 6,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.447,
+     "top_species": "amepip",
+     "top_count": 10,
+     "top_base": 0.09
+    },
+    {
+     "n": 20,
+     "frac_other": 0.7,
+     "base_other": 0.447,
+     "top_species": "amepip",
+     "top_count": 6,
+     "top_base": 0.09
+    },
+    {
+     "n": 20,
+     "frac_other": 0.85,
+     "base_other": 0.447,
+     "top_species": "rocwre",
+     "top_count": 17,
+     "top_base": 0.061
+    }
+   ],
    "patches": {
     "1": {
      "focal": [
@@ -36817,6 +37492,48 @@
      "soundscape_neg": 11983
     }
    },
+   "confusion": [
+    {
+     "n": 20,
+     "frac_other": 0.9,
+     "base_other": 0.447,
+     "top_species": "whcspa",
+     "top_count": 14,
+     "top_base": 0.223
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.447,
+     "top_species": "gcrfin",
+     "top_count": 16,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 0.95,
+     "base_other": 0.447,
+     "top_species": "rocwre",
+     "top_count": 9,
+     "top_base": 0.061
+    },
+    {
+     "n": 20,
+     "frac_other": 0.7,
+     "base_other": 0.447,
+     "top_species": "gcrfin",
+     "top_count": 6,
+     "top_base": 0.056
+    },
+    {
+     "n": 20,
+     "frac_other": 1.0,
+     "base_other": 0.447,
+     "top_species": "daejun",
+     "top_count": 16,
+     "top_base": 0.014
+    }
+   ],
    "patches": {
     "1": {
      "focal": [

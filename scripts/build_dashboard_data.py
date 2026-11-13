@@ -104,6 +104,31 @@ def species_activation_cdfs(data: dict, c: int) -> dict:
     return out
 
 
+CONFUSION_TOP_N = 20
+
+
+def confusion_stats(data: dict, c: int, sp_list: list[str], top_n: int = CONFUSION_TOP_N) -> list[dict]:
+    """For each prototype of species c: among its top-N activating soundscape clips WITHOUT c, how many
+    contain another annotated species, vs the base rate over all soundscape clips without c."""
+    d = data["soundscape"]
+    T = d["targets"]                                    # (N, 21) bool, all HSN species
+    neg = np.nonzero(~T[:, c])[0]
+    base_any = float(T[neg].any(axis=1).mean())
+    base_sp = T[neg].mean(axis=0)                       # per-species base rate among negatives
+    out = []
+    for k in range(d["proto_max"].shape[2]):
+        top = neg[np.argsort(-d["proto_max"][neg, c, k])][:top_n]
+        counts = T[top].sum(axis=0)
+        j = int(np.argmax(counts))
+        out.append({
+            "n": int(len(top)),
+            "frac_other": r(T[top].any(axis=1).mean(), 3), "base_other": r(base_any, 3),
+            "top_species": sp_list[j] if counts[j] > 0 else None, "top_count": int(counts[j]),
+            "top_base": r(base_sp[j], 3),
+        })
+    return out
+
+
 def activation_cdfs(data: dict, species: list[dict], sp_list: list[str], step: float = 0.01) -> dict:
     """Pooled CDFs of per-prototype max activation over the analysed species' prototypes,
     on clips with (positives) and without (negatives) the species, in both domains."""
@@ -260,6 +285,43 @@ def computed_findings(species: list[dict], dists: dict) -> list[dict]:
                           "map is maximal; rows are 16 mel bins wide (lowest row centred at ~0.1 kHz).",
             },
         })
+    # 6. Cross-species confusion: top false matches are enriched for other (co-occurring) species
+    rows = [(sp["code"], k + 1, cf) for sp in species for k, cf in enumerate(sp["confusion"])]
+    enriched = [t for t in rows if t[2]["frac_other"] > t[2]["base_other"] + 0.1]
+    pairs = [(sp, k, cf) for sp, k, cf in rows
+             if cf["top_species"] and cf["top_count"] >= 0.3 * cf["n"] and cf["top_base"] > 0
+             and (cf["top_count"] / cf["n"]) / cf["top_base"] >= 2]
+    pairs.sort(key=lambda t: -(t[2]["top_count"] / t[2]["n"]) / t[2]["top_base"])
+    med_top = float(np.median([cf["frac_other"] for _, _, cf in rows]))
+    med_base = float(np.median([cf["base_other"] for _, _, cf in rows]))
+    if pairs:
+        sp0, k0, cf0 = pairs[0]
+        out.append({
+            "title": "False matches are often other birds, not noise",
+            "text": f"Among each prototype's top {CONFUSION_TOP_N} soundscape false matches, a median of "
+                    f"{med_top:.0%} contain another annotated species, vs {med_base:.0%} of all clips without the "
+                    f"species; {len(enriched)} of {len(rows)} prototypes are enriched by > 10 points. "
+                    f"{len(pairs)} prototypes concentrate on one other species, e.g. {sp0} P{k0} → "
+                    f"{cf0['top_species']} ({cf0['top_count']}/{cf0['n']} top false matches vs a "
+                    f"{cf0['top_base']:.0%} base rate).",
+            "species": sp0, "prototype": k0,
+            "evidence": {
+                "kind": "confusion", "top_n": CONFUSION_TOP_N,
+                "pairs": [{"species": sp, "proto": k, "other": cf["top_species"], "frac": r(cf["top_count"] / cf["n"], 3),
+                           "base": cf["top_base"]} for sp, k, cf in pairs[:14]],
+                "stats": [[f"Median share of top-{CONFUSION_TOP_N} false matches with another species", f"{med_top:.0%}"],
+                          ["Median base rate (all clips without the species)", f"{med_base:.0%}"],
+                          ["Prototypes enriched by > 10 points", f"{len(enriched)} / {len(rows)}"],
+                          ["Prototypes concentrating on one species (≥ 30% of top matches, ≥ 2× base)", f"{len(pairs)} / {len(rows)}"]],
+                "method": f"For each prototype, its {CONFUSION_TOP_N} highest-activating soundscape clips not labelled with "
+                          "its species. 'Contains another species' uses the BirdSet HSN multi-label annotations (21 "
+                          "species). Base rate = fraction of all soundscape clips without the species that contain the "
+                          "other species (or any species). Caveats: some top 'false' matches may be unannotated calls of the "
+                          "species itself, and any bird vocalisation resembles a prototype more than silence does, so "
+                          "enrichment for 'any species' is partly expected; concentration on one specific species is "
+                          "the stronger signal of confusion.",
+            },
+        })
     return out
 
 
@@ -344,6 +406,7 @@ def main() -> None:
             "class_auc": {dom: r(st["domains"][dom]["class_auc"]) for dom in DOMAINS},
             "prototypes": protos,
             "act_cdf": species_activation_cdfs(data, c),
+            "confusion": confusion_stats(data, c, sp_list),
             "patches": None if args.skip_patches else export_patches(data, sp, c, patch_dir, pre, cache, args.top),
         })
         logger.info(f"{sp}: exported")

@@ -214,6 +214,22 @@
     return cdfChart(ev.cdf.x, ev.cdf.series, ev.cdf.medians, { label: "Pooled activation distributions" });
   }
 
+  function evConfusion(ev) {
+    const rows = ev.pairs, W = 560, rowH = 22, box = { left: 150, right: 540, top: 6, bottom: 6 + rows.length * rowH };
+    const H = box.bottom + 44, x = scale(0, 1, box.left, box.right);
+    const svg = evSvg(W, H, "Concentration of false matches on one other species");
+    axes(svg, x, null, `Share of top-${ev.top_n} false matches containing the other species`, null,
+      { xTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => Math.round(t * 100) + "%", box });
+    rows.forEach((r, i) => {
+      const cy = box.top + i * rowH + rowH / 2;
+      svg.append(sv("text", { class: "row-label", x: box.left - 8, y: cy + 4, "text-anchor": "end" }, `${r.species} P${r.proto} → ${r.other}`));
+      svg.append(sv("line", { class: "connector", x1: x(r.base), x2: x(r.frac), y1: cy, y2: cy }));
+      svg.append(sv("circle", { class: "pt", cx: x(r.base), cy, r: 4.5, "data-species": r.species, "data-proto": r.proto }));
+      svg.append(sv("circle", { class: "pt sel", cx: x(r.frac), cy, r: 5.5, "data-species": r.species, "data-proto": r.proto }));
+    });
+    return svg;
+  }
+
   function evScatter(ev, { get, lo, hi, ticks, fmt, log, xt, yt, band }) {
     const W = 560, H = 420, box = { left: 56, right: 540, top: 10, bottom: 370 };
     const tr = log ? Math.log10 : (v) => v;
@@ -272,7 +288,9 @@
       const p = sp.prototypes[k - 1];
       return [[`${sp.code} P${k} AUC (focal → soundscape)`, `${fmt(p.focal.auc, 3)} → ${fmt(p.soundscape.auc, 3)}`],
               [`${sp.code} P${k} share of evidence`, `${pct(p.focal.logit_share)} → ${pct(p.soundscape.logit_share)}`],
-              [`${sp.code} P${k} median activation on positives`, `${fmt(p.focal.act_q[2], 3)} → ${fmt(p.soundscape.act_q[2], 3)}`]];
+              [`${sp.code} P${k} median activation on positives`, `${fmt(p.focal.act_q[2], 3)} → ${fmt(p.soundscape.act_q[2], 3)}`],
+              ...(sp.confusion ? [[`${sp.code} P${k} top-${sp.confusion[k - 1].n} false matches with other species`,
+                `${pct(sp.confusion[k - 1].frac_other)} (base ${pct(sp.confusion[k - 1].base_other)})`]] : [])];
     });
   }
 
@@ -293,6 +311,9 @@
         lo: 0.05, hi: 16, ticks: [0.1, 0.25, 0.5, 1, 2, 4, 8, 16], fmt: (t) => String(t), log: true,
         xt: "Peak frequency · focal (kHz, log)", yt: "Peak frequency · soundscape (kHz, log)", band: [0.05, 0.5, "wind / ambient band (< 0.5 kHz)"] });
       legendItems = [["sel", "Drifting to the noise band"], ["other", "Other prototypes"]];
+    } else if (ev.kind === "confusion") {
+      chart = evConfusion(ev);
+      legendItems = [["sel", `Share of top-${ev.top_n} false matches with the other species`], ["other", "Base rate among all clips without the species"]];
     } else if (ev.kind === "patches") {
       chart = evPatches(ev);
       legendItems = [["focal", "Focal, with species"], ["soundscape", "Soundscape, with species"], ["soundscape neg", "Soundscape, without species (dashed)"]];
@@ -441,6 +462,13 @@
     share.append(el("div", { class: "row peak" }, "Peak freq.",
       el("b", { text: `${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz` })));
     if (low) share.append(el("div", { class: "flag", text: "soundscape peak in noise band" }));
+    const cf = sp.confusion && sp.confusion[p.k - 1];
+    if (cf) {
+      share.append(el("div", { class: "conf", title: `Top ${cf.n} soundscape clips without ${sp.code}, ranked by P${p.k} activation; base = all soundscape clips without ${sp.code}` },
+        el("div", { class: "conf-label", text: `Top-${cf.n} false matches` }),
+        el("div", {}, el("b", { text: pct(cf.frac_other) }), ` with other species (base ${pct(cf.base_other)})`),
+        cf.top_species ? el("div", {}, "mostly ", el("b", { text: `${cf.top_species} ${cf.top_count}/${cf.n}` }), ` (base ${pct(cf.top_base)})`) : null));
+    }
     const pcol = el("div", { class: "col col-patches" });
     const patches = sp.patches && sp.patches[String(p.k)];
     if (patches) pcol.append(...patchGroups(patches));
@@ -486,7 +514,7 @@
     return el("div", { class: "proto-head", "aria-hidden": "true" },
       el("span", { text: "Prototype · detection AUC" }),
       el("span", { text: "Activation on positives (0–0.6)" }),
-      el("span", { text: "Share of class evidence · peak" }),
+      el("span", { text: "Evidence share · peak · false matches" }),
       el("span", { text: "Top-activating patches (activation · kHz) · hover to zoom" }));
   }
 
