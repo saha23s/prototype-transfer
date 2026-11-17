@@ -38,6 +38,30 @@
     </figure>
   </section>
 
+  <section id="model-comparison" aria-labelledby="cmp-title">
+    <h2 id="cmp-title">Model comparison (test split)</h2>
+    <p class="hint" id="cmp-hint"></p>
+    <div class="table-wrap">
+      <table id="cmp-table">
+        <thead><tr>
+          <th>Model</th><th>Trained on</th><th>Focal cmAP</th><th>Soundscape cmAP</th>
+          <th>Focal AUC</th><th>Soundscape AUC</th><th>Proto-AUC median focal</th><th>Proto-AUC median soundscape</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <figure id="cmp-species" class="chart">
+      <figcaption>
+        <div class="cmp-head">
+          <h3>Per-species average precision</h3>
+          <div class="seg" role="tablist" aria-label="Test domain"></div>
+        </div>
+        <p class="hint">One row per species, one dot per model. Click a row to inspect that species below.</p>
+        <div class="legend"></div>
+      </figcaption>
+    </figure>
+  </section>
+
   <section aria-labelledby="detail-title">
     <div class="detail-bar">
       <h2 id="detail-title">Species detail</h2>

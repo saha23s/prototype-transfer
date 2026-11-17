@@ -4,6 +4,9 @@
 Reads outputs/features/prototype_responses.pt + outputs/results/prototype_transfer.json and writes
   dashboard/data.json, data.js     per-species / per-prototype stats + findings
   dashboard/patches/<sp>_P<k>_<domain>_<rank>.png   top-activating spectrogram crops
+and, if present, embeds outputs/results/model_comparison.json (test-split comparison of pretrained XCL,
+focal-only and soundscape-only models) as `model_comparison`. `--comparison-only` refreshes just that
+block in an existing dashboard/data.json, without the features file or audio.
 
 Patch export recomputes spectrograms from audio, so run it where data/ lives.
 """
@@ -361,6 +364,33 @@ def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreproc
     return patches
 
 
+MODEL_LABELS = {"pretrained-xcl": "Pretrained (XCL)", "focal-only": "Focal-only", "soundscape-only": "Soundscape-only"}
+COMPARISON_METRICS = ("cmAP", "macro_auc", "proto_auc_median", "proto_auc_frac_gt_0.8", "per_species_ap", "per_species_auc")
+
+
+def model_comparison_block(path: Path) -> dict | None:
+    """Compact, dashboard-ready view of compare_models.py output (None if it hasn't been run)."""
+    if not path.exists():
+        return None
+    cmp = json.loads(path.read_text())
+    rr = lambda v: [r(x) for x in v] if isinstance(v, list) else r(v)
+    return {
+        "split": "test",
+        "species": cmp["species"],
+        "n_pos": cmp["n_pos"],
+        "min_pos": cmp["min_pos"],
+        "models": [{"name": name, "label": MODEL_LABELS.get(name, name), "train_domain": m["train_domain"],
+                    **{d: {k: rr(m[d][k]) for k in COMPARISON_METRICS} for d in DOMAINS}}
+                   for name, m in cmp["models"].items()],
+    }
+
+
+def write_bundle(out: dict, out_dir: Path) -> None:
+    (out_dir / "data.json").write_text(json.dumps(out, indent=1))
+    # data.js lets index.html work from file:// (browsers block fetch() of local JSON there).
+    (out_dir / "data.js").write_text("window.DASHBOARD_DATA = " + json.dumps(out) + ";\n")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--features-path", type=Path, default=Path("outputs/features/prototype_responses.pt"))
@@ -368,7 +398,19 @@ def main() -> None:
     p.add_argument("--out-dir", type=Path, default=Path("dashboard"))
     p.add_argument("--top", type=int, default=3, help="Patches per prototype and domain")
     p.add_argument("--skip-patches", action="store_true")
+    p.add_argument("--comparison-path", type=Path, default=Path("outputs/results/model_comparison.json"))
+    p.add_argument("--comparison-only", action="store_true",
+                   help="Only (re)embed --comparison-path into the existing <out-dir>/data.json")
     args = p.parse_args()
+
+    if args.comparison_only:
+        out = json.loads((args.out_dir / "data.json").read_text())
+        out["model_comparison"] = model_comparison_block(args.comparison_path)
+        if out["model_comparison"] is None:
+            raise SystemExit(f"{args.comparison_path} not found")
+        write_bundle(out, args.out_dir)
+        logger.info(f"Embedded {args.comparison_path} into {args.out_dir / 'data.json'}")
+        return
 
     payload = torch.load(args.features_path, map_location="cpu", weights_only=False)
     stats = json.loads(args.results_path.read_text())
@@ -425,10 +467,9 @@ def main() -> None:
         "findings": computed_findings(species, activation_cdfs(data, species, sp_list)) + CURATED_FINDINGS,
         "caveats": CAVEATS,
         "species": species,
+        "model_comparison": model_comparison_block(args.comparison_path),
     }
-    (args.out_dir / "data.json").write_text(json.dumps(out, indent=1))
-    # data.js lets index.html work from file:// (browsers block fetch() of local JSON there).
-    (args.out_dir / "data.js").write_text("window.DASHBOARD_DATA = " + json.dumps(out) + ";\n")
+    write_bundle(out, args.out_dir)
     logger.info(f"Wrote {args.out_dir / 'data.json'} ({len(species)} species)")
 
 

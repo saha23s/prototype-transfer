@@ -42,6 +42,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--min-soundscape-pos", type=int, default=10,
                    help="Species need at least this many soundscape positives to be analysed")
     p.add_argument("--device", default="auto")
+    p.add_argument("--checkpoint", default=None,
+                   help="21-class checkpoint from scripts/train_protopnet.py (default: pretrained XCL model)")
     return p.parse_args()
 
 
@@ -49,7 +51,7 @@ def main() -> None:
     args = parse_args()
     device = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == "auto" else args.device
     logger.info(f"Using device: {device}")
-    model = HSNProtoPNetClassifier(device=device)
+    model = HSNProtoPNetClassifier(device=device, checkpoint=args.checkpoint)
 
     results = {}
     for name, manifest, is_sc, cap in [

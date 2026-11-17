@@ -63,6 +63,7 @@
   function hideTip() { tip().setAttribute("hidden", ""); }
 
   function tipFor(target) {
+    if (target.dataset.model) return cmpTip(target);
     const sp = bySp[target.dataset.species];
     if (!sp) return null;
     if (target.dataset.proto) {
@@ -601,12 +602,83 @@
     }
   }
 
+  // ---------- model comparison (test split) ----------
+  const MC = DATA.model_comparison;
+  const mcByName = MC ? Object.fromEntries(MC.models.map((m) => [m.name, m])) : {};
+  let cmpDomain = "soundscape";
+
+  function cmpTip(target) {
+    const m = mcByName[target.dataset.model];
+    if (!m) return null;
+    const sp = target.dataset.species, i = MC.species.indexOf(sp);
+    return `<b>${m.label} · ${sp}</b><br>${LABEL[cmpDomain]} AP ${fmt(m[cmpDomain].per_species_ap[i], 3)}` +
+      ` · AUC ${fmt(m[cmpDomain].per_species_auc[i], 3)}<br>Test positives: ${MC.n_pos[cmpDomain][sp]}`;
+  }
+
+  function renderComparison() {
+    const sec = document.getElementById("model-comparison");
+    if (!MC) { sec.hidden = true; return; }
+    document.getElementById("cmp-hint").textContent =
+      `Pretrained XCL model vs. ProtoPNets fine-tuned on focal recordings only and on soundscapes only, scored on held-out ` +
+      `TEST clips for the ${MC.species.length} species with ≥ ${MC.min_pos} positives in both test sets. ` +
+      `The rest of this page analyses the pretrained model on all clips.`;
+
+    // table
+    const cols = [["focal", "cmAP"], ["soundscape", "cmAP"], ["focal", "macro_auc"], ["soundscape", "macro_auc"],
+      ["focal", "proto_auc_median"], ["soundscape", "proto_auc_median"]];
+    const best = cols.map(([d, k]) => Math.max(...MC.models.map((m) => m[d][k])));
+    const tb = document.querySelector("#cmp-table tbody");
+    for (const m of MC.models) {
+      tb.append(el("tr", { "data-model": m.name },
+        el("td", {}, el("i", { class: "swatch cmp-" + m.name }), m.label),
+        el("td", { text: m.train_domain === "xcl" ? "XCL (pretraining)" : LABEL[m.train_domain] || m.train_domain }),
+        ...cols.map(([d, k], j) => el("td", { class: "num" + (m[d][k] === best[j] ? " best" : ""), text: m[d][k].toFixed(3) }))));
+    }
+
+    // chart
+    const fig = document.getElementById("cmp-species");
+    legend(fig, MC.models.map((m) => ["cmp-" + m.name, m.label]));
+    const seg = fig.querySelector(".seg");
+    for (const d of DOMAINS) {
+      const b = el("button", { type: "button", role: "tab", "data-domain": d, "aria-selected": String(d === cmpDomain), text: LABEL[d] });
+      b.addEventListener("click", () => {
+        cmpDomain = d;
+        seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.domain === d)));
+        drawCmpChart(fig);
+      });
+      seg.append(b);
+    }
+    drawCmpChart(fig);
+    listeners.push(() => drawCmpChart(fig)); // keep the selected-species label in bold
+  }
+
+  function drawCmpChart(fig) {
+    const W = 720, rowH = 24, box = { left: 70, right: 700, top: 8, bottom: 8 + MC.species.length * rowH };
+    const H = box.bottom + 44, x = scale(0, 1, box.left, box.right);
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Per-species ${LABEL[cmpDomain].toLowerCase()} average precision by model` });
+    axes(svg, x, null, `Average precision · ${LABEL[cmpDomain]} test clips`, null, { xTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => t.toFixed(2), box });
+    MC.species.forEach((sp, i) => {
+      const cy = box.top + i * rowH + rowH / 2;
+      const vals = MC.models.map((m) => m[cmpDomain].per_species_ap[i]);
+      const g = sv("g", { class: "cmp-row" });
+      g.append(sv("text", { class: "row-label" + (sp === selected ? " sel" : ""), x: box.left - 8, y: cy + 4, "text-anchor": "end", "data-species": sp }, sp));
+      g.append(sv("line", { class: "cmp-range", x1: x(Math.min(...vals)), x2: x(Math.max(...vals)), y1: cy, y2: cy }));
+      MC.models.forEach((m, j) => g.append(sv("circle", { class: "dot cmp-" + m.name, cx: x(vals[j]), cy, r: 5.5,
+        "data-model": m.name, "data-species": sp, "data-value": vals[j].toFixed(4) })));
+      svg.append(g);
+    });
+    const old = fig.querySelector("svg");
+    if (old) old.replaceWith(svg); else fig.append(svg);
+    wireChart(svg);
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     renderHeader();
     renderSummary();
     wireZoom();
     renderClassAuc();
     renderScatter();
+    renderComparison();
     renderSelect();
     renderFindings();
     renderTable();

@@ -8,6 +8,7 @@
   --soundscape: #eb6834;
   --sel: #1f1f1e;
   --muted-dot: #b9b9b5;
+  --xcl: #7d8590;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -20,6 +21,7 @@
     --soundscape: #d95926;
     --sel: #ececea;
     --muted-dot: #5a5a57;
+    --xcl: #9aa3ad;
   }
 }
 
@@ -194,3 +196,17 @@ svg .leader { stroke: var(--ink-2); stroke-width: 1; }
 .proto-card .conf { font-size: 0.75rem; color: var(--ink-2); margin-top: 8px; line-height: 1.35; }
 .proto-card .conf b { color: var(--ink); font-weight: 600; }
 .proto-card .conf-label { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.68rem; }
+
+/* model comparison */
+#model-comparison .table-wrap { margin-bottom: 16px; }
+#cmp-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+#cmp-table td.best { font-weight: 600; }
+#cmp-table td .swatch { margin-right: 6px; }
+.cmp-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.cmp-head h3 { margin: 0; }
+.swatch.cmp-pretrained-xcl, svg .dot.cmp-pretrained-xcl { background: var(--xcl); fill: var(--xcl); }
+.swatch.cmp-focal-only, svg .dot.cmp-focal-only { background: var(--focal); fill: var(--focal); }
+.swatch.cmp-soundscape-only, svg .dot.cmp-soundscape-only { background: var(--soundscape); fill: var(--soundscape); }
+svg .cmp-range { stroke: var(--muted-dot); stroke-width: 2; }
+#cmp-species svg .dot { cursor: pointer; stroke: var(--card); stroke-width: 1; }
+#cmp-table td:first-child { white-space: nowrap; }

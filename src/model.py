@@ -37,21 +37,30 @@ class HSNProtoPNetClassifier(nn.Module):
         device: str | torch.device = "cpu",
         species_list: Sequence[str] = HSN_SPECIES_LIST,
         revision: str = MODEL_REVISION,
+        checkpoint: str | None = None,
     ) -> None:
+        """checkpoint: optional 21-class model trained by scripts/train_protopnet.py; otherwise the
+        pretrained 9736-class XCL model is used (and sliced to the HSN species)."""
         super().__init__()
         self.device = torch.device(device)
         self.species_list = list(species_list)
         self.num_target_classes = len(self.species_list)
 
-        logger.info(f"Loading pretrained AudioProtoPNet from {pretrained_model_name_or_path}@{revision}...")
-        self.config = AutoConfig.from_pretrained(
-            pretrained_model_name_or_path, revision=revision, trust_remote_code=True)
-        self.model = AutoModelForSequenceClassification.from_pretrained(
-            pretrained_model_name_or_path,
-            config=self.config,
-            revision=revision,
-            trust_remote_code=True,
-        )
+        if checkpoint:
+            from src.protopnet import load_checkpoint  # local import: src.protopnet imports this module
+            logger.info(f"Loading trained 21-class AudioProtoPNet from {checkpoint}...")
+            self.model = load_checkpoint(checkpoint)
+            self.config = self.model.config
+        else:
+            logger.info(f"Loading pretrained AudioProtoPNet from {pretrained_model_name_or_path}@{revision}...")
+            self.config = AutoConfig.from_pretrained(
+                pretrained_model_name_or_path, revision=revision, trust_remote_code=True)
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                pretrained_model_name_or_path,
+                config=self.config,
+                revision=revision,
+                trust_remote_code=True,
+            )
         self.model.to(self.device)
         self.model.eval()
 

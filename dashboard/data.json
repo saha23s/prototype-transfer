@@ -37862,5 +37862,274 @@
     }
    }
   }
- ]
+ ],
+ "model_comparison": {
+  "split": "test",
+  "species": [
+   "whcspa",
+   "amepip",
+   "rocwre",
+   "daejun",
+   "foxspa",
+   "clanut",
+   "moublu",
+   "casfin",
+   "herthr",
+   "amerob",
+   "yerwar",
+   "mouchi"
+  ],
+  "n_pos": {
+   "focal": {
+    "whcspa": 75,
+    "amepip": 24,
+    "rocwre": 22,
+    "daejun": 93,
+    "foxspa": 37,
+    "clanut": 18,
+    "moublu": 7,
+    "casfin": 44,
+    "herthr": 75,
+    "amerob": 120,
+    "yerwar": 43,
+    "mouchi": 52
+   },
+   "soundscape": {
+    "whcspa": 749,
+    "amepip": 301,
+    "rocwre": 237,
+    "daejun": 47,
+    "foxspa": 13,
+    "clanut": 120,
+    "moublu": 8,
+    "casfin": 6,
+    "herthr": 95,
+    "amerob": 38,
+    "yerwar": 5,
+    "mouchi": 16
+   }
+  },
+  "min_pos": 5,
+  "models": [
+   {
+    "name": "pretrained-xcl",
+    "label": "Pretrained (XCL)",
+    "train_domain": "xcl",
+    "focal": {
+     "cmAP": 0.9097,
+     "macro_auc": 0.9776,
+     "proto_auc_median": 0.9574,
+     "proto_auc_frac_gt_0.8": 0.9167,
+     "per_species_ap": [
+      0.9568,
+      0.9575,
+      0.9488,
+      0.9066,
+      0.936,
+      0.9456,
+      0.6044,
+      0.9473,
+      0.949,
+      0.9651,
+      0.8608,
+      0.938
+     ],
+     "per_species_auc": [
+      0.9937,
+      0.9591,
+      0.9993,
+      0.9839,
+      0.9976,
+      0.999,
+      0.904,
+      0.9972,
+      0.9876,
+      0.9918,
+      0.9357,
+      0.9824
+     ]
+    },
+    "soundscape": {
+     "cmAP": 0.5395,
+     "macro_auc": 0.9241,
+     "proto_auc_median": 0.8797,
+     "proto_auc_frac_gt_0.8": 0.6667,
+     "per_species_ap": [
+      0.8177,
+      0.7283,
+      0.7078,
+      0.2324,
+      0.0141,
+      0.728,
+      0.7566,
+      0.8556,
+      0.7395,
+      0.553,
+      0.0692,
+      0.2716
+     ],
+     "per_species_auc": [
+      0.9232,
+      0.9271,
+      0.9344,
+      0.8825,
+      0.6405,
+      0.944,
+      0.9793,
+      0.9982,
+      0.9872,
+      0.9857,
+      0.977,
+      0.9097
+     ]
+    }
+   },
+   {
+    "name": "focal-only",
+    "label": "Focal-only",
+    "train_domain": "focal",
+    "focal": {
+     "cmAP": 0.9011,
+     "macro_auc": 0.98,
+     "proto_auc_median": 0.9794,
+     "proto_auc_frac_gt_0.8": 0.9667,
+     "per_species_ap": [
+      0.9498,
+      0.9267,
+      0.9906,
+      0.9383,
+      0.8992,
+      0.9213,
+      0.5365,
+      0.8992,
+      0.9244,
+      0.9748,
+      0.9017,
+      0.9508
+     ],
+     "per_species_auc": [
+      0.9925,
+      0.9966,
+      0.9998,
+      0.9888,
+      0.9854,
+      0.9969,
+      0.8477,
+      0.9975,
+      0.9843,
+      0.9949,
+      0.9787,
+      0.9962
+     ]
+    },
+    "soundscape": {
+     "cmAP": 0.4709,
+     "macro_auc": 0.8983,
+     "proto_auc_median": 0.8298,
+     "proto_auc_frac_gt_0.8": 0.6333,
+     "per_species_ap": [
+      0.7865,
+      0.634,
+      0.6265,
+      0.087,
+      0.0194,
+      0.7803,
+      0.5062,
+      0.5755,
+      0.5694,
+      0.6374,
+      0.1753,
+      0.2532
+     ],
+     "per_species_auc": [
+      0.8839,
+      0.8705,
+      0.8903,
+      0.8612,
+      0.7751,
+      0.9654,
+      0.9592,
+      0.9929,
+      0.8796,
+      0.9937,
+      0.9795,
+      0.7285
+     ]
+    }
+   },
+   {
+    "name": "soundscape-only",
+    "label": "Soundscape-only",
+    "train_domain": "soundscape",
+    "focal": {
+     "cmAP": 0.7576,
+     "macro_auc": 0.9491,
+     "proto_auc_median": 0.9543,
+     "proto_auc_frac_gt_0.8": 0.9167,
+     "per_species_ap": [
+      0.9399,
+      0.8427,
+      0.9868,
+      0.7576,
+      0.0931,
+      0.8549,
+      0.5157,
+      0.7893,
+      0.8448,
+      0.9013,
+      0.7225,
+      0.8429
+     ],
+     "per_species_auc": [
+      0.983,
+      0.9777,
+      0.9996,
+      0.9527,
+      0.807,
+      0.996,
+      0.8611,
+      0.9941,
+      0.9672,
+      0.9806,
+      0.8927,
+      0.978
+     ]
+    },
+    "soundscape": {
+     "cmAP": 0.6756,
+     "macro_auc": 0.9673,
+     "proto_auc_median": 0.9587,
+     "proto_auc_frac_gt_0.8": 0.9167,
+     "per_species_ap": [
+      0.8949,
+      0.879,
+      0.739,
+      0.3463,
+      0.0876,
+      0.8769,
+      0.8004,
+      0.8367,
+      0.9283,
+      0.9384,
+      0.1101,
+      0.6697
+     ],
+     "per_species_auc": [
+      0.9659,
+      0.9792,
+      0.9702,
+      0.8794,
+      0.904,
+      0.9943,
+      0.9633,
+      0.9864,
+      0.9962,
+      0.9995,
+      0.9908,
+      0.9788
+     ]
+    }
+   }
+  ]
+ }
 }

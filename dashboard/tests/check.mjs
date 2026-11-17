@@ -158,6 +158,59 @@ if (zimg) {
   ok(ztip.hasAttribute("hidden"), "zoom hides on mouseout");
 } else ok(false, "patch images are zoomable");
 
+// Model comparison (test split): table + per-species AP chart with a domain toggle.
+{
+  const mc = data.model_comparison;
+  ok(!!mc && mc.models.length === 3 && mc.species.length > 0, "data has model_comparison with 3 models");
+  const sec = d.querySelector("#model-comparison");
+  ok(!!sec && /test/i.test(sec.textContent), "#model-comparison section exists and says it is the test split");
+  const rows = [...d.querySelectorAll("#cmp-table tbody tr[data-model]")];
+  ok(rows.length === 3 && rows.map((r) => r.dataset.model).join() === mc.models.map((m) => m.name).join(),
+     "#cmp-table has one row per model, in data order");
+  for (const m of mc.models) {
+    const r = rows.find((x) => x.dataset.model === m.name);
+    ok(r && r.textContent.includes(m.label) && r.textContent.includes(m.focal.cmAP.toFixed(3)) && r.textContent.includes(m.soundscape.cmAP.toFixed(3)),
+       `#cmp-table row ${m.name} shows label and both cmAPs (3 dp)`);
+  }
+  const bestSc = mc.models.reduce((a, b) => (b.soundscape.cmAP > a.soundscape.cmAP ? b : a));
+  const bestFo = mc.models.reduce((a, b) => (b.focal.cmAP > a.focal.cmAP ? b : a));
+  const bestTxt = (name) => [...(rows.find((x) => x.dataset.model === name)?.querySelectorAll("td.best") || [])].map((t) => t.textContent).join("|");
+  ok(bestTxt(bestSc.name).includes(bestSc.soundscape.cmAP.toFixed(3)), `soundscape cmAP best cell is marked .best in ${bestSc.name} row`);
+  ok(bestTxt(bestFo.name).includes(bestFo.focal.cmAP.toFixed(3)), `focal cmAP best cell is marked .best in ${bestFo.name} row`);
+  ok(d.querySelectorAll("#cmp-table td.best").length >= 6 && d.querySelectorAll("#cmp-table td.best").length <= 8, "#cmp-table marks one best cell per metric column (6 columns)");
+
+  const circles = () => [...d.querySelectorAll("#cmp-species svg circle[data-model][data-species]")];
+  ok(circles().length === 3 * mc.species.length, `#cmp-species has ${3 * mc.species.length} circles`);
+  const valOk = (dom_) => mc.models.every((m) => mc.species.every((sp, i) => {
+    const c = d.querySelector(`#cmp-species circle[data-model="${m.name}"][data-species="${sp}"]`);
+    return c && Math.abs(Number(c.dataset.value) - m[dom_].per_species_ap[i]) < 1e-3;
+  }));
+  const segBtn = (dom_) => d.querySelector(`#cmp-species .seg button[data-domain="${dom_}"]`);
+  ok(segBtn("soundscape")?.getAttribute("aria-selected") === "true", "comparison chart defaults to soundscape");
+  ok(valOk("soundscape"), "comparison circles carry soundscape per-species AP in data-value");
+  const cx0 = circles()[0]?.getAttribute("cx");
+  segBtn("focal")?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+  ok(segBtn("focal")?.getAttribute("aria-selected") === "true" && segBtn("soundscape")?.getAttribute("aria-selected") === "false", "focal toggle selected after click");
+  ok(valOk("focal") && circles().length === 3 * mc.species.length, "after toggle, circles carry focal per-species AP");
+  ok(circles().some((c, i) => i === 0 && c.getAttribute("cx") !== cx0), "toggle moves the circles");
+  const legendTxt = d.querySelector("#cmp-species .legend")?.textContent || "";
+  ok(mc.models.every((m) => legendTxt.includes(m.label)), "comparison legend lists every model label");
+
+  const m1 = mc.models[1], sp1 = mc.species[1];
+  const c1 = d.querySelector(`#cmp-species circle[data-model="${m1.name}"][data-species="${sp1}"]`);
+  const tip2 = d.querySelector("#tooltip");
+  c1?.dispatchEvent(new w.MouseEvent("mouseover", { bubbles: true, clientX: 80, clientY: 80 }));
+  ok(!tip2.hasAttribute("hidden") && tip2.textContent.includes(m1.label) && tip2.textContent.includes(sp1), "comparison tooltip names model and species");
+  c1?.dispatchEvent(new w.MouseEvent("mouseout", { bubbles: true }));
+  ok(tip2.hasAttribute("hidden"), "comparison tooltip hides on mouseout");
+  if (codes.includes(sp1)) {
+    c1?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 30));
+    ok(sel.value === sp1, "clicking a comparison circle selects its species");
+  }
+}
+
 ok(d.querySelectorAll("#proto-table tbody tr").length === S.length * 5, `#proto-table has ${S.length * 5} rows`);
 ok(d.querySelectorAll("#caveats li").length === data.caveats.length, `#caveats lists ${data.caveats.length} items`);
 ok(errors.length === 0, `no script errors after interaction (${errors.slice(0, 3).join(" | ")})`);
