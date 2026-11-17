@@ -28,7 +28,19 @@ done
 
 # Create the venv on the big disk, then expose it as ./.venv
 cd "$REPO_DIR"
-UV_PROJECT_ENVIRONMENT="$STORAGE_DIR/venv" uv sync
+# --locked: fail instead of silently re-resolving if pyproject.toml and uv.lock disagree.
+UV_PROJECT_ENVIRONMENT="$STORAGE_DIR/venv" uv sync --locked
 [[ -e .venv || -L .venv ]] || ln -s "$STORAGE_DIR/venv" .venv
+
+# Sanity check: if a GPU is present, the installed torch build must be able to use it.
+if command -v nvidia-smi >/dev/null && nvidia-smi >/dev/null 2>&1; then
+    .venv/bin/python - <<'PY'
+import sys, torch
+if not torch.cuda.is_available():
+    sys.exit(f"ERROR: GPU present but torch {torch.__version__} cannot use it "
+             "(driver too old for this CUDA build?). See [tool.uv.sources] in pyproject.toml.")
+print(f"torch {torch.__version__}: CUDA OK on {torch.cuda.get_device_name(0)}")
+PY
+fi
 
 echo "Setup complete. Run: scripts/run_pipeline.sh --smoke"

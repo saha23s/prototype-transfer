@@ -1,0 +1,16 @@
+{
+ "name": "focal-only",
+ "train_domain": "focal",
+ "selected_val": {
+  "focal": {
+   "cmAP": 0.9518442231364413,
+   "macro_auc": 0.991577291705536
+  },
+  "soundscape": {
+   "cmAP": 0.48722951138843335,
+   "macro_auc": 0.8677309361235999
+  }
+ },
+ "checkpoint": "outputs/runs/focal-only/best.pt",
+ "history": "outputs/runs/focal-only/history.json"
+}
