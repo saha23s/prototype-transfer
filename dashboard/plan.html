@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unsupervised prototype transfer: plan</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="plan.css">
+</head>
+<body>
+  <header>
+    <p class="crumbs"><a href="index.html">&larr; Prototype transfer findings</a></p>
+    <h1 id="title"></h1>
+    <p class="subtitle" id="subtitle"></p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#problem">Problem</a><a href="#decisions">Decisions</a><a href="#analysis">Analysis of current work</a>
+      <a href="#plan">Plan</a><a href="#recipe">Training recipe</a><a href="#criteria">Success criteria</a><a href="#blockers">Blockers</a>
+    </nav>
+  </header>
+
+  <section id="problem" aria-labelledby="problem-title">
+    <h2 id="problem-title">Problem</h2>
+    <p class="statement" id="statement"></p>
+    <div class="cols3" id="problem-cols"></div>
+    <p class="definition" id="transferable"></p>
+    <h3>Three ways the shift hurts, and the label-free lever for each</h3>
+    <div class="table-wrap"><table id="shift-table" class="text-table">
+      <thead><tr><th>Shift factor</th><th>Evidence so far</th><th>Label-free lever</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="decisions" aria-labelledby="decisions-title">
+    <h2 id="decisions-title">Decisions</h2>
+    <p class="hint">Status: <b>decided</b> is settled; <b>proposed</b> awaits confirmation; <b>hypothesis</b> is gated by a diagnostic; <b>to verify</b> rests on an unconfirmed assumption; <b>open</b> needs an answer.</p>
+    <div id="decision-tiles" class="tiles small"></div>
+    <div class="table-wrap"><table id="decision-table" class="text-table">
+      <thead><tr><th>Decision</th><th>Choice</th><th>Why</th><th>Status</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="analysis" aria-labelledby="analysis-title">
+    <h2 id="analysis-title">Analysis of current work</h2>
+    <p class="hint">Computed from <code>outputs/results/model_comparison.json</code> (test splits, 12 species, 60 prototypes). No GPU needed.</p>
+    <div id="plan-findings" class="findings"></div>
+
+    <div class="charts">
+      <figure id="ch-counts" class="chart">
+        <figcaption><h3>Prototypes that fail or improve on soundscapes</h3>
+          <p class="hint">Count of the 60 prototypes by &Delta;<sub>k</sub> = soundscape AUC &minus; focal AUC.</p><div class="legend"></div></figcaption>
+      </figure>
+      <figure id="ch-groups" class="chart">
+        <figcaption><h3>Soundscape AUC of the prototypes that failed under pretrained</h3>
+          <p class="hint">Mean prototype soundscape AUC, per group of prototypes, for each model.</p><div class="legend"></div></figcaption>
+      </figure>
+    </div>
+
+    <figure id="ch-scatter" class="chart wide">
+      <figcaption><h3>Do the same prototypes fail across models?</h3>
+        <p class="hint">Each dot is one prototype. x = &Delta;<sub>k</sub> under pretrained, y = &Delta;<sub>k</sub> under the fine-tuned model. Dots on the dashed line fail (or improve) identically. Hover a dot for its name.</p></figcaption>
+      <div class="scatter-pair"></div>
+    </figure>
+
+    <figure id="ch-species" class="chart wide">
+      <figcaption><h3>Soundscape test positives per species</h3>
+        <p class="hint">Log scale. Filled bar = soundscape test positives; hollow dot = focal test positives. The dashed line is the primary-evaluation threshold.</p><div class="legend"></div></figcaption>
+    </figure>
+
+    <h3>Class-level scores on the primary species</h3>
+    <div class="table-wrap"><table id="class-table">
+      <thead><tr><th>Model</th><th>Focal AUC</th><th>Soundscape AUC</th><th>Focal AP</th><th>Soundscape AP</th></tr></thead><tbody></tbody>
+    </table></div>
+
+    <h3>The split, and who sees what</h3>
+    <p class="hint">Groups never cross splits: focal is grouped by recordist, soundscape by site (one 10-minute recording per site, 120 adjacent clips). Seed 0.</p>
+    <div class="table-wrap"><table id="split-table" class="text-table">
+      <thead><tr><th>Domain</th><th>Split</th><th>Clips</th><th>Grouped by</th><th>Groups</th><th>Audio</th><th>Labels</th><th>Role in this project</th></tr></thead><tbody></tbody>
+    </table></div>
+    <h3>Positives per species in each split</h3>
+    <p class="hint">Number of clips containing the species. Bold rows are the primary evaluation species (at least 30 soundscape test positives).</p>
+    <div class="table-wrap"><table id="species-split-table">
+      <thead>
+        <tr><th rowspan="2">Species</th><th colspan="3" class="grp">Focal clips</th><th colspan="3" class="grp">Soundscape clips</th></tr>
+        <tr><th>train</th><th>val</th><th>test</th><th>train</th><th>val</th><th>test</th></tr>
+      </thead><tbody></tbody>
+    </table></div>
+    <ul id="split-notes"></ul>
+  </section>
+
+  <section id="plan" aria-labelledby="plan-title">
+    <h2 id="plan-title">Plan</h2>
+    <p class="hint">Stages run in this order. Stage 1 is done; Stage 0 and 2 need no training; no <code>sbatch</code> is submitted without explicit approval.</p>
+    <div id="stages" class="stages"></div>
+
+    <h3 id="recipe">Stage 3 design: the training recipe</h3>
+    <p class="hint" id="recipe-intro"></p>
+    <h4>Run ladder</h4>
+    <div class="table-wrap"><table id="ladder-table" class="text-table">
+      <thead><tr><th>Run</th><th>What changes</th><th>Question it answers</th><th>Evidence</th></tr></thead><tbody></tbody>
+    </table></div>
+    <h4>Augmentation and loss components</h4>
+    <div id="components" class="cols3"></div>
+    <h4>Inherited from the existing script</h4>
+    <div class="table-wrap"><table id="inherited-table" class="text-table"><tbody></tbody></table></div>
+    <p class="definition" id="recipe-observation"></p>
+    <div class="cols3">
+      <div class="col-card"><h3>Not in the first round</h3><ul id="not-now"></ul></div>
+      <div class="col-card"><h3>Checks before any run</h3><ul id="recipe-checks"></ul></div>
+      <div class="col-card"><h3>Files to change</h3><ul id="recipe-files"></ul></div>
+    </div>
+  </section>
+
+  <section id="criteria" aria-labelledby="criteria-title">
+    <h2 id="criteria-title">Success criteria</h2>
+    <p class="hint">Fixed before any training; baselines are today's numbers on the primary species.</p>
+    <div class="table-wrap"><table id="criteria-table" class="text-table">
+      <thead><tr><th>Criterion</th><th>Baseline and target</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+
+  <section id="blockers" aria-labelledby="blockers-title">
+    <h2 id="blockers-title">Blockers before Stage 2 and 3</h2>
+    <ul id="blocker-list"></ul>
+  </section>
+
+  <script src="plan_data.js"></script>
+  <script src="plan.js"></script>
+</body>
+</html>
