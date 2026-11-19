@@ -5,8 +5,10 @@ Reads outputs/features/prototype_responses.pt + outputs/results/prototype_transf
   dashboard/data.json, data.js     per-species / per-prototype stats + findings
   dashboard/patches/<sp>_P<k>_<domain>_<rank>.png   top-activating spectrogram crops
 and, if present, embeds outputs/results/model_comparison.json (test-split comparison of pretrained XCL,
-focal-only and soundscape-only models) as `model_comparison`. `--comparison-only` refreshes just that
-block in an existing dashboard/data.json, without the features file or audio.
+focal-only and soundscape-only models) as `model_comparison`, plus per-prototype test-split stats for each
+model as `model_prototypes` (from outputs/results/prototype_transfer_<model>.json; confusion stats need
+outputs/features/responses_<model>.pt). `--comparison-only` refreshes just those blocks in an existing
+dashboard/data.json, without the main features file or audio.
 
 Patch export recomputes spectrograms from audio, so run it where data/ lives.
 """
@@ -385,6 +387,66 @@ def model_comparison_block(path: Path) -> dict | None:
     }
 
 
+DRIFT_FOCAL_KHZ, DRIFT_SOUNDSCAPE_KHZ = 1.0, 0.2  # "drifts to the noise floor": >1 kHz on focal, lowest band on soundscape
+
+
+def model_prototypes_block(names: list[str], results_dir: Path, features_dir: Path) -> dict | None:
+    """Per-model, per-prototype transfer stats on the test split (same species filter as each results file)."""
+    models = []
+    for name in names:
+        res_path = results_dir / f"prototype_transfer_{name}.json"
+        if not res_path.exists():
+            continue
+        stats = json.loads(res_path.read_text())
+        feat_path = features_dir / f"responses_{name}.pt"
+        payload = torch.load(feat_path, map_location="cpu", weights_only=False) if feat_path.exists() else None
+        if payload is None:
+            logger.warning(f"{feat_path} missing: no confusion stats for {name}")
+        species, pooled = {}, []
+        for sp, st in stats["species"].items():
+            if not st["analysed"]:
+                continue
+            conf = confusion_stats(payload, payload["species_list"].index(sp), payload["species_list"]) if payload else None
+            protos = []
+            for k in range(5):
+                e = {"k": k + 1, "weight": r(st["last_layer_weights"][k])}
+                for dom in DOMAINS:
+                    ps = st["domains"][dom]["prototypes"][k]
+                    e[dom] = {"auc": r(ps["auc"]), "act_pos": r(ps["act_pos"]), "act_neg": r(ps["act_neg"]),
+                              "share": r(ps["logit_share"]), "peak_khz": r(ps["peak_khz"], 2)}
+                if conf:
+                    e["confusion"] = conf[k]
+                e["drift"] = bool(e["focal"]["peak_khz"] is not None and e["soundscape"]["peak_khz"] is not None
+                                  and e["focal"]["peak_khz"] > DRIFT_FOCAL_KHZ and e["soundscape"]["peak_khz"] < DRIFT_SOUNDSCAPE_KHZ)
+                protos.append(e)
+                pooled.append(e)
+            species[sp] = {"n": {d: st["domains"][d]["n_pos"] for d in DOMAINS},
+                           "class_auc": {d: r(st["domains"][d]["class_auc"]) for d in DOMAINS}, "prototypes": protos}
+        both = [e for e in pooled if e["focal"]["auc"] is not None and e["soundscape"]["auc"] is not None]
+        med = lambda vals: r(float(np.median([v for v in vals if v is not None]))) if vals else None
+        dauc = [e["soundscape"]["auc"] - e["focal"]["auc"] for e in both]
+        models.append({
+            "name": name, "label": MODEL_LABELS.get(name, name), "species": species,
+            "summary": {
+                "n_protos": len(both),
+                "auc_median": {d: med([e[d]["auc"] for e in both]) for d in DOMAINS},
+                "act_pos_median": {d: med([e[d]["act_pos"] for e in pooled]) for d in DOMAINS},
+                "act_neg_median": {d: med([e[d]["act_neg"] for e in pooled]) for d in DOMAINS},
+                "n_lose": sum(x < -0.1 for x in dauc), "n_improve": sum(x > 0 for x in dauc),
+                "n_drift": sum(e["drift"] for e in pooled),
+                "frac_other_median": med([e["confusion"]["frac_other"] for e in pooled if "confusion" in e]),
+                "base_other_median": med([e["confusion"]["base_other"] for e in pooled if "confusion" in e]),
+            },
+        })
+    if not models:
+        return None
+    codes = sorted(set.intersection(*(set(m["species"]) for m in models)),
+                   key=lambda sp: -models[0]["species"][sp]["n"]["soundscape"])
+    return {"split": "test", "species": codes, "min_soundscape_pos": stats["min_soundscape_pos"],
+            "drift_rule": f"peak > {DRIFT_FOCAL_KHZ:g} kHz on focal, < {DRIFT_SOUNDSCAPE_KHZ:g} kHz on soundscape",
+            "confusion_top_n": CONFUSION_TOP_N, "models": models}
+
+
 def write_bundle(out: dict, out_dir: Path) -> None:
     (out_dir / "data.json").write_text(json.dumps(out, indent=1))
     # data.js lets index.html work from file:// (browsers block fetch() of local JSON there).
@@ -400,7 +462,8 @@ def main() -> None:
     p.add_argument("--skip-patches", action="store_true")
     p.add_argument("--comparison-path", type=Path, default=Path("outputs/results/model_comparison.json"))
     p.add_argument("--comparison-only", action="store_true",
-                   help="Only (re)embed --comparison-path into the existing <out-dir>/data.json")
+                   help="Only (re)embed model_comparison and model_prototypes into the existing <out-dir>/data.json")
+    p.add_argument("--models", nargs="+", default=list(MODEL_LABELS), help="Models for model_prototypes")
     args = p.parse_args()
 
     if args.comparison_only:
@@ -408,6 +471,7 @@ def main() -> None:
         out["model_comparison"] = model_comparison_block(args.comparison_path)
         if out["model_comparison"] is None:
             raise SystemExit(f"{args.comparison_path} not found")
+        out["model_prototypes"] = model_prototypes_block(args.models, args.results_path.parent, args.features_path.parent)
         write_bundle(out, args.out_dir)
         logger.info(f"Embedded {args.comparison_path} into {args.out_dir / 'data.json'}")
         return
@@ -468,6 +532,7 @@ def main() -> None:
         "caveats": CAVEATS,
         "species": species,
         "model_comparison": model_comparison_block(args.comparison_path),
+        "model_prototypes": model_prototypes_block(args.models, args.results_path.parent, args.features_path.parent),
     }
     write_bundle(out, args.out_dir)
     logger.info(f"Wrote {args.out_dir / 'data.json'} ({len(species)} species)")

@@ -210,3 +210,21 @@ svg .leader { stroke: var(--ink-2); stroke-width: 1; }
 svg .cmp-range { stroke: var(--muted-dot); stroke-width: 2; }
 #cmp-species svg .dot { cursor: pointer; stroke: var(--card); stroke-width: 1; }
 #cmp-table td:first-child { white-space: nowrap; }
+
+/* per-model prototype transfer */
+#model-protos { margin-top: 24px; }
+#model-protos h4 { margin: 0 0 4px; font-size: 0.95rem; }
+#mp-table tr.active td { background: var(--grid); }
+#mp-table td:first-child { white-space: nowrap; }
+#mp-table td.num, #mp-proto-table td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+#mp-proto-table td.neg { color: var(--soundscape); font-weight: 600; }
+.mp-body { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 20px; margin-top: 12px; }
+@media (max-width: 900px) { .mp-body { grid-template-columns: 1fr; } }
+svg .pt.mp { fill: var(--muted-dot); opacity: 0.8; stroke: var(--card); stroke-width: 1; cursor: pointer; }
+svg .pt.mp.sel.cmp-pretrained-xcl { fill: var(--xcl); }
+svg .pt.mp.sel.cmp-focal-only { fill: var(--focal); }
+svg .pt.mp.sel.cmp-soundscape-only { fill: var(--soundscape); }
+svg .pt.mp.sel { opacity: 1; }
+svg .pt.mp.drift { stroke: var(--ink); stroke-width: 2; }
+#mp-table td .swatch { margin-right: 6px; }
+#mp-proto-table { font-size: 0.85rem; }

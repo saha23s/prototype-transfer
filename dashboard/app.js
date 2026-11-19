@@ -63,6 +63,7 @@
   function hideTip() { tip().setAttribute("hidden", ""); }
 
   function tipFor(target) {
+    if (target.dataset.mp) return mpTip(target);
     if (target.dataset.model) return cmpTip(target);
     const sp = bySp[target.dataset.species];
     if (!sp) return null;
@@ -672,6 +673,119 @@
     wireChart(svg);
   }
 
+  // ---------- per-model prototype transfer (test split) ----------
+  const MP = DATA.model_prototypes;
+  const mpByName = MP ? Object.fromEntries(MP.models.map((m) => [m.name, m])) : {};
+  let mpModel = MP ? (mpByName["focal-only"] ? "focal-only" : MP.models[0].name) : null;
+  const mpProto = (t) => mpByName[t.dataset.mp]?.species[t.dataset.species]?.prototypes[Number(t.dataset.proto) - 1];
+  const both = (p) => p.focal.auc != null && p.soundscape.auc != null;
+
+  function mpTip(t) {
+    const m = mpByName[t.dataset.mp], p = mpProto(t);
+    if (!p) return null;
+    const cf = p.confusion;
+    return `<b>${m.label} · ${t.dataset.species} P${p.k}</b><br>AUC focal ${fmt(p.focal.auc)} → soundscape ${fmt(p.soundscape.auc)}` +
+      ` (${signed(p.soundscape.auc - p.focal.auc)})<br>Soundscape act. with / without species ${fmt(p.soundscape.act_pos, 3)} / ${fmt(p.soundscape.act_neg, 3)}` +
+      `<br>Peak ${fmt(p.focal.peak_khz)} → ${fmt(p.soundscape.peak_khz)} kHz${p.drift ? " (drifts to noise floor)" : ""}` +
+      (cf && cf.top_species ? `<br>Top false matches: ${cf.top_species} (${cf.top_count}/${cf.n})` : "");
+  }
+
+  function renderModelProtos() {
+    const box = document.getElementById("model-protos");
+    if (!MP) { box.hidden = true; return; }
+    document.getElementById("mp-hint").textContent =
+      `Each model's prototypes as detectors of their own species on held-out TEST clips (${MP.species.length} species with ≥ ` +
+      `${MP.min_soundscape_pos} soundscape test positives). Drift to noise floor: ${MP.drift_rule}. False matches: share of each ` +
+      `prototype's top ${MP.confusion_top_n} soundscape clips without its species that contain another annotated species (median).`;
+    const tb = document.querySelector("#mp-table tbody");
+    for (const m of MP.models) {
+      const s = m.summary;
+      tb.append(el("tr", { "data-model": m.name },
+        el("td", {}, el("i", { class: "swatch cmp-" + m.name }), m.label),
+        el("td", { class: "num", text: `${fmt(s.auc_median.focal, 3)} → ${fmt(s.auc_median.soundscape, 3)}` }),
+        el("td", { class: "num", text: `${s.n_lose} / ${s.n_protos}` }),
+        el("td", { class: "num", text: `${s.n_improve} / ${s.n_protos}` }),
+        el("td", { class: "num", text: String(s.n_drift) }),
+        el("td", { class: "num", text: `${fmt(s.act_pos_median.focal, 3)} / ${fmt(s.act_pos_median.soundscape, 3)}` }),
+        el("td", { class: "num", text: `${fmt(s.act_neg_median.focal, 3)} / ${fmt(s.act_neg_median.soundscape, 3)}` }),
+        el("td", { class: "num", text: s.frac_other_median == null ? "—" : `${pct(s.frac_other_median)} (base ${pct(s.base_other_median)})` })));
+    }
+    const seg = box.querySelector(".seg");
+    for (const m of MP.models) {
+      const b = el("button", { type: "button", role: "tab", "data-model": m.name, "aria-selected": String(m.name === mpModel), text: m.label });
+      b.addEventListener("click", () => {
+        mpModel = m.name;
+        seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.model === mpModel)));
+        drawMp();
+      });
+      seg.append(b);
+    }
+    drawMp();
+    listeners.push(drawMp);
+  }
+
+  function drawMp() {
+    const m = mpByName[mpModel];
+    drawMpScatter(m);
+    drawMpSpecies(m);
+    document.querySelectorAll("#mp-table tbody tr").forEach((r) => r.classList.toggle("active", r.dataset.model === mpModel));
+  }
+
+  function drawMpScatter(m) {
+    const fig = document.getElementById("mp-scatter");
+    const lg = fig.querySelector(".legend");
+    lg.replaceChildren();
+    legend(fig, [["cmp-" + m.name, `${selected} (${m.label})`], ["other", "Other species"]]);
+    const all = MP.models.flatMap((mm) => MP.species.flatMap((sp) => mm.species[sp].prototypes.filter(both)));
+    const LO = Math.min(0.5, Math.floor(Math.min(...all.flatMap((p) => [p.focal.auc, p.soundscape.auc])) * 10) / 10);
+    const W = 460, H = 420, left = 52, right = 14, top = 10, bottom = 48;
+    const x = scale(LO, 1.0, left, W - right), y = scale(LO, 1.0, H - bottom, top);
+    const wmax = Math.max(...all.map((p) => p.weight));
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `${m.label}: prototype AUC, focal vs soundscape (test)` });
+    for (let t = LO; t <= 1.0001; t += 0.1) {
+      svg.append(sv("line", { class: "gridline", x1: x(t), x2: x(t), y1: top, y2: H - bottom }));
+      svg.append(sv("line", { class: "gridline", x1: left, x2: W - right, y1: y(t), y2: y(t) }));
+      svg.append(sv("text", { x: x(t), y: H - bottom + 16, "text-anchor": "middle" }, t.toFixed(1)));
+      svg.append(sv("text", { x: left - 8, y: y(t) + 4, "text-anchor": "end" }, t.toFixed(1)));
+    }
+    svg.append(sv("line", { class: "diag", x1: x(LO), y1: y(LO), x2: x(1), y2: y(1) }));
+    svg.append(sv("text", { class: "axis-title", x: (left + W - right) / 2, y: H - 10, "text-anchor": "middle" }, "Prototype AUC · focal (test)"));
+    svg.append(sv("text", { class: "axis-title", x: 14, y: (top + H - bottom) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(top + H - bottom) / 2})` }, "Prototype AUC · soundscape (test)"));
+    const rest = sv("g"), front = sv("g"), labels = sv("g");
+    for (const sp of MP.species) for (const p of m.species[sp].prototypes.filter(both)) {
+      const on = sp === selected;
+      const c = sv("circle", { class: `pt mp cmp-${m.name}` + (on ? " sel" : "") + (p.drift ? " drift" : ""),
+        cx: x(p.focal.auc), cy: y(p.soundscape.auc), r: 4 + 5 * (p.weight / wmax), "data-mp": m.name, "data-species": sp, "data-proto": p.k });
+      (on ? front : rest).append(c);
+      if (on) labels.append(sv("text", { class: "pt-label", x: x(p.focal.auc) + 8, y: y(p.soundscape.auc) + 3 }, "P" + p.k));
+    }
+    svg.append(rest, front, labels);
+    const old = fig.querySelector("svg");
+    if (old) old.replaceWith(svg); else fig.append(svg);
+    wireChart(svg);
+  }
+
+  function drawMpSpecies(m) {
+    const sp = m.species[selected];
+    document.getElementById("mp-species-title").textContent = sp ? `${selected} · ${m.label}` : `${selected} · not analysed on the test split`;
+    const tb = document.querySelector("#mp-proto-table tbody");
+    tb.replaceChildren();
+    if (!sp) {
+      tb.append(el("tr", {}, el("td", { colspan: "9", text: `Fewer than ${MP.min_soundscape_pos} soundscape test positives for ${selected}.` })));
+      return;
+    }
+    for (const p of sp.prototypes) {
+      const d = both(p) ? p.soundscape.auc - p.focal.auc : null, cf = p.confusion;
+      tb.append(el("tr", { "data-proto": p.k, class: p.drift ? "drift" : "" },
+        el("td", { text: "P" + p.k }), el("td", { class: "num", text: fmt(p.weight) }),
+        el("td", { class: "num", text: fmt(p.focal.auc, 3) }), el("td", { class: "num", text: fmt(p.soundscape.auc, 3) }),
+        el("td", { class: "num" + (d != null && d < -0.1 ? " neg" : ""), text: d == null ? "—" : signed(d, 3) }),
+        el("td", { class: "num", text: fmt(p.soundscape.act_pos, 3) }), el("td", { class: "num", text: fmt(p.soundscape.act_neg, 3) }),
+        el("td", { class: "num", text: `${fmt(p.focal.peak_khz)} → ${fmt(p.soundscape.peak_khz)}${p.drift ? " ⚠" : ""}` }),
+        el("td", { text: cf && cf.top_species ? `${cf.top_species} (${cf.top_count}/${cf.n})` : "—" })));
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", () => {
     renderHeader();
     renderSummary();
@@ -679,6 +793,7 @@
     renderClassAuc();
     renderScatter();
     renderComparison();
+    renderModelProtos();
     renderSelect();
     renderFindings();
     renderTable();
