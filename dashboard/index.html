@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype transfer: focal → soundscape</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>How prototypes transfer: focal → soundscape</h1>
+    <p class="subtitle" id="subtitle"></p>
+    <p class="subtitle"><a href="plan.html">Plan, decisions and analysis of current work &rarr;</a></p>
+  </header>
+
+  <section id="summary" class="tiles" aria-label="Summary"></section>
+
+  <section aria-labelledby="findings-title">
+    <h2 id="findings-title">Main findings</h2>
+    <p class="hint">Click a finding to see the data behind it (and the species it refers to, below).</p>
+    <div id="findings" class="findings"></div>
+    <div id="evidence" class="evidence" aria-live="polite"></div>
+  </section>
+
+  <section class="charts">
+    <figure id="class-auc" class="chart">
+      <figcaption>
+        <h2>Species-level detection</h2>
+        <p class="hint">Class ROC-AUC per species, sorted by drop. Click a row to inspect it.</p>
+        <div class="legend"></div>
+      </figcaption>
+    </figure>
+    <figure id="proto-scatter" class="chart">
+      <figcaption>
+        <h2>Prototype-level detection</h2>
+        <p class="hint">One dot per prototype; size = last-layer weight. Below the diagonal = worse on soundscapes.</p>
+        <div class="legend"></div>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section id="model-comparison" aria-labelledby="cmp-title">
+    <h2 id="cmp-title">Model comparison (test split)</h2>
+    <p class="hint" id="cmp-hint"></p>
+    <div class="table-wrap">
+      <table id="cmp-table">
+        <thead><tr>
+          <th>Model</th><th>Trained on</th><th>Focal cmAP</th><th>Soundscape cmAP</th>
+          <th>Focal AUC</th><th>Soundscape AUC</th><th>Proto-AUC median focal</th><th>Proto-AUC median soundscape</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <figure id="cmp-species" class="chart">
+      <figcaption>
+        <div class="cmp-head">
+          <h3>Per-species average precision</h3>
+          <div class="seg" role="tablist" aria-label="Test domain"></div>
+        </div>
+        <p class="hint">One row per species, one dot per model. Click a row to inspect that species below.</p>
+        <div class="legend"></div>
+      </figcaption>
+    </figure>
+    <div id="model-protos">
+      <div class="cmp-head">
+        <h3>Prototype transfer by model</h3>
+        <div class="seg" role="tablist" aria-label="Model"></div>
+      </div>
+      <p class="hint" id="mp-hint"></p>
+      <div class="table-wrap">
+        <table id="mp-table">
+          <thead><tr>
+            <th>Model</th><th>Median proto-AUC focal → soundscape</th><th>Losing &gt; 0.1 AUC</th><th>Improving</th>
+            <th>Drift to noise floor</th><th>Median act. with species (focal / sc)</th><th>Median act. without species (focal / sc)</th>
+            <th>Top false matches with another species</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="mp-body">
+        <figure id="mp-scatter" class="chart">
+          <figcaption>
+            <h4>Prototype-level detection</h4>
+            <p class="hint">One dot per prototype on test clips; size = last-layer weight. Below the diagonal = worse on soundscapes. Ringed = drifts to the noise floor.</p>
+            <div class="legend"></div>
+          </figcaption>
+        </figure>
+        <figure id="mp-species" class="chart">
+          <figcaption>
+            <h4 id="mp-species-title">Selected species</h4>
+            <p class="hint">Prototypes of the species selected below, for the chosen model.</p>
+          </figcaption>
+          <div class="table-wrap"><table id="mp-proto-table">
+            <thead><tr>
+              <th>Prototype</th><th>Weight</th><th>AUC focal</th><th>AUC sc</th><th>ΔAUC</th>
+              <th>Act. with species (sc)</th><th>Act. without (sc)</th><th>Peak kHz focal → sc</th><th>Top false-match species</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="detail-title">
+    <div class="detail-bar">
+      <h2 id="detail-title">Species detail</h2>
+      <label>Species <select id="species-select"></select></label>
+    </div>
+    <div id="species-detail"></div>
+  </section>
+
+  <section>
+    <details>
+      <summary>Show data table (all prototypes)</summary>
+      <div class="table-wrap">
+        <table id="proto-table">
+          <thead><tr>
+            <th>Species</th><th>Prototype</th><th>Weight</th><th>AUC focal</th><th>AUC soundscape</th>
+            <th>ΔAUC</th><th>Median act. focal</th><th>Median act. soundscape</th>
+            <th>Share focal</th><th>Share soundscape</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="caveats-title">
+    <h2 id="caveats-title">Caveats</h2>
+    <ul id="caveats"></ul>
+  </section>
+
+  <div id="tooltip" role="tooltip" hidden></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

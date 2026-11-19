@@ -1,0 +1,393 @@
+{
+  "title": "Unsupervised prototype transfer: problem, decisions and plan",
+  "subtitle": "Planning page. Analysis numbers below are generated from outputs/results/*.json by scripts/build_plan_data.py; the text on this page is edited by hand in dashboard/plan_content.json.",
+  "problem": {
+    "statement": "Adapt an interpretable bird-sound ProtoPNet (AudioProtoPNet, pretrained on focal Xeno-Canto clips) to field soundscapes without using any soundscape labels, so that each prototype keeps detecting its own species there.",
+    "given": [
+      "Pretrained AudioProtoPNet-5-BirdSet-XCL (XCL is focal Xeno-Canto data only; HSN soundscapes are a BirdSet test set, so neither their audio nor labels were in pretraining).",
+      "Labeled focal clips for the 21 HSN species (focal train split).",
+      "Unlabeled audio of the soundscape train split (60 sites, 7,200 clips)."
+    ],
+    "forbidden": [
+      "Soundscape labels in any loss term.",
+      "Soundscape labels for checkpoint selection or hyperparameter tuning.",
+      "Soundscape test sites in any training or adaptation step."
+    ],
+    "goal": [
+      "Soundscape macro AUC and prevalence-honest AP move toward the soundscape-only oracle.",
+      "Most prototypes keep their detection AUC from focal to soundscape (small |Δ_k|), not just on average.",
+      "Top soundscape matches are the species' call, not noise-floor energy or another bird.",
+      "Focal performance is retained."
+    ],
+    "transferable": "Prototype k of species c is transferable if (1) its detection AUC for c on soundscapes is close to its focal AUC (Δ_k ≈ 0), (2) its top soundscape matches are c's call rather than wind-band noise or a co-occurring species, and (3) the class-level soundscape score does not pay for it. A monotone rescaling of activations is allowed: shrinkage with preserved ranking is a calibration shift, not a failure."
+  },
+  "shift_factors": [
+    {
+      "name": "Lower SNR and different background",
+      "evidence": "Median positive activation falls to 39% of the focal value (0.27 → 0.10) while ranking mostly survives (median prototype AUC 0.87).",
+      "label_free_fix": "Mix real soundscape background into focal clips at random SNR."
+    },
+    {
+      "name": "Overlapping species",
+      "evidence": "A median of 85% of each prototype's top-20 soundscape false matches contain another annotated species (44% base rate).",
+      "label_free_fix": "Overlay a focal clip of species B on one of species A with the multi-label target {A, B}. The labels are correct and need no soundscape labels."
+    },
+    {
+      "name": "Noise-only clips outside the focal support",
+      "evidence": "54% of soundscape train clips contain no target species. 5 prototypes that fire above 1 kHz on focal peak near 0.1 kHz (wind) on soundscapes.",
+      "label_free_fix": "Use low-confidence soundscape clips as background; flag prototypes whose unlabeled-soundscape peak frequency drifts."
+    }
+  ],
+  "decisions": [
+    {
+      "title": "Unsupervised protocol",
+      "choice": "Zero soundscape labels in the loss, in checkpoint selection and in tuning. Soundscape labels are used only for final evaluation (and for clearly marked diagnostics).",
+      "why": "This is the realistic deployment: audio is cheap, annotation is the bottleneck.",
+      "status": "decided"
+    },
+    {
+      "title": "Inductive setting",
+      "choice": "Adapt on audio from the 60 train sites; evaluate on the 30 unseen test sites.",
+      "why": "Follows from the site split; avoids touching test audio. A transductive variant can be an extra.",
+      "status": "decided"
+    },
+    {
+      "title": "Splits",
+      "choice": "Keep the current splits: focal grouped by recordist, soundscape grouped by site.",
+      "why": "Both groupings stop near-duplicate audio crossing train and test.",
+      "status": "decided"
+    },
+    {
+      "title": "Focal test and val",
+      "choice": "Focal val is used for checkpoint selection (as in train_protopnet.py); focal test is a retention reference only, not a generalization score.",
+      "why": "Focal clips are Xeno-Canto, so they are very likely part of XCL's training data. Soundscape test is the only clean held-out number.",
+      "status": "decided"
+    },
+    {
+      "title": "Source-only baseline",
+      "choice": "The existing focal-only run is a valid source-only baseline: it selects on focal val only; soundscape val is just logged.",
+      "why": "Checked in scripts/train_protopnet.py. No rerun needed.",
+      "status": "decided"
+    },
+    {
+      "title": "Pretraining contents",
+      "choice": "Treat XCL as focal-only.",
+      "why": "Based on prior knowledge of BirdSet; not yet confirmed against the model card or paper.",
+      "status": "to-verify"
+    },
+    {
+      "title": "Evaluation species and uncertainty",
+      "choice": "Primary: species with at least 30 soundscape test positives. Secondary: the 12 species with at least 5. Report site-level bootstrap CIs (30 test sites).",
+      "why": "5 of the 12 species have 16 or fewer soundscape test positives, so the 12-species mean is dominated by noise.",
+      "status": "proposed"
+    },
+    {
+      "title": "Success criteria",
+      "choice": "See the table below. Fixed before any training and not tuned afterwards.",
+      "why": "Avoids moving the goalposts once results exist.",
+      "status": "proposed"
+    },
+    {
+      "title": "Method hypothesis",
+      "choice": "Shift-matched augmentation (background mixing + overlap mixing) while fine-tuning from pretrained.",
+      "why": "Targets all three shift factors with no soundscape labels. Only pursued if Stage 2 shows the synthetic shift reproduces the real failures.",
+      "status": "hypothesis"
+    },
+    {
+      "title": "BatchNorm adaptation as a baseline",
+      "choice": "Dropped; use re-estimated input-spectrogram normalization instead.",
+      "why": "ConvNeXt backbones use LayerNorm, so there are no BN statistics to adapt (to confirm in src/model.py).",
+      "status": "to-verify"
+    },
+    {
+      "title": "Compute venue for GPU stages",
+      "choice": "Mila SLURM or filo?",
+      "why": "This node is CPU-only; the earlier training ran on filo and its checkpoints live there.",
+      "status": "open"
+    },
+    {
+      "title": "Experiment tracking",
+      "choice": "Keep argparse + JSON histories (the repo's convention) unless W&B / Hydra is wanted.",
+      "why": "Minimum edit to the forked code.",
+      "status": "open"
+    },
+    {
+      "title": "Training recipe ladder",
+      "choice": "R0 anchored, R1a/R1b background (generic vs target), R2 overlap, R3 both, R4 pseudo-label, R5 conditional. See the recipe section.",
+      "why": "One change per rung, ordered by strength of evidence, so each result can be attributed.",
+      "status": "proposed"
+    },
+    {
+      "title": "Checkpoint rule for the new runs",
+      "choice": "Keep the focal-val rule for comparability, and also report the last epoch.",
+      "why": "Focal val keeps rising to about epoch 8 while soundscape val (monitoring only) falls from epoch 1, so the rule may pick worse-transfer epochs. A fixed short epoch budget is the alternative.",
+      "status": "open"
+    }
+  ],
+  "stages": [
+    {
+      "id": "0",
+      "title": "Fix the protocol",
+      "status": "next",
+      "kind": "cpu",
+      "what": [
+        "Regenerate data/HSN/splits with make_splits.py (deterministic, seed 0).",
+        "Add the primary / secondary species sets and site-level bootstrap CIs to compare_models.py.",
+        "Freeze the success criteria."
+      ],
+      "verify": "Regenerated split counts equal outputs/results/splits.json.",
+      "gate": null
+    },
+    {
+      "id": "1",
+      "title": "Analyze existing results",
+      "status": "done",
+      "kind": "cpu",
+      "what": [
+        "Per-prototype Δ_k across pretrained, focal-only and soundscape-only.",
+        "Positive counts per species and split."
+      ],
+      "verify": "Numbers below are computed from outputs/results/model_comparison.json.",
+      "gate": null
+    },
+    {
+      "id": "2",
+      "title": "Diagnostics without training",
+      "status": "pending",
+      "kind": "gpu-inference",
+      "what": [
+        "2.0 Extract pretrained responses on soundscape-train (GPU inference). This gives each clip's maximum species probability: the label-free background manifest (lowest 30%) for R1b and the teacher soft labels for R4.",
+        "2.1 Corrupt focal test clips with soundscape background at SNR 20/10/5/0/-5 dB, with an overlaid second species, and with both; compute Δ_k(synthetic) for the pretrained model.",
+        "2.2 From unlabeled soundscape-train audio compute per-prototype fire rate, peak-frequency shift and activation quantiles; correlate with the real Δ_k.",
+        "2.3 Inference-only baselines: re-estimated input normalization; zero the weights of prototypes flagged by 2.2."
+      ],
+      "verify": "Spearman(Δ_k synthetic, Δ_k real) over the 60 prototypes.",
+      "gate": "Proceed to augmentation training only if the correlation is above 0.5 for at least one corruption. Otherwise switch to adaptation on real soundscape features."
+    },
+    {
+      "id": "3",
+      "title": "Training (needs sign-off)",
+      "status": "pending",
+      "kind": "training",
+      "what": [
+        "Run the ladder R0–R5 in the recipe section below: seed 0 to screen, three seeds for the finalists.",
+        "Each run changes one thing relative to the previous one; new flags default to off.",
+        "Code changes are listed under the recipe (train_dataset.py, train_protopnet.py, one new script, one new test file)."
+      ],
+      "verify": "Unit tests pass and each flag passes a 2-batch smoke test. No sbatch without explicit approval.",
+      "gate": null
+    },
+    {
+      "id": "4",
+      "title": "Evaluate and write up",
+      "status": "pending",
+      "kind": "cpu",
+      "what": [
+        "Extract test responses for every run with extract_prototype_activations.py.",
+        "Compare on the success criteria with CIs.",
+        "Failure analysis: which shift factor each run fixes and which prototypes remain."
+      ],
+      "verify": "Criteria table below.",
+      "gate": null
+    }
+  ],
+  "blockers": [
+    "data/HSN/splits/ does not exist on this machine; it is created by scripts/make_splits.py.",
+    "outputs/features/ is empty (gitignored), so response features must be re-extracted on a GPU.",
+    "Fine-tuned checkpoints live on filo and are not in the repo.",
+    "No GPU on the current node (CPU-only interactive job)."
+  ],
+  "splits_roles": {
+    "focal/train": "Labeled source data for fine-tuning.",
+    "focal/val": "Checkpoint selection. Saturated, so it works as a retention check.",
+    "focal/test": "Retention reference only (likely seen in pretraining).",
+    "soundscape/train": "Labels ignored. Unlabeled target audio for backgrounds and diagnostics.",
+    "soundscape/val": "Monitoring only. Never used for selection.",
+    "soundscape/test": "Final evaluation on 30 unseen sites."
+  },
+  "splits_access": {
+    "focal/train": {
+      "audio": "yes",
+      "labels": "yes"
+    },
+    "focal/val": {
+      "audio": "yes",
+      "labels": "yes"
+    },
+    "focal/test": {
+      "audio": "yes",
+      "labels": "yes"
+    },
+    "soundscape/train": {
+      "audio": "yes",
+      "labels": "no"
+    },
+    "soundscape/val": {
+      "audio": "yes",
+      "labels": "monitoring only"
+    },
+    "soundscape/test": {
+      "audio": "evaluation only",
+      "labels": "evaluation only"
+    }
+  },
+  "recipe": {
+    "intro": "Stage 3 is a ladder: every run changes one thing relative to the run before it, so each gain or loss can be attributed. All runs start from the pretrained model and reuse scripts/train_protopnet.py. Every new flag defaults to off, so the existing focal-only and soundscape-only runs stay reproducible.",
+    "inherited": [
+      [
+        "Initialization",
+        "Pretrained XCL sliced to the 21 HSN species (105 prototypes), as build_hsn_protopnet() does."
+      ],
+      [
+        "Phases",
+        "warm 2 epochs (prototypes + last layer, backbone frozen) → joint 12 epochs → push onto focal-train positives → last layer 4 epochs."
+      ],
+      [
+        "Optimizer",
+        "AdamW with OneCycle. Warm lr 1e-3 (prototypes, last). Joint lr: backbone 2e-5, prototypes 1e-4, last 1e-4. Last-layer lr 1e-3. Weight decay 1e-4."
+      ],
+      [
+        "Loss",
+        "The model's asymmetric multi-label loss + 0.01 × orthogonality. Batch size 32, bf16 autocast."
+      ],
+      [
+        "Existing augmentation",
+        "Random gain ±6 dB, 2 time masks (up to 60 frames), 2 frequency masks (up to 24 bins)."
+      ],
+      [
+        "Checkpoint rule",
+        "Best joint and last epoch by focal val cmAP. Never uses soundscape labels."
+      ],
+      [
+        "Seeds",
+        "Seed 0 to screen every run; the finalists are rerun with seeds 0, 1, 2 and reported as mean ± sd plus the site-bootstrap CI."
+      ],
+      [
+        "Cost",
+        "From history.json, the earlier focal-only run took about 13 min and soundscape-only about 23 min end to end, so the whole ladder is a few GPU-hours."
+      ]
+    ],
+    "observation": "Why checkpoint selection needs care: in the focal-only run, soundscape val cmAP is highest at the first joint epoch (0.608) and decays to 0.575 while focal val cmAP rises from 0.951 to 0.972. Selecting on focal val therefore tends to pick epochs with worse transfer. This curve comes from monitoring data, not from selection, so any epoch budget we choose because of it is reported as a recipe choice, not tuned on soundscape labels.",
+    "ladder": [
+      {
+        "id": "R0",
+        "name": "anchored-focal",
+        "change": "Joint phase skipped (--joint-epochs 0): backbone frozen, only prototypes and last layer train; then push and last layer.",
+        "isolates": "Is the focal-only drop caused by forgetting in the backbone?",
+        "evidence": "Direct, ours: the 34 fine prototypes lose 0.907 → 0.850 AUC; the soundscape val curve above.",
+        "kind": "ours"
+      },
+      {
+        "id": "R1a",
+        "name": "bg-generic",
+        "change": "Background mixing with generic coloured noise (pink, brown, white).",
+        "isolates": "Does any noise augmentation help?",
+        "evidence": "Literature: BirdSet's own recipe mixes soundscape-like noise (p = 0.5) to bridge focal to soundscape.",
+        "kind": "literature"
+      },
+      {
+        "id": "R1b",
+        "name": "bg-target",
+        "change": "Same as R1a, but backgrounds are real HSN soundscape-train clips that the pretrained model scores as empty.",
+        "isolates": "Does target-domain background beat generic noise? This is the new claim.",
+        "evidence": "Hypothesis. Indirect support only (target-location pseudo-labeling helps in BirdCLEF).",
+        "kind": "hypothesis"
+      },
+      {
+        "id": "R2",
+        "name": "overlap",
+        "change": "Multi-label mixup: overlay a second focal species with the union of both labels.",
+        "isolates": "Does teaching overlap reduce cross-species false matches?",
+        "evidence": "Ours: a median of 85% of false matches contain another bird. Literature: multi-label mixup is standard in BirdSet and BirdCLEF.",
+        "kind": "ours"
+      },
+      {
+        "id": "R3",
+        "name": "bg+overlap",
+        "change": "The better of R1a / R1b, plus R2.",
+        "isolates": "Do the two augmentations add up?",
+        "evidence": "Depends on the R1 and R2 results.",
+        "kind": "conditional"
+      },
+      {
+        "id": "R4",
+        "name": "pseudo-label",
+        "change": "R3 plus a soft pseudo-label loss on unlabeled soundscape-train clips (one noisy-student round, teacher = pretrained).",
+        "isolates": "What does supervision from unlabeled target audio add on top of augmentation?",
+        "evidence": "Strongest external evidence (BirdCLEF noisy-student, Lasseck 2024), mostly competition write-ups. Risk: it can reinforce cross-species confusion.",
+        "kind": "literature"
+      },
+      {
+        "id": "R5",
+        "name": "best + anchored",
+        "change": "The best configuration run with R0's anchored schedule. Only if R0 shows forgetting matters.",
+        "isolates": "Do augmentation and anchoring combine?",
+        "evidence": "Conditional on R0.",
+        "kind": "conditional"
+      }
+    ],
+    "components": [
+      {
+        "name": "Background mixing (R1a, R1b, R3, R4)",
+        "params": [
+          "Probability 0.5 per training clip (BirdSet's noise probability).",
+          "SNR drawn uniformly from −5 to 20 dB. The final range is set by Stage 2.1, so that the synthetic shift reproduces the real Δ_k.",
+          "Mixed on the waveform after the 5 s crop and before the gain augmentation: x' = x + g·b, with g chosen so that the power ratio of x to g·b equals the sampled SNR.",
+          "Labels do not change. Peak-normalise only if max |x'| > 1."
+        ],
+        "source": "R1b backgrounds: soundscape-train clips in the lowest 30% of pretrained max species probability (a label-free quantile), random 5 s window. R1a backgrounds: generated coloured noise. One-off check of the selected clips against soundscape val labels, reported as a diagnostic and not used to tune anything."
+      },
+      {
+        "name": "Overlap mixing (R2, R3, R4)",
+        "params": [
+          "Probability 0.5 per training clip.",
+          "Second clip: a random focal-train clip of a different species, random 5 s crop.",
+          "Relative level of the second clip drawn uniformly from −10 to 0 dB, so the primary species stays dominant.",
+          "Target = union of both labels. At most two sources."
+        ],
+        "source": "Uses only focal labels, so it needs no soundscape labels."
+      },
+      {
+        "name": "Soft pseudo-labels (R4)",
+        "params": [
+          "Teacher = pretrained model. Its sigmoid probabilities on unaugmented soundscape-train clips are computed once and cached.",
+          "Loss: soft binary cross-entropy on those probabilities with a small weight (0.2), plus the usual focal loss. Per step: 32 focal clips and 16 soundscape clips.",
+          "Soundscape clips get the existing masking and gain noise, not BG / OV mixing.",
+          "Push uses focal-train positives only, so pseudo-labels never place a prototype."
+        ],
+        "source": "Round 1 only. Later rounds (student becomes teacher) only if round 1 helps. Monitor the fraction of top false matches that are other species."
+      }
+    ],
+    "not_now": [
+      "Prototype band constraint: kept as an inference-time diagnostic (evidence is n = 5).",
+      "Alignment or adversarial losses: no prototype-specific evidence found.",
+      "Pushing prototypes onto pseudo-labeled soundscape patches: high risk of locking in wrong evidence."
+    ],
+    "checks": [
+      "Unit tests (new tests/test_mixing.py): requested vs measured SNR within 0.5 dB; overlap targets equal the union; background selection is label-free; with all new flags off, the dataset output equals the current one.",
+      "Add an isfinite check on the loss in run_epoch so a NaN fails immediately.",
+      "Guard joint_epochs = 0 in train_protopnet.py (it currently loads a joint_best.pt that would not exist).",
+      "Smoke test every new flag with --max-train-batches 2 --max-eval-samples 64 before any full run.",
+      "Print the resolved args and the effective augmentation settings at start, and save them in args.json.",
+      "Check GPU, disk for checkpoints and logs, and get explicit approval before any sbatch."
+    ],
+    "files": [
+      [
+        "src/train_dataset.py",
+        "Background and overlap mixing options; a small unlabeled soundscape dataset that returns cached soft targets (about 60–80 lines)."
+      ],
+      [
+        "scripts/train_protopnet.py",
+        "Flags: --bg-kind, --bg-manifest, --bg-prob, --snr-min, --snr-max, --overlap-prob, --overlap-gain-min, --overlap-gain-max, --pseudo-manifest, --pseudo-weight; the joint_epochs = 0 guard; the NaN check."
+      ],
+      [
+        "scripts/make_background_manifest.py (new)",
+        "Reads pretrained responses on soundscape-train and writes the background manifest and the teacher soft labels. No labels are read."
+      ],
+      [
+        "tests/test_mixing.py (new)",
+        "The unit tests above."
+      ]
+    ]
+  }
+}

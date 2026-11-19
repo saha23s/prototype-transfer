@@ -1,0 +1,13 @@
+# Symlinks to external storage (see scripts/setup_storage.sh)
+/.venv
+/data
+/models
+
+__pycache__/
+*.pyc
+
+# Generated artifacts (large / reproducible)
+outputs/features/
+outputs/smoke/
+*.pt
+slurm-*.out

@@ -1,0 +1,16 @@
+{
+ "name": "soundscape-only",
+ "train_domain": "soundscape",
+ "selected_val": {
+  "focal": {
+   "cmAP": 0.7935799136673174,
+   "macro_auc": 0.9425387862364086
+  },
+  "soundscape": {
+   "cmAP": 0.6614018124861129,
+   "macro_auc": 0.9673205922859022
+  }
+ },
+ "checkpoint": "outputs/runs/soundscape-only/best.pt",
+ "history": "outputs/runs/soundscape-only/history.json"
+}

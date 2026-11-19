@@ -1,0 +1,18 @@
+{
+ "train_domain": "focal",
+ "name": "None",
+ "splits_dir": "data/HSN/splits",
+ "batch_size": "32",
+ "num_workers": "10",
+ "warm_epochs": "2",
+ "joint_epochs": "12",
+ "last_epochs": "4",
+ "lr_backbone": "2e-05",
+ "lr_prototypes": "0.001",
+ "lr_last": "0.001",
+ "weight_decay": "0.0001",
+ "ortho_weight": "0.01",
+ "max_train_batches": "None",
+ "max_eval_samples": "None",
+ "seed": "0"
+}
