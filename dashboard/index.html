@@ -61,6 +61,45 @@
         <div class="legend"></div>
       </figcaption>
     </figure>
+    <div id="model-protos">
+      <div class="cmp-head">
+        <h3>Prototype transfer by model</h3>
+        <div class="seg" role="tablist" aria-label="Model"></div>
+      </div>
+      <p class="hint" id="mp-hint"></p>
+      <div class="table-wrap">
+        <table id="mp-table">
+          <thead><tr>
+            <th>Model</th><th>Median proto-AUC focal → soundscape</th><th>Losing &gt; 0.1 AUC</th><th>Improving</th>
+            <th>Drift to noise floor</th><th>Median act. with species (focal / sc)</th><th>Median act. without species (focal / sc)</th>
+            <th>Top false matches with another species</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="mp-body">
+        <figure id="mp-scatter" class="chart">
+          <figcaption>
+            <h4>Prototype-level detection</h4>
+            <p class="hint">One dot per prototype on test clips; size = last-layer weight. Below the diagonal = worse on soundscapes. Ringed = drifts to the noise floor.</p>
+            <div class="legend"></div>
+          </figcaption>
+        </figure>
+        <figure id="mp-species" class="chart">
+          <figcaption>
+            <h4 id="mp-species-title">Selected species</h4>
+            <p class="hint">Prototypes of the species selected below, for the chosen model.</p>
+          </figcaption>
+          <div class="table-wrap"><table id="mp-proto-table">
+            <thead><tr>
+              <th>Prototype</th><th>Weight</th><th>AUC focal</th><th>AUC sc</th><th>ΔAUC</th>
+              <th>Act. with species (sc)</th><th>Act. without (sc)</th><th>Peak kHz focal → sc</th><th>Top false-match species</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </figure>
+      </div>
+    </div>
   </section>
 
   <section aria-labelledby="detail-title">
