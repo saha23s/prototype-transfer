@@ -38,6 +38,8 @@ Run on a compute node (a GPU is used automatically if available; CPU works but i
 | Per-prototype responses | `scripts/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
 | Prototype-transfer figures | `scripts/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
 | Dashboard data | `scripts/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
+| Canonical evaluation (protocol v1, CPU) | `scripts/canonical_eval.py` | `outputs/results/canonical_eval.json` |
+| Domain-shift diagnostics (GPU, pretrained model) | `scripts/slurm/diagnose_shift.sbatch`, `diagnose_shift_v2.sbatch` (run `scripts/diagnose_shift.py`, `scripts/analyze_diagnostics.py`) | `outputs/results/diagnostics_stage2*.json` |
 
 ### Prototype transfer (focal -> soundscape)
 
@@ -58,8 +60,9 @@ log-spectrogram, normalised with the model's training mean/std). Pass `--cache-t
 
 ```
 configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size, output dirs)
-src/       dataset, preprocessing, model wrapper, metrics, plotting
-scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/pipeline.sbatch
+src/       dataset, preprocessing, model wrapper, metrics, splits, plotting
+scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/*.sbatch
+tests/     plain-assert tests (no pytest needed): python tests/test_canonical_eval.py
 ```
 
 `run_inference.py` reads its defaults (device, batch size, output dir) from
