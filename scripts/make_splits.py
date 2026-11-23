@@ -3,6 +3,12 @@
 
 Outputs data/HSN/splits/{focal,soundscape}_{train,val,test}.parquet and a summary
 outputs/results/splits.json (per-species positives per split, sites, recordists).
+
+Cross-validation folds (--cv-folds K, default 3) are part of the evaluation protocol: the non-test soundscape sites
+(train + val) are divided into K site-grouped folds (src.splits.soundscape_cv_folds). For fold f this writes
+  soundscape_cv{f}_train.parquet     the sites of the other folds: the only soundscape audio / labels fold-f runs may use
+  soundscape_cv{f}_heldout.parquet   the sites of fold f: scored by scripts/canonical_eval.py --split cv --fold f
+and outputs/results/splits_cv.json (fold -> sites, positives per species). train / val / test are untouched.
 """
 
 from __future__ import annotations
@@ -18,7 +24,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src.model import HSN_SPECIES_LIST
-from src.splits import focal_split, soundscape_split
+from src.splits import focal_split, soundscape_cv_folds, soundscape_split
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("make_splits")
@@ -32,6 +38,8 @@ def main() -> None:
     p.add_argument("--out-dir", type=Path, default=Path("data/HSN/splits"))
     p.add_argument("--summary", type=Path, default=Path("outputs/results/splits.json"))
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--cv-folds", type=int, default=3, help="site-grouped cross-validation folds over the non-test soundscape sites (0 = off)")
+    p.add_argument("--cv-summary", type=Path, default=Path("outputs/results/splits_cv.json"))
     args = p.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -55,6 +63,21 @@ def main() -> None:
             summary[name][split] = {"n_clips": len(part), **extra,
                                     "positives": {sp: int(counts.get(sp, 0)) for sp in HSN_SPECIES_LIST}}
             logger.info(f"{name}/{split}: {len(part)} clips")
+    if args.cv_folds:
+        pool = s[s["split"] != "test"].reset_index(drop=True)
+        fold, cv_info = soundscape_cv_folds(pool, n_folds=args.cv_folds, seed=args.seed)
+        assert not {x for v in cv_info["sites"].values() for x in v} & set(sc_info["sites"]["test"]), "a CV fold contains a test site"
+        cv = {"seed": args.seed, "n_folds": args.cv_folds, **cv_info, "n_clips": {}, "positives": {}}
+        for g in range(args.cv_folds):
+            held, rest = pool[fold == g].drop(columns="split").reset_index(drop=True), pool[fold != g].drop(columns="split").reset_index(drop=True)
+            held.to_parquet(args.out_dir / f"soundscape_cv{g}_heldout.parquet", index=False)
+            rest.to_parquet(args.out_dir / f"soundscape_cv{g}_train.parquet", index=False)
+            counts = held["hsn_classes"].explode().dropna().value_counts()
+            cv["n_clips"][str(g)] = {"heldout": len(held), "train": len(rest)}
+            cv["positives"][str(g)] = {sp: int(counts.get(sp, 0)) for sp in HSN_SPECIES_LIST}
+            logger.info(f"soundscape/cv{g}: {len(held)} held-out clips ({len(cv_info['sites'][str(g)])} sites), {len(rest)} train clips")
+        args.cv_summary.parent.mkdir(parents=True, exist_ok=True)
+        args.cv_summary.write_text(json.dumps(cv, indent=1))
     # recordist leakage check
     rec = {sp: set(f.loc[f["split"] == sp, "recordist"]) for sp in ("train", "val", "test")}
     assert not (rec["train"] & rec["test"]) and not (rec["val"] & rec["test"]), "recordist leakage"

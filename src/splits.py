@@ -82,3 +82,40 @@ def soundscape_split(df: pd.DataFrame, test_frac: float = 0.3, val_frac: float =
     info = {"sites": {s: sorted(k for k, a in assign.items() if a == s) for s in ("train", "val", "test")},
             "eligible_species": eligible, "objective": float(best_score), "positive_fraction": frac}
     return split, info
+
+
+def soundscape_cv_folds(df: pd.DataFrame, n_folds: int = 3, seed: int = 0, n_trials: int = 20000,
+                        min_sites: int = 3) -> tuple[pd.Series, dict]:
+    """Site-grouped cross-validation folds of a soundscape manifest (pass the non-test sites, i.e. train + val).
+
+    Returns (fold id 0..n_folds-1 per clip aligned with df, info). Whole sites go to one fold, so the clips of a
+    10-minute recording never straddle folds. Random search over site partitions with equal-size folds (sizes differ by
+    at most one site), first requiring that every species present at >= min_sites sites has positives in every fold,
+    then minimising the mean deviation of each fold's positive fraction from 1 / n_folds (same objective as
+    soundscape_split)."""
+    site = site_of(df["filepath"])
+    sites = np.array(sorted(site.unique()))
+    assert 1 < n_folds <= len(sites), f"n_folds={n_folds} must be between 2 and {len(sites)}"
+    Y = np.zeros((len(df), len(HSN_SPECIES_LIST)), dtype=np.int64)
+    idx = {sp: i for i, sp in enumerate(HSN_SPECIES_LIST)}
+    for r, classes in enumerate(df["hsn_classes"]):
+        for sp in classes:
+            Y[r, idx[sp]] = 1
+    per_site = pd.DataFrame(Y, columns=HSN_SPECIES_LIST).groupby(site.to_numpy()).sum().reindex(sites)
+    eligible = [sp for sp in HSN_SPECIES_LIST if (per_site[sp] > 0).sum() >= min_sites]
+    P = per_site[eligible].to_numpy(dtype=float)                       # [n_sites, n_eligible]
+    totals = P.sum(axis=0)
+    sizes = [len(sites) // n_folds + (g < len(sites) % n_folds) for g in range(n_folds)]
+    bounds = np.cumsum([0] + sizes)
+    rng = np.random.default_rng(seed)
+    best, best_score = None, np.inf
+    for _ in range(n_trials):
+        perm = rng.permutation(len(sites))
+        frac = np.stack([P[perm[bounds[g]:bounds[g + 1]]].sum(axis=0) / totals for g in range(n_folds)])   # [n_folds, n_eligible]
+        score = int((frac == 0).sum()) + float(np.abs(frac - 1 / n_folds).mean())
+        if score < best_score:
+            best, best_score = perm, score
+    fold_of = {sites[i]: g for g in range(n_folds) for i in best[bounds[g]:bounds[g + 1]]}
+    info = {"sites": {str(g): sorted(s for s, f in fold_of.items() if f == g) for g in range(n_folds)},
+            "eligible_species": eligible, "objective": float(best_score)}
+    return site.map(fold_of), info

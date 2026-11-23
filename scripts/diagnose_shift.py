@@ -38,6 +38,9 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("diagnose_shift")
 
 SPLITS = Path("data/HSN/splits")
+# --eval-split: the labeled (focal, soundscape) pair that is extracted / corrupted / scored, and the file-name suffix.
+# test is the committed default; val (soundscape_val, focal_val) lets the diagnostics run without touching test.
+EVAL_SETS = {"test": ("focal_test", "soundscape_test", ""), "val": ("focal_val", "soundscape_val", "_val")}
 BG_SNR_DB = (20, 10, 5, 0, -5)      # background level: SNR of the clip over the added background
 OVERLAP_REL_DB = (-10, -5, 0)       # level of the overlaid second species relative to the clip
 BOTH = ((10, -5), (0, -5))          # (background SNR, overlap level) combinations
@@ -130,8 +133,9 @@ def task_extract(args, model, pre) -> None:
     out: dict[str, Any] = {"species": model.species_list, "seed": args.seed,
                            "last_layer_weights": model.hsn_last_layer_weights().detach().cpu().numpy(),  # [21, 5]
                            "bias": model.head.last_layer.bias[model.target_class_tensor].detach().cpu().numpy()}  # [21]
+    f_eval, s_eval, sfx = EVAL_SETS[args.eval_split]
     for name, is_sc, labeled in (("soundscape_train", True, False), ("focal_train", False, True),
-                                 ("focal_test", False, True), ("soundscape_test", True, True)):
+                                 (f_eval, False, True), (s_eval, True, True)):
         out[name] = extract_set(model, pre, read_split(name, args.max_n), is_sc, labeled, args.batch_size, args.num_workers, name)
     # label-free background manifest: soundscape-train clips the pretrained model finds empty
     sc = read_split("soundscape_train", args.max_n)
@@ -145,7 +149,7 @@ def task_extract(args, model, pre) -> None:
     out["background_check"] = {"n_selected": int(keep.sum()), "threshold": float(np.quantile(max_prob, args.bg_quantile)),
                                "frac_selected_empty": float(empty[keep].mean()), "frac_all_empty": float(empty.mean())}
     logger.info(f"background selection: {out['background_check']}")
-    torch.save(out, args.out_dir / "diag_responses.pt")
+    torch.save(out, args.out_dir / f"diag_responses{sfx}.pt")
 
 
 def mix_snr(x: torch.Tensor, b: torch.Tensor, snr_db: float) -> torch.Tensor:
@@ -167,15 +171,16 @@ def peak_guard(x: torch.Tensor) -> torch.Tensor:
 
 def task_synthetic(args, model, pre) -> None:
     rng = np.random.default_rng(args.seed)
-    focal = read_split("focal_test", args.max_n)
+    f_eval, _, sfx = EVAL_SETS[args.eval_split]
+    focal = read_split(f_eval, args.max_n)
     bg_df = pd.read_parquet(SPLITS / "soundscape_background.parquet") if not args.max_n else \
         read_split("soundscape_train", args.max_n)
     ov_all = read_split("focal_train", args.max_n)
     bg_df = bg_df.sample(n=min(args.pool, len(bg_df)), random_state=args.seed).reset_index(drop=True)
     ov_df = ov_all.sample(n=min(args.pool, len(ov_all)), random_state=args.seed).reset_index(drop=True)
     load = lambda df, sc, d, win="peak_energy": torch.cat(list(tqdm(wav_loader(df, sc, 32, args.num_workers, win, args.seed), desc=d)))  # [N, 1, T]
-    x, bgw, ovw = load(focal, False, "focal_test wav", args.focal_window), load(bg_df, True, "background wav"), load(ov_df, False, "overlay wav")
-    x_peak = x if args.focal_window == "peak_energy" else load(focal, False, "focal_test wav (peak_energy)")
+    x, bgw, ovw = load(focal, False, f"{f_eval} wav", args.focal_window), load(bg_df, True, "background wav"), load(ov_df, False, "overlay wav")
+    x_peak = x if args.focal_window == "peak_energy" else load(focal, False, f"{f_eval} wav (peak_energy)")
     sp_x, sp_ov = focal["target_class"].to_numpy(), ov_df["target_class"].to_numpy()
     bg_idx = rng.integers(0, len(bgw), len(x))
     ov_idx = np.array([rng.choice(np.nonzero(sp_ov != s)[0]) for s in sp_x])  # overlay a DIFFERENT species
@@ -215,7 +220,7 @@ def task_synthetic(args, model, pre) -> None:
                 **{k: np.stack(v) for k, v in res.items()},  # [C, N, ...]
                 "targets": targets_of(focal, False), "audio_path": focal["audio_path"].tolist(),
                 "bg_audio": bg_df["audio_path"].tolist(), "peak_guard_frac": guard_frac, "measured_snr_db": measured,
-                "seed": args.seed, "focal_window": args.focal_window, "mix_mode": args.mix_mode}, args.out_dir / f"diag_synthetic{args.tag}.pt")
+                "seed": args.seed, "focal_window": args.focal_window, "mix_mode": args.mix_mode}, args.out_dir / f"diag_synthetic{sfx}{args.tag}.pt")
 
 
 @torch.no_grad()
@@ -228,15 +233,18 @@ def task_renorm(args, model, pre) -> None:
     mu = s1 / n; sd = (s2 / n - mu ** 2) ** 0.5
     logger.info(f"soundscape-train dB mean {mu:.3f} std {sd:.3f} (pretrained fixed: {pre.mean} / {pre.std})")
     pre_sc = to_device(AudioPreprocessor(mean=mu, std=sd), model.device)  # respond() reads pre.mean / pre.std
-    test = read_split("soundscape_test", args.max_n)
-    out = extract_set(model, pre_sc, test, True, True, args.batch_size, args.num_workers, "soundscape_test (renorm)")
-    torch.save({"mean": mu, "std": sd, "default_mean": pre.mean, "default_std": pre.std, "soundscape_test": out},
-               args.out_dir / "diag_renorm.pt")
+    _, s_eval, sfx = EVAL_SETS[args.eval_split]
+    test = read_split(s_eval, args.max_n)
+    out = extract_set(model, pre_sc, test, True, True, args.batch_size, args.num_workers, f"{s_eval} (renorm)")
+    torch.save({"mean": mu, "std": sd, "default_mean": pre.mean, "default_std": pre.std, s_eval: out},
+               args.out_dir / f"diag_renorm{sfx}.pt")
 
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--task", choices=["extract", "synthetic", "renorm"], required=True)
+    p.add_argument("--eval-split", choices=list(EVAL_SETS), default="test",
+                   help="test: focal_test + soundscape_test (committed results). val: focal_val + soundscape_val, outputs get a _val suffix")
     p.add_argument("--out-dir", type=Path, default=Path("outputs/features"))
     p.add_argument("--batch-size", type=int, default=16)
     p.add_argument("--num-workers", type=int, default=8)

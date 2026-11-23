@@ -90,27 +90,33 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--features-dir", type=Path, default=Path("outputs/features"))
     p.add_argument("--comparison", type=Path, default=Path("outputs/results/model_comparison.json"))
-    p.add_argument("--synthetic", default="diag_synthetic.pt", help="synthetic cache in --features-dir")
-    p.add_argument("--out", type=Path, default=Path("outputs/results/diagnostics_stage2.json"))
+    p.add_argument("--eval-split", choices=["test", "val"], default="test",
+                   help="test: the committed Stage 2 analysis. val: the same analysis on soundscape_val + focal_val "
+                        "(run diagnose_shift.py with --eval-split val first); default file names get a _val suffix")
+    p.add_argument("--synthetic", default=None, help="synthetic cache in --features-dir (default diag_synthetic[_val].pt)")
+    p.add_argument("--out", type=Path, default=None, help="default outputs/results/diagnostics_stage2[_val].json")
     p.add_argument("--seed", type=int, default=0)
     args = p.parse_args()
     rng = np.random.default_rng(args.seed)
+    f_key, s_key, sfx = {"test": ("focal_test", "soundscape_test", ""), "val": ("focal_val", "soundscape_val", "_val")}[args.eval_split]
+    args.synthetic = args.synthetic or f"diag_synthetic{sfx}.pt"
+    args.out = args.out or Path(f"outputs/results/diagnostics_stage2{sfx}.json")
     ld = lambda n: torch.load(args.features_dir / n, map_location="cpu", weights_only=False)
-    R, S, N = ld("diag_responses.pt"), ld(args.synthetic), ld("diag_renorm.pt")
+    R, S, N = ld(f"diag_responses{sfx}.pt"), ld(args.synthetic), ld(f"diag_renorm{sfx}.pt")
     cmp = json.loads(args.comparison.read_text())
     sp = R["species"]
-    ft, st, sr = R["focal_test"], R["soundscape_test"], R["soundscape_train"]
+    ft, st, sr = R[f_key], R[s_key], R["soundscape_train"]
     assert (S["targets"] == ft["targets"]).all(), "synthetic and extract use different focal-test clips"
     npos = {"focal": ft["targets"].sum(0), "soundscape": st["targets"].sum(0)}
     cols = [c for c in range(len(sp)) if npos["focal"][c] >= MIN_POS and npos["soundscape"][c] >= MIN_POS]
     primary = [c for c in cols if npos["soundscape"][c] >= PRIMARY_MIN_POS]
     logger.info(f"{len(cols)} analysed species {[sp[c] for c in cols]}; {len(primary)} primary")
-    res: dict = {"species": [sp[c] for c in cols], "primary": [sp[c] for c in primary], "seed": args.seed}
+    res: dict = {"eval_split": args.eval_split, "species": [sp[c] for c in cols], "primary": [sp[c] for c in primary], "seed": args.seed}
 
     # ---- 2.0 consistency with the committed pretrained numbers
     a_f, a_s = proto_auc(ft["proto_max"], ft["targets"], cols), proto_auc(st["proto_max"], st["targets"], cols)
     m = cmp["models"]["pretrained-xcl"]
-    same_species = cmp["species"] == [sp[c] for c in cols]
+    same_species = args.eval_split == "test" and cmp["species"] == [sp[c] for c in cols]   # committed numbers are test-split only
     chk = {"same_species_as_committed": same_species}
     if same_species:
         chk |= {"max_abs_diff_proto_auc_focal": float(np.nanmax(np.abs(a_f - np.array(m["focal"]["proto_auc"])))),
@@ -190,7 +196,7 @@ def main() -> None:
     mask = np.ones((len(sp), K))
     for j in np.nonzero(drift)[0]:
         mask[cols[j // K], j % K] = 0
-    variants = {"renorm_input_stats": N["soundscape_test"]["probs"], "zero_drifting_prototypes": logits_probs(st["proto_max"], w, b, mask)}
+    variants = {"renorm_input_stats": N[s_key]["probs"], "zero_drifting_prototypes": logits_probs(st["proto_max"], w, b, mask)}
     base = {"all_12": {"ap": macro(ap, y, p0, cols), "auc": macro(auc, y, p0, cols)},
             "primary": {"ap": macro(ap, y, p0, primary), "auc": macro(auc, y, p0, primary)}}
     res["baselines"] = {"pretrained": base, "renorm_stats": {"mean": N["mean"], "std": N["std"], "default_mean": N["default_mean"], "default_std": N["default_std"]}}
@@ -198,7 +204,7 @@ def main() -> None:
         res["baselines"][name] = {"all_12": {"ap": macro(ap, y, p1, cols), "auc": macro(auc, y, p1, cols)},
                                   "primary": {"ap": macro(ap, y, p1, primary), "auc": macro(auc, y, p1, primary)},
                                   "primary_vs_pretrained_boot": paired_boot(y, p0, p1, primary, sites, rng)}
-    pa_ren = proto_auc(N["soundscape_test"]["proto_max"], st["targets"], cols)
+    pa_ren = proto_auc(N[s_key]["proto_max"], st["targets"], cols)
     res["baselines"]["renorm_input_stats"]["n_fail"] = int(((pa_ren - a_f) < FAIL).sum())
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(res, indent=1, default=float))

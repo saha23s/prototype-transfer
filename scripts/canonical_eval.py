@@ -3,9 +3,13 @@
 
 Input per model: the response file written by scripts/extract_prototype_activations.py (keys focal / soundscape) or by
 scripts/diagnose_shift.py extract (keys focal_test / soundscape_test), run on data/HSN/splits/{focal,soundscape}_test.parquet.
-All models must be evaluated on identical clips (checked).
+--split val scores soundscape_val (10 sites) against focal_val instead, so development never touches the test sites.
+--split cv --fold F scores the held-out sites of cross-validation fold F (soundscape_cv{F}_heldout, scripts/make_splits.py)
+against focal_val; the model must have been trained without those sites (scripts/train_protopnet.py --cv-fold F), and
+scripts/cv_aggregate.py combines the folds. The split (and fold) that was scored is recorded in the JSON.
+All models must be evaluated on identical clips (checked), and on exactly the clips of the requested split.
 
-Protocol (fixed; see dashboard/plan.html):
+Protocol (fixed; changing it means a new PROTOCOL version):
   species      secondary = species with >= 5 positives in BOTH test sets (12); primary = >= 30 soundscape test positives (7)
   headline     soundscape macro AP on the primary species
   secondary    soundscape macro AUC (primary, 12), cmAP over the 12, focal macro AUC / AP (retention only)
@@ -92,17 +96,35 @@ def main() -> None:
     p.add_argument("--model", nargs=2, action="append", metavar=("NAME", "RESPONSES_PT"), required=True)
     p.add_argument("--baseline", default="pretrained-xcl", help="model the success criteria are measured against")
     p.add_argument("--oracle", default="soundscape-only", help="supervised in-domain reference for the gap fraction (optional)")
-    p.add_argument("--focal-manifest", type=Path, default=Path("data/HSN/splits/focal_test.parquet"), help="gives the recordist of each focal clip")
+    p.add_argument("--split", choices=["test", "val", "cv"], default="test",
+                   help="which held-out split the responses were extracted on. test: soundscape_test + focal_test (the reported numbers). "
+                        "val: soundscape_val + focal_val, for development without touching test. "
+                        "cv: held-out sites of --fold + focal_val (cross-validation, K=3 folds over the non-test sites)")
+    p.add_argument("--fold", type=int, default=None, help="cross-validation fold (required with --split cv)")
+    p.add_argument("--focal-manifest", type=Path, default=None, help="gives the recordist of each focal clip (default: focal_test, or focal_val for --split val / cv)")
+    p.add_argument("--soundscape-manifest", type=Path, default=None, help="clips the soundscape responses must match (default: soundscape_<split>, or soundscape_cv<fold>_heldout)")
     p.add_argument("--n-boot", type=int, default=1000)
     p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--out", type=Path, default=Path("outputs/results/canonical_eval.json"))
+    p.add_argument("--out", type=Path, default=None, help="default: outputs/results/canonical_eval[_val|_cv<fold>].json")
     args = p.parse_args()
+    if (args.split == "cv") != (args.fold is not None):
+        p.error("--fold goes with --split cv (and only with it)")
+    spl = Path("data/HSN/splits")
+    tag = {"test": "", "val": "_val", "cv": f"_cv{args.fold}"}[args.split]
+    args.focal_manifest = args.focal_manifest or spl / ("focal_test.parquet" if args.split == "test" else "focal_val.parquet")
+    args.soundscape_manifest = args.soundscape_manifest or spl / (f"soundscape_cv{args.fold}_heldout.parquet" if args.split == "cv" else f"soundscape_{args.split}.parquet")
+    args.out = args.out or Path("outputs/results") / f"canonical_eval{tag}.json"
 
     models = [Model(n, Path(f)) for n, f in args.model]
     ref = models[0]
     for m in models[1:]:  # identical species, labels and clips for every model
         assert m.species == ref.species and m.paths == ref.paths, f"{m.name} was evaluated on different clips than {ref.name}"
         assert (m.y_f == ref.y_f).all() and (m.y_s == ref.y_s).all(), f"{m.name}: targets differ"
+    # the responses must be exactly the clips of the requested split (soundscape labels are only ever read for that split)
+    want = set(pd.read_parquet(args.soundscape_manifest)["audio_path"].map(lambda q: Path(q).name))
+    assert set(ref.paths["soundscape"]) == want, (
+        f"--split {args.split}: the soundscape responses are not the clips of {args.soundscape_manifest} "
+        f"({len(set(ref.paths['soundscape']) - want)} extra, {len(want - set(ref.paths['soundscape']))} missing)")
     names = [m.name for m in models]
     assert args.baseline in names, f"--baseline {args.baseline} is not among the models {names}"
     oracle = args.oracle if args.oracle in names else None
@@ -132,7 +154,7 @@ def main() -> None:
         if (b + 1) % 100 == 0:
             logger.info(f"bootstrap {b + 1}/{args.n_boot}")
 
-    out = {"protocol": PROTOCOL, "seed": args.seed, "n_boot": args.n_boot, "baseline": args.baseline, "oracle": oracle,
+    out = {"protocol": PROTOCOL, "split": args.split, "fold": args.fold, "seed": args.seed, "n_boot": args.n_boot, "baseline": args.baseline, "oracle": oracle,
            "species": {"secondary": [sp[c] for c in cols], "primary": [sp[cols[i]] for i in pri],
                        "n_pos_soundscape": {sp[c]: int(npos_s[c]) for c in cols}, "n_pos_focal": {sp[c]: int(npos_f[c]) for c in cols}},
            "n_clips": {"focal": len(allf), "soundscape": len(alls)}, "n_clusters": {"recordists": int(len(np.unique(recordists))), "sites": int(len(np.unique(sites)))},
@@ -162,7 +184,7 @@ def main() -> None:
     args.out.write_text(json.dumps(out, indent=1))
 
     fmt = lambda n, k, d=3: f"{point[n][k]:.{d}f} [{ci(boot[n][k])[0]:.{d}f},{ci(boot[n][k])[1]:.{d}f}]"
-    print(f"\nCanonical evaluation {PROTOCOL}: primary = {out['species']['primary']}; {len(cols)} secondary; {args.n_boot} site/recordist-cluster resamples")
+    print(f"\nCanonical evaluation {PROTOCOL} on the {args.split}{"" if args.fold is None else f" fold {args.fold}"} split: primary = {out['species']['primary']}; {len(cols)} secondary; {args.n_boot} site/recordist-cluster resamples")
     print(f"{'model':18} {'sc AP primary':>22} {'sc AUC primary':>22} {'cmAP-12':>22} {'focal AUC prim':>22}  fail  fail(birds)")
     for m in models:
         n = m.name

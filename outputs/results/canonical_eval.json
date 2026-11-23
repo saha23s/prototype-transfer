@@ -1,5 +1,7 @@
 {
  "protocol": "v1",
+ "split": "test",
+ "fold": null,
  "seed": 0,
  "n_boot": 1000,
  "baseline": "pretrained-xcl",
