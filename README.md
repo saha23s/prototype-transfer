@@ -56,13 +56,53 @@ Spectrograms are computed on the fly from the audio (`src/preprocessing.py`: 32 
 log-spectrogram, normalised with the model's training mean/std). Pass `--cache-tensors` to
 `preprocess_hsn.py` to pre-compute them to disk.
 
+## Splits and training recipe
+
+Splits (`scripts/make_splits.py`, seed 0): focal grouped by recordist, soundscape grouped by site (60 / 10 / 30 sites for
+train / val / test). Soundscape val is monitoring-only during training and the split to use whenever soundscape labels are
+needed during development: `scripts/canonical_eval.py --split val` and `scripts/diagnose_shift.py` /
+`analyze_diagnostics.py --eval-split val` score val (with `focal_val`) instead of test. The split is recorded in the output JSON.
+
+**Cross-validation (part of the protocol).** Recipe choices (which rung, epoch rule, hyperparameters) are made by 3-fold
+cross-validation over the 70 non-test soundscape sites (train + val), never on test. `make_splits.py --cv-folds 3` (default)
+divides those sites into 3 site-grouped folds balanced in species coverage (`outputs/results/splits_cv.json`) and writes, for
+fold F, `soundscape_cv{F}_train.parquet` (the other folds: the only soundscape audio / labels the run may use) and
+`soundscape_cv{F}_heldout.parquet`. Each fold is a separate training run that holds fold F out
+(`train_protopnet.py --cv-fold F`, which refuses background / pseudo-label manifests containing held-out clips, and for a
+soundscape-trained run requires `--select last` so the held-out fold never picks a checkpoint), scored with
+`canonical_eval.py --split cv --fold F`; `scripts/cv_aggregate.py NAME` reports mean ± sd over the folds next to the pretrained
+baseline on the same held-out sites. Label-free rungs need per-fold manifests (`make_background_manifest.py --fold F`, which also
+needs the val responses from `diagnose_shift.py --task extract --eval-split val`). The chosen configuration is then retrained on
+all non-test data and scored once on test. The whole ladder is 3 folds x 7 rungs of about 15-25 GPU-minutes each.
+`sbatch --array=0-2 scripts/slurm/run_recipe.sbatch NAME RUNG [train args]` runs the three folds.
+
+`scripts/train_protopnet.py` takes the recipe options below. Everything defaults to off, so the earlier focal-only and
+soundscape-only runs reproduce. `src/mixing.py` holds the (unit-tested) waveform mixing.
+
+| Rung | Flags (with `--train-domain focal`) |
+|---|---|
+| R0 anchored | `--anchored` (joint phase skipped, backbone frozen) |
+| R1a generic noise | `--bg-kind noise` |
+| R1b target background | `--bg-kind real --bg-manifest data/HSN/splits/soundscape_background.parquet` |
+| R2 overlap | `--overlap-prob 0.5` |
+| R3 both | R1 flags + `--overlap-prob 0.5` |
+| R4 pseudo-labels | R3 flags + `--pseudo-manifest data/HSN/splits/soundscape_pseudo.parquet --pseudo-weight 0.2` |
+| label budget (oracle, uses labels) | `--train-domain soundscape --train-labels N --select last` |
+
+Defaults: background probability 0.5 at SNR U[-5, 20] dB, overlap probability from `--overlap-prob` at U[-10, 0] dB relative level.
+`--select last` keeps the last epoch of each phase instead of the best by in-domain val cmAP; both are reported in
+`outputs/results/train_<name>.json`. The background and pseudo-label manifests are built without any annotation by
+`scripts/make_background_manifest.py` from the pretrained responses of `scripts/diagnose_shift.py --task extract`.
+One run end to end (train, extract responses, canonical eval): `sbatch scripts/slurm/run_recipe.sbatch NAME RUNG [train args]` (add `--array=0-2` for cross-validation).
+Runs are recorded in `outputs/runs/registry.json` (name, rung, seed, commit, settings).
+
 ## Layout
 
 ```
 configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size, output dirs)
-src/       dataset, preprocessing, model wrapper, metrics, splits, plotting
+src/       dataset, preprocessing, model wrapper, metrics, splits, mixing, plotting
 scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/*.sbatch
-tests/     plain-assert tests (no pytest needed): python tests/test_canonical_eval.py
+tests/     plain-assert tests (no pytest needed): python tests/test_<name>.py (canonical_eval, splits, mixing, cv_aggregate)
 ```
 
 `run_inference.py` reads its defaults (device, batch size, output dir) from
