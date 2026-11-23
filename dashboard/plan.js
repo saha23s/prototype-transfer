@@ -41,13 +41,15 @@ $("problem-cols").append(listCard("Given", D.problem.given), listCard("Not allow
 fill("shift-table", D.shift_factors.map((s) => [s.name, s.evidence, s.label_free_fix]));
 
 // ---------- decisions ----------
+const stateTag = (state, ok) => (ok === false ? el("span", { class: "badge open" }, "missing") : state === "planned" ? el("span", { class: "badge ev-conditional" }, "planned") : null);
+const whereCell = (ws = []) => el("div", { class: "where" }, ws.map((w) => el("div", {}, el("code", {}, w.path), " ", stateTag(w.state, w.ok), el("span", { class: "wnote" }, ` ${w.note}`))));
 const ORDER = ["decided", "proposed", "hypothesis", "to-verify", "open"];
 const counts = Object.fromEntries(ORDER.map((s) => [s, D.decisions.filter((d) => d.status === s).length]));
 for (const s of ORDER) {
   $("decision-tiles").append(el("div", { class: "stat-tile" }, el("span", { class: "value" }, counts[s]), el("span", { class: "label" }, STATUS_TEXT[s] || s)));
 }
 fill("decision-table", [...D.decisions].sort((a, b) => ORDER.indexOf(a.status) - ORDER.indexOf(b.status))
-  .map((d) => [d.title, d.choice, d.why, badge(d.status)]));
+  .map((d) => [d.title, d.choice, d.why, whereCell(d.where), badge(d.status)]));
 
 // ---------- findings ----------
 for (const f of A.findings) $("plan-findings").append(el("div", { class: "finding" }, el("h3", {}, f.title), el("p", {}, f.text)));
@@ -161,7 +163,7 @@ for (const st of D.stages) {
     el("div", { class: "num" }, st.id),
     el("h3", {}, st.title, badge(st.status), el("span", { class: "kind" }, KIND[st.kind] || st.kind)),
     el("ul", {}, st.what.map((w) => el("li", {}, w))),
-    el("div", {}, el("p", { class: "verify" }, el("b", {}, "Verify: "), st.verify), st.gate ? el("p", { class: "gate" }, el("b", {}, "Gate: "), st.gate) : null)));
+    el("div", {}, st.result ? el("p", { class: "result" }, el("b", {}, "Result: "), st.result) : null, el("p", { class: "verify" }, el("b", {}, "Verify: "), st.verify), st.gate ? el("p", { class: "gate" }, el("b", {}, "Gate: "), st.gate) : null)));
 }
 for (const b of D.blockers) $("blocker-list").append(el("li", {}, b));
 
@@ -186,3 +188,28 @@ for (const b of D.blockers) $("blocker-list").append(el("li", {}, b));
 for (const [id, n] of Object.entries(A.figure_notes)) {
   $(id).append(el("p", { class: "note" }, el("span", {}, el("b", {}, "Shows: "), n.shows), el("span", {}, el("b", {}, "Insight: "), n.insight)));
 }
+
+// ---------- canonical evaluation protocol ----------
+{
+  $("eval-intro").textContent = D.evaluation.intro;
+  fill("eval-table", D.evaluation.rows);
+  const C = A.canonical, tb = $("eval-scored").querySelector("tbody");
+  if (C) {
+    $("eval-scored-hint").textContent = `Protocol ${C.protocol}, ${C.n_boot} cluster-bootstrap resamples (95% intervals). Models without local response files are not listed.`;
+    const cell = (m, k, d = 3) => `${m.point[k].toFixed(d)} [${m.ci95[k][0].toFixed(d)}, ${m.ci95[k][1].toFixed(d)}]`;
+    for (const m of C.models) tb.append(el("tr", {}, el("td", {}, MODEL[m.name] || m.name), el("td", {}, cell(m, "sc_ap_primary")), el("td", {}, cell(m, "sc_auc_primary")),
+      el("td", {}, cell(m, "sc_cmap_12")), el("td", {}, cell(m, "f_auc_primary")), el("td", {}, cell(m, "n_fail", 0)), el("td", {}, cell(m, "n_fail_birds", 0))));
+  } else {
+    $("eval-scored-hint").textContent = "outputs/results/canonical_eval.json has not been generated yet.";
+  }
+}
+
+// ---------- label-budget design ----------
+{
+  $("lb-intro").textContent = D.label_budget.intro;
+  const tb = $("lb-table").querySelector("tbody");
+  for (const [k, v] of D.label_budget.rows) tb.append(el("tr", {}, el("td", {}, k), el("td", {}, v)));
+}
+
+// ---------- evaluation code map ----------
+fill("code-map", D.evaluation.code_map.map(([part, path, what, state, ok]) => [part, el("code", {}, path), what, stateTag(state, ok) || "exists"]));

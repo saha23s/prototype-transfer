@@ -14,7 +14,7 @@
     <p class="subtitle" id="subtitle"></p>
     <nav class="toc" aria-label="Sections">
       <a href="#problem">Problem</a><a href="#decisions">Decisions</a><a href="#analysis">Analysis of current work</a>
-      <a href="#plan">Plan</a><a href="#recipe">Training recipe</a><a href="#criteria">Success criteria</a><a href="#blockers">Blockers</a>
+      <a href="#evaluation">Evaluation</a><a href="#plan">Plan</a><a href="#recipe">Training recipe</a><a href="#criteria">Success criteria</a><a href="#blockers">Blockers</a>
     </nav>
   </header>
 
@@ -34,7 +34,7 @@
     <p class="hint">Status: <b>decided</b> is settled; <b>proposed</b> awaits confirmation; <b>hypothesis</b> is gated by a diagnostic; <b>to verify</b> rests on an unconfirmed assumption; <b>open</b> needs an answer.</p>
     <div id="decision-tiles" class="tiles small"></div>
     <div class="table-wrap"><table id="decision-table" class="text-table">
-      <thead><tr><th>Decision</th><th>Choice</th><th>Why</th><th>Status</th></tr></thead><tbody></tbody>
+      <thead><tr><th>Decision</th><th>Choice</th><th>Why</th><th>Where (file, code)</th><th>Status</th></tr></thead><tbody></tbody>
     </table></div>
   </section>
 
@@ -86,10 +86,28 @@
     <ul id="split-notes"></ul>
   </section>
 
+  <section id="evaluation" aria-labelledby="evaluation-title">
+    <h2 id="evaluation-title">Canonical evaluation protocol</h2>
+    <p class="hint" id="eval-intro"></p>
+    <div class="table-wrap"><table id="eval-table" class="text-table"><thead><tr><th>Item</th><th>Definition</th></tr></thead><tbody></tbody></table></div>
+    <h3>Where the evaluation lives</h3>
+    <p class="hint">Files and code behind each part of the protocol. <i>planned</i> means not written yet.</p>
+    <div class="table-wrap"><table id="code-map" class="text-table"><thead><tr><th>Part</th><th>File</th><th>What it holds</th><th>State</th></tr></thead><tbody></tbody></table></div>
+    <h3>Scored so far</h3>
+    <p class="hint" id="eval-scored-hint"></p>
+    <div class="table-wrap"><table id="eval-scored">
+      <thead><tr><th>Model</th><th>Soundscape AP (primary)</th><th>Soundscape AUC (primary)</th><th>cmAP (12)</th><th>Focal AUC (primary)</th><th>Failing Δ</th><th>Failing Δ (birds)</th></tr></thead><tbody></tbody>
+    </table></div>
+  </section>
+
   <section id="plan" aria-labelledby="plan-title">
     <h2 id="plan-title">Plan</h2>
     <p class="hint">Stages run in this order. Stage 1 is done; Stage 0 and 2 need no training; no <code>sbatch</code> is submitted without explicit approval.</p>
     <div id="stages" class="stages"></div>
+
+    <h3 id="label-budget">Stage 2b design: label-budget curve</h3>
+    <p class="hint" id="lb-intro"></p>
+    <div class="table-wrap"><table id="lb-table" class="text-table"><tbody></tbody></table></div>
 
     <h3 id="recipe">Stage 3 design: the training recipe</h3>
     <p class="hint" id="recipe-intro"></p>

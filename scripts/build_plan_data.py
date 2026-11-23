@@ -38,6 +38,22 @@ def r3(x: float) -> float:
     return round(float(x), 3)
 
 
+def check_paths(content: dict) -> None:
+    """Mark every pointer on the page ok/missing: a file marked 'exists' must exist in the repo."""
+    bad = []
+    for d in content["decisions"]:
+        for w in d.get("where", []):
+            w["ok"] = w["state"] != "exists" or Path(w["path"]).exists()
+            if not w["ok"]:
+                bad.append(w["path"])
+    for row in content["evaluation"].get("code_map", []):
+        row.append(row[3] != "exists" or Path(row[1]).exists())
+        if not row[-1]:
+            bad.append(row[1])
+    if bad:
+        logger.warning(f"pointers marked 'exists' but not found: {sorted(set(bad))}")
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--comparison", type=Path, default=Path("outputs/results/model_comparison.json"))
@@ -49,6 +65,7 @@ def main() -> None:
     cmp = json.loads(args.comparison.read_text())
     spl = json.loads(args.splits.read_text())
     content = json.loads(args.content.read_text())
+    check_paths(content)
     sp, M = cmp["species"], cmp["models"]
     K = 5  # prototypes per species; model_comparison stores proto_auc species-major
     names = [PRETRAINED, FOCAL_ONLY, SC_ONLY]
@@ -161,6 +178,22 @@ def main() -> None:
          "text": f"Mean test prevalence is {prev['focal']} on focal and {prev['soundscape']} on soundscapes, so the cmAP gap is not mainly a base-rate effect."},
     ]
 
+    # ---- canonical evaluation (scripts/canonical_eval.py), when it has been run
+    canon = None
+    cpath = Path("outputs/results/canonical_eval.json")
+    if cpath.exists():
+        cj = json.loads(cpath.read_text())
+        canon = {"protocol": cj["protocol"], "n_boot": cj["n_boot"], "baseline": cj["baseline"], "primary": cj["species"]["primary"],
+                 "models": [{"name": n, "point": e["point"], "ci95": e["ci95"], "criteria": e.get("criteria")} for n, e in cj["models"].items()]}
+        base = cj["models"][cj["baseline"]]
+        ci = lambda k: f"[{base['ci95'][k][0]:.3f}, {base['ci95'][k][1]:.3f}]"
+        criteria[0]["baseline"] += f"; unpaired 95% CI of the baseline {ci('sc_ap_primary')}"
+        criteria[2]["baseline"] += f"; 95% CI {base['ci95']['n_fail'][0]:.0f}\u2013{base['ci95']['n_fail'][1]:.0f}"
+        findings.append({"title": "Against bird-only negatives, more prototypes fail",
+                         "text": f"With negatives restricted to clips containing another target species, {int(base['point']['n_fail_birds'])} of {counts[0]['total']} prototypes lose more than "
+                                 f"{abs(FAIL)} AUC (median \u0394 {base['point']['median_delta_birds']:.3f}), against {int(base['point']['n_fail'])} (median {base['point']['median_delta']:.3f}) with all negatives. "
+                                 f"The empty-background negatives were hiding part of the shift: telling species apart degrades more than detecting them."})
+
     # ---- one-to-two line caption per figure: what it shows + the insight (numbers computed above)
     g_fail, g_rest = groups
     npri_low = [s for s in species if not s["primary"]]
@@ -179,12 +212,12 @@ def main() -> None:
             "insight": f"Only {len(primary)} species reach {PRIMARY_MIN_POS} soundscape test positives; the other {len(npri_low)} have {min(s['n_soundscape'] for s in npri_low)}\u2013{max(s['n_soundscape'] for s in npri_low)}, so their scores are too noisy to headline."},
     }
 
-    out = {**{k: content[k] for k in ("title", "subtitle", "problem", "shift_factors", "decisions", "stages", "blockers", "recipe")},
+    out = {**{k: content[k] for k in ("title", "subtitle", "problem", "shift_factors", "decisions", "stages", "blockers", "recipe", "evaluation", "label_budget")},
            "analysis": {"models": [{"name": n, "label": LABELS[n]} for n in names], "species": species,
                         "primary_min_pos": PRIMARY_MIN_POS, "primary_species": [sp[i] for i in primary],
                         "class_level": class_level, "proto_counts": counts, "proto": protos, "rho": rho,
                         "groups": groups, "prevalence": prev, "splits": splits, "species_split": sp_split, "split_notes": split_notes, "figure_notes": figure_notes, "criteria": criteria,
-                        "thresholds": {"fail": FAIL, "improve": IMPROVE}, "findings": findings}}
+                        "thresholds": {"fail": FAIL, "improve": IMPROVE}, "findings": findings, "canonical": canon}}
     args.out.write_text("window.PLAN_DATA = " + json.dumps(out) + ";\n")
     logger.info(f"Wrote {args.out}: {len(protos)} prototypes, {len(primary)} primary species {[sp[i] for i in primary]}")
     for f in findings:

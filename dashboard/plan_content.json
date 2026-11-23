@@ -43,92 +43,409 @@
       "title": "Unsupervised protocol",
       "choice": "Zero soundscape labels in the loss, in checkpoint selection and in tuning. Soundscape labels are used only for final evaluation (and for clearly marked diagnostics).",
       "why": "This is the realistic deployment: audio is cheap, annotation is the bottleneck.",
-      "status": "decided"
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "checkpoint selection uses in-domain (focal) val only; soundscape val is just logged",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "soundscape labels are used only here, to score test",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Inductive setting",
       "choice": "Adapt on audio from the 60 train sites; evaluate on the 30 unseen test sites.",
       "why": "Follows from the site split; avoids touching test audio. A transductive variant can be an extra.",
-      "status": "decided"
+      "status": "decided",
+      "where": [
+        {
+          "path": "src/splits.py",
+          "note": "soundscape_split: site-disjoint train / val / test",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/results/splits.json",
+          "note": "committed split summary",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Splits",
       "choice": "Keep the current splits: focal grouped by recordist, soundscape grouped by site.",
       "why": "Both groupings stop near-duplicate audio crossing train and test.",
-      "status": "decided"
+      "status": "decided",
+      "where": [
+        {
+          "path": "src/splits.py",
+          "note": "focal_split (by recordist), soundscape_split (by site)",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/make_splits.py",
+          "note": "writes data/HSN/splits/*.parquet and splits.json, seed 0",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/results/splits.json",
+          "note": "regenerated splits match it exactly",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Focal test and val",
       "choice": "Focal val is used for checkpoint selection (as in train_protopnet.py); focal test is a retention reference only, not a generalization score.",
       "why": "Focal clips are Xeno-Canto, so they are very likely part of XCL's training data. Soundscape test is the only clean held-out number.",
-      "status": "decided"
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "focal val selects checkpoints",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "focal metrics f_auc_* / f_ap_* are retention only",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Source-only baseline",
       "choice": "The existing focal-only run is a valid source-only baseline: it selects on focal val only; soundscape val is just logged.",
       "why": "Checked in scripts/train_protopnet.py. No rerun needed.",
-      "status": "decided"
+      "status": "decided",
+      "where": [
+        {
+          "path": "outputs/runs/focal-only/",
+          "note": "args.json, history.json, push.json (the checkpoint is not in the repo)",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/results/train_focal-only.json",
+          "note": "final validation metrics",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Pretraining contents",
       "choice": "Treat XCL as focal-only.",
       "why": "Based on prior knowledge of BirdSet; not yet confirmed against the model card or paper.",
-      "status": "to-verify"
+      "status": "to-verify",
+      "where": [
+        {
+          "path": "src/model.py",
+          "note": "MODEL_REVISION pins the checkpoint; the model card has not been checked",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Evaluation species and uncertainty",
-      "choice": "Primary: species with at least 30 soundscape test positives. Secondary: the 12 species with at least 5. Report site-level bootstrap CIs (30 test sites).",
+      "choice": "Primary: the 7 species with at least 30 soundscape test positives. Secondary: the 12 with at least 5 in both test sets. Cluster bootstrap CIs, 1,000 shared resamples: soundscape by site (30), focal by recordist (110).",
       "why": "5 of the 12 species have 16 or fewer soundscape test positives, so the 12-species mean is dominated by noise.",
-      "status": "proposed"
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "constants MIN_POS, PRIMARY_MIN_POS; --n-boot",
+          "state": "exists"
+        },
+        {
+          "path": "src/metrics.py",
+          "note": "cluster_indices() (whole-cluster bootstrap resamples)",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Success criteria",
-      "choice": "See the table below. Fixed before any training and not tuned afterwards.",
+      "choice": "The four criteria in the table below, scored by scripts/canonical_eval.py. Fixed before any training and not tuned afterwards.",
       "why": "Avoids moving the goalposts once results exist.",
-      "status": "proposed"
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "constants GAP_FRACTION, FOCAL_TOL, FAIL; the criteria dict in main()",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/results/canonical_eval.json",
+          "note": "per-model criteria flags",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Method hypothesis",
       "choice": "Shift-matched augmentation (background mixing + overlap mixing) while fine-tuning from pretrained.",
       "why": "Targets all three shift factors with no soundscape labels. Only pursued if Stage 2 shows the synthetic shift reproduces the real failures.",
-      "status": "hypothesis"
+      "status": "hypothesis",
+      "where": [
+        {
+          "path": "scripts/diagnose_shift.py",
+          "note": "Stage 2 GPU diagnostics (extract, synthetic, renorm)",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/analyze_diagnostics.py",
+          "note": "the gate; results in outputs/results/diagnostics_stage2*.json",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "BatchNorm adaptation as a baseline",
       "choice": "Dropped; use re-estimated input-spectrogram normalization instead.",
       "why": "ConvNeXt backbones use LayerNorm, so there are no BN statistics to adapt (to confirm in src/model.py).",
-      "status": "to-verify"
+      "status": "to-verify",
+      "where": [
+        {
+          "path": "scripts/diagnose_shift.py",
+          "note": "task renorm: the substitute baseline",
+          "state": "exists"
+        }
+      ]
     },
     {
       "title": "Compute venue for GPU stages",
-      "choice": "Mila SLURM or filo?",
-      "why": "This node is CPU-only; the earlier training ran on filo and its checkpoints live there.",
-      "status": "open"
+      "choice": "Mila SLURM.",
+      "why": "Confirmed by you. The Stage 2 diagnostics already run there (1 GPU, 8 CPUs, 32 GB). The earlier fine-tuned checkpoints live on filo.",
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/slurm/diagnose_shift.sbatch",
+          "note": "Mila SLURM template: 1 GPU, 8 CPUs, 32 GB",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/slurm/run_recipe.sbatch",
+          "note": "parameterised train → extract → canonical_eval launcher",
+          "state": "planned"
+        }
+      ]
     },
     {
       "title": "Experiment tracking",
       "choice": "Keep argparse + JSON histories (the repo's convention) unless W&B / Hydra is wanted.",
       "why": "Minimum edit to the forked code.",
-      "status": "open"
+      "status": "open",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "args.json and history.json per run in outputs/runs/<name>/",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/runs/registry.json",
+          "note": "run name → recipe rung, seed, commit",
+          "state": "planned"
+        }
+      ]
     },
     {
       "title": "Training recipe ladder",
       "choice": "R0 anchored, R1a/R1b background (generic vs target), R2 overlap, R3 both, R4 pseudo-label, R5 conditional. See the recipe section.",
       "why": "One change per rung, ordered by strength of evidence, so each result can be attributed.",
-      "status": "proposed"
+      "status": "proposed",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "flags --bg-kind, --overlap-prob, --pseudo-weight and the rest of the recipe",
+          "state": "planned"
+        },
+        {
+          "path": "src/train_dataset.py",
+          "note": "background and overlap mixing options",
+          "state": "planned"
+        },
+        {
+          "path": "tests/test_mixing.py",
+          "note": "unit tests for the mixing",
+          "state": "planned"
+        }
+      ]
     },
     {
       "title": "Checkpoint rule for the new runs",
       "choice": "Keep the focal-val rule for comparability, and also report the last epoch.",
       "why": "Focal val keeps rising to about epoch 8 while soundscape val (monitoring only) falls from epoch 1, so the rule may pick worse-transfer epochs. A fixed short epoch budget is the alternative.",
-      "status": "open"
+      "status": "open",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "today: best epoch by in-domain val cmAP (lines ~156-163)",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "--select last option",
+          "state": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Headline metric",
+      "choice": "Soundscape macro AP on the primary species. Macro AUC, cmAP over the 12 and focal retention are secondary.",
+      "why": "AUC is nearly saturated on the primary species (0.941 vs 0.969 for the oracle), while AP separates the models.",
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "metrics(): sc_ap_primary",
+          "state": "exists"
+        }
+      ]
+    },
+    {
+      "title": "Canonical evaluation",
+      "choice": "One script, scripts/canonical_eval.py, scores every model on the same test clips (checked) and writes outputs/results/canonical_eval.json. No model is reported from any other script.",
+      "why": "Makes every comparison, including future runs, use identical species sets, metrics, CIs and criteria.",
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "the single scoring script, CPU only",
+          "state": "exists"
+        },
+        {
+          "path": "outputs/results/canonical_eval.json",
+          "note": "its output",
+          "state": "exists"
+        },
+        {
+          "path": "tests/test_canonical_eval.py",
+          "note": "AUC vs sklearn, matched negatives, bootstrap",
+          "state": "exists"
+        },
+        {
+          "path": "scripts/evaluate_models.sh",
+          "note": "extraction then canonical_eval for all models",
+          "state": "exists"
+        },
+        {
+          "path": "src/evaluation.py",
+          "note": "move the metric and bootstrap functions here so scripts and tests import from src/",
+          "state": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Prototype delta definition",
+      "choice": "Report both: Δ (soundscape negatives = all other soundscape clips, as before) and Δ on matched negatives (soundscape negatives = clips with another target species).",
+      "why": "Focal negatives are other species' clips, so matched negatives compare like with like. They also remove easy empty-background negatives. On the pretrained model 42 of 60 prototypes fail on matched negatives against 26 with the old definition.",
+      "status": "decided",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "metrics(): delta and delta_b (matched negatives)",
+          "state": "exists"
+        }
+      ]
+    },
+    {
+      "title": "Label-budget curve",
+      "choice": "Add it as Stage 2b: soundscape-only models trained with 100 to 7,200 labeled clips under one fixed schedule, 3 seeds each.",
+      "why": "Separates a data gap (labels needed) from a methodology gap (how to get that information without labels) and gives label-free methods a label-equivalence yardstick.",
+      "status": "proposed",
+      "where": [
+        {
+          "path": "scripts/train_protopnet.py",
+          "note": "--train-labels, a constant-steps sampler, --select last",
+          "state": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Deliverable",
+      "choice": "A method, plus the analysis of how and why prototypes fail to transfer, plus strong baselines (pretrained, focal-only, soundscape-only oracle, label-budget curve).",
+      "why": "Confirmed by you. The analysis and baselines stand on their own even if the method closes only part of the gap.",
+      "status": "decided",
+      "where": [
+        {
+          "path": "dashboard/plan.html",
+          "note": "this page",
+          "state": "exists"
+        }
+      ]
+    },
+    {
+      "title": "Dev set (separate from test)",
+      "choice": "Dev = the 10 val sites plus 10 sites carved from train (20 labeled sites), held out from adaptation. Val stops being a separate set. Dev labels never enter the training loss.",
+      "why": "The Stage 2 gate and its follow-ups used test labels, and soundscape val (10 sites, 9 of 21 species with no positives) is too small to decide with. Dev only costs data during development: finalists are refit on all 70 non-test sites.",
+      "status": "proposed",
+      "where": [
+        {
+          "path": "src/splits.py",
+          "note": "soundscape_dev_split: carve 10 sites from train",
+          "state": "planned"
+        },
+        {
+          "path": "scripts/make_splits.py",
+          "note": "--dev-sites 10; writes data/HSN/splits/soundscape_dev.parquet",
+          "state": "planned"
+        },
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "--split dev|test, recording which split was scored",
+          "state": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Test-set use rule",
+      "choice": "Test is scored only by scripts/canonical_eval.py, for frozen finalists, once each. Every decision and diagnostic uses dev, or all 70 non-test sites for diagnostics that fit nothing. canonical_eval records which split it scored.",
+      "why": "The Stage 2 decisions already looked at test; this keeps the final numbers clean.",
+      "status": "proposed",
+      "where": [
+        {
+          "path": "scripts/canonical_eval.py",
+          "note": "--split dev|test and a split field in the JSON",
+          "state": "planned"
+        },
+        {
+          "path": "scripts/analyze_diagnostics.py",
+          "note": "redo the Stage 2 analysis on non-test sites",
+          "state": "planned"
+        }
+      ]
+    },
+    {
+      "title": "Tiered evaluation protocol",
+      "choice": "1) Diagnostics that fit nothing: pool labels of all 70 non-test sites. 2) Screening trained ideas: the 20-site dev split, seed 0. 3) Finalists (2 or 3): 3-fold site-grouped cross-validation over the 70 non-test sites, then refit on all 70 and score test once.",
+      "why": "Site heterogeneity makes a single small dev set noisy, but cross-validating every run triples the cost, so it is kept for the end.",
+      "status": "proposed",
+      "where": [
+        {
+          "path": "src/splits.py",
+          "note": "site-grouped folds stratified by species coverage",
+          "state": "planned"
+        },
+        {
+          "path": "scripts/make_splits.py",
+          "note": "--cv-folds 3",
+          "state": "planned"
+        },
+        {
+          "path": "outputs/results/splits_cv.json",
+          "note": "fold assignment of every site",
+          "state": "planned"
+        }
+      ]
     }
   ],
   "stages": [
     {
       "id": "0",
       "title": "Fix the protocol",
-      "status": "next",
+      "status": "done",
       "kind": "cpu",
       "what": [
         "Regenerate data/HSN/splits with make_splits.py (deterministic, seed 0).",
@@ -136,7 +453,8 @@
         "Freeze the success criteria."
       ],
       "verify": "Regenerated split counts equal outputs/results/splits.json.",
-      "gate": null
+      "gate": null,
+      "result": "Splits regenerated and identical to the committed splits.json. Species sets, site/recordist cluster bootstrap, matched-negatives Δ and the success criteria are implemented in scripts/canonical_eval.py (unit tests in tests/test_canonical_eval.py); the pretrained model is scored under it."
     },
     {
       "id": "1",
@@ -153,7 +471,7 @@
     {
       "id": "2",
       "title": "Diagnostics without training",
-      "status": "pending",
+      "status": "next",
       "kind": "gpu-inference",
       "what": [
         "2.0 Extract pretrained responses on soundscape-train (GPU inference). This gives each clip's maximum species probability: the label-free background manifest (lowest 30%) for R1b and the teacher soft labels for R4.",
@@ -162,7 +480,20 @@
         "2.3 Inference-only baselines: re-estimated input normalization; zero the weights of prototypes flagged by 2.2."
       ],
       "verify": "Spearman(Δ_k synthetic, Δ_k real) over the 60 prototypes.",
-      "gate": "Proceed to augmentation training only if the correlation is above 0.5 for at least one corruption. Otherwise switch to adaptation on real soundscape features."
+      "gate": "Proceed to augmentation training only if the correlation is above 0.5 for at least one corruption. Otherwise switch to adaptation on real soundscape features.",
+      "result": "Run 1 (job 11787583): the extraction reproduces the committed pretrained numbers. The gate FAILED: no corruption reproduces which prototypes fail (Spearman between −0.20 and +0.10, all CIs include 0), the synthetic activation ratio stays at 0.91–0.97 against 0.30 real, and no label-free predictor works (|ρ| ≤ 0.15). The label-free background selector works (97% of selected clips are empty). Follow-up (job 11809428, queued) tests random focal windows and quieter-bird mixing down to −25 dB."
+    },
+    {
+      "id": "2b",
+      "title": "Label-budget curve (reference experiment)",
+      "status": "pending",
+      "kind": "training",
+      "what": [
+        "Train soundscape-only models with 100, 250, 500, 1,000, 2,000 and all 7,200 labeled clips, 3 seeds each, under one fixed schedule (design below the stages).",
+        "Score every run with scripts/canonical_eval.py and plot the % of the AP gap closed against labeled clips."
+      ],
+      "verify": "The 7,200-clip point matches the existing soundscape-only run within seed noise; no sbatch without explicit approval.",
+      "gate": "Decides how hard the label-free target is: if a few hundred labels recover most of the gain, aim label-free methods at that; if it needs thousands, treat the label-free target as much more ambitious."
     },
     {
       "id": "3",
@@ -387,6 +718,176 @@
       [
         "tests/test_mixing.py (new)",
         "The unit tests above."
+      ]
+    ]
+  },
+  "evaluation": {
+    "intro": "Every model is scored by scripts/canonical_eval.py on the held-out test splits. The protocol is fixed; changing it means a new protocol version.",
+    "rows": [
+      [
+        "Clips",
+        "Focal test (1,157) and soundscape test (3,600 clips, 30 sites). Identical for every model; the script refuses models evaluated on different clips."
+      ],
+      [
+        "Species",
+        "Primary: at least 30 soundscape test positives (7). Secondary: at least 5 in both test sets (12). Counts come from the test labels only, never from model output."
+      ],
+      [
+        "Headline",
+        "Soundscape macro AP on the primary species."
+      ],
+      [
+        "Secondary",
+        "Soundscape macro AUC (primary and 12), cmAP over the 12, and focal macro AUC / AP as a retention check (focal test is likely seen in pretraining)."
+      ],
+      [
+        "Prototype level",
+        "Δ_k = soundscape AUC − focal AUC of each prototype's max activation as a detector of its species, for the 60 prototypes of the 12 species. Reported on all negatives (Δ) and on matched negatives (Δ birds). Counts of Δ < −0.10 and > +0.02, and the median."
+      ],
+      [
+        "Uncertainty",
+        "Cluster bootstrap with 1,000 resamples shared across models: whole sites for soundscape, whole recordists for focal. 95% percentile intervals. Unpaired intervals are wide because few sites carry the positives, so comparisons use paired differences."
+      ],
+      [
+        "Comparison",
+        "Paired differences against the baseline (pretrained) for every model, and the fraction of the baseline-to-oracle AP gap closed, each with a CI."
+      ],
+      [
+        "Success criteria",
+        "The four criteria below. Criterion 1 also requires the paired ΔAP interval to exclude zero."
+      ],
+      [
+        "How to run",
+        "Responses come from scripts/extract_prototype_activations.py (GPU) on the two test manifests. Then: python scripts/canonical_eval.py --model NAME responses.pt (repeat per model) --baseline pretrained-xcl --oracle soundscape-only. CPU only, about 75 s per model."
+      ],
+      [
+        "Not covered yet",
+        "Multi-seed aggregation (seeds are evaluated as separate models for now). Only the pretrained model has been scored under this protocol so far: the fine-tuned checkpoints live on filo and are not available here."
+      ]
+    ],
+    "code_map": [
+      [
+        "Split definitions",
+        "src/splits.py",
+        "focal_split, soundscape_split",
+        "exists"
+      ],
+      [
+        "Split generation",
+        "scripts/make_splits.py",
+        "data/HSN/splits/*.parquet (gitignored) and outputs/results/splits.json",
+        "exists"
+      ],
+      [
+        "Response extraction (GPU)",
+        "scripts/extract_prototype_activations.py",
+        "outputs/features/responses_<model>.pt (gitignored)",
+        "exists"
+      ],
+      [
+        "Canonical scoring (CPU)",
+        "scripts/canonical_eval.py",
+        "metrics(), the criteria dict; python scripts/canonical_eval.py --model NAME responses.pt ...",
+        "exists"
+      ],
+      [
+        "Canonical output",
+        "outputs/results/canonical_eval.json",
+        "per-model points, 95% CIs, paired differences, criteria, per-prototype Δ",
+        "exists"
+      ],
+      [
+        "Tests",
+        "tests/test_canonical_eval.py",
+        "run with: python tests/test_canonical_eval.py",
+        "exists"
+      ],
+      [
+        "Full pipeline",
+        "scripts/evaluate_models.sh",
+        "extraction for each model, then canonical_eval",
+        "exists"
+      ],
+      [
+        "Legacy comparison",
+        "scripts/compare_models.py",
+        "feeds outputs/results/model_comparison.json for the main dashboard; not used for reported numbers",
+        "exists"
+      ],
+      [
+        "Dev split and CV folds",
+        "src/splits.py",
+        "soundscape_dev_split and the site-grouped folds",
+        "planned"
+      ],
+      [
+        "Shared metric code",
+        "src/evaluation.py",
+        "metrics and bootstrap moved out of scripts/",
+        "planned"
+      ],
+      [
+        "Run launcher",
+        "scripts/slurm/run_recipe.sbatch",
+        "train → extract test responses → canonical_eval for one run",
+        "planned"
+      ],
+      [
+        "Run registry",
+        "outputs/runs/registry.json",
+        "run name → rung, seed, commit; read by the dashboard",
+        "planned"
+      ],
+      [
+        "Plan page data",
+        "scripts/build_plan_data.py",
+        "builds dashboard/plan_data.js from outputs/results/*.json and plan_content.json",
+        "exists"
+      ]
+    ]
+  },
+  "label_budget": {
+    "intro": "A diagnostic that separates a data gap from a methodology gap: how many labeled soundscape clips does it take to recover the gain? It also gives a yardstick for any label-free method (“equal to about N labeled clips”). It uses soundscape labels by design, so it is a reference experiment, not a candidate method.",
+    "rows": [
+      [
+        "Question",
+        "How much of the pretrained-to-oracle AP gap does each labeled-clip budget close, and how many failing prototypes does it fix?"
+      ],
+      [
+        "Budgets",
+        "Labeled soundscape-train clips: 0 (pretrained), 100, 250, 500, 1,000, 2,000 and all 7,200. The 7,200 point is rerun under the same fixed schedule, so the whole curve is comparable."
+      ],
+      [
+        "Sampling",
+        "Random clips from all 60 train sites, fixed seeds. A second variant draws whole sites instead (annotation is done on contiguous recordings in practice) once the first curve exists."
+      ],
+      [
+        "Schedule",
+        "The soundscape-only recipe (warm 2, joint 12, push, last 4). The number of optimizer steps is held constant by sampling with replacement, so only the amount of distinct data changes."
+      ],
+      [
+        "Selection",
+        "Fixed schedule, last epoch, no validation labels: in the few-label regime they would count against the budget."
+      ],
+      [
+        "Seeds",
+        "3 seeds (0, 1, 2) per budget. Report mean ± sd, plus the canonical paired CI for seed 0."
+      ],
+      [
+        "Readout",
+        "% of the AP gap closed and failing prototypes (Δ and Δ birds) against the number of labeled clips, and per primary species where positives allow. Label-free methods are placed on the same axis."
+      ],
+      [
+        "Interpretation",
+        "If a few hundred labels recover most of the gain, the gap is small in data terms and a label-free target is realistic. If it needs thousands, label-free methods face a much harder target."
+      ],
+      [
+        "Cost",
+        "16 runs (5 budgets × 3 seeds, plus the full rerun), each about as long as the earlier soundscape-only run (about 20 min), so roughly 5 GPU-hours, parallelizable. Constant steps mean small budgets save no time."
+      ],
+      [
+        "Code",
+        "scripts/train_protopnet.py: --train-labels N, a constant-steps sampler, and --select last (a few lines each). Evaluation reuses scripts/canonical_eval.py. No sbatch without approval."
       ]
     ]
   }
