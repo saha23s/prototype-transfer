@@ -34,7 +34,7 @@ def focal_split(df: pd.DataFrame, test_frac: float = 0.2, val_frac: float = 0.1,
     return split
 
 
-def _site_of(filepath: pd.Series) -> pd.Series:
+def site_of(filepath: pd.Series) -> pd.Series:
     return filepath.str.extract(r"^(HSN_\d+)_")[0]
 
 
@@ -46,7 +46,7 @@ def soundscape_split(df: pd.DataFrame, test_frac: float = 0.3, val_frac: float =
     both train and test; then minimise the mean deviation of its test (and, half-weighted, val) positive
     fraction from test_frac (val_frac). Val may lack rare species (it is only used for model selection).
     """
-    site = _site_of(df["filepath"])
+    site = site_of(df["filepath"])
     sites = np.array(sorted(site.unique()))
     # positives per (site, species)
     Y = np.zeros((len(df), len(HSN_SPECIES_LIST)), dtype=np.int64)

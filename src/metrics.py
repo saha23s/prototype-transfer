@@ -14,6 +14,7 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 import torch
+from scipy.stats import rankdata
 from sklearn.metrics import average_precision_score, f1_score, roc_auc_score
 
 logger = logging.getLogger("metrics")
@@ -131,3 +132,27 @@ def evaluate_predictions(
         "threshold": threshold,
         "per_class": class_metrics,
     }
+
+
+# ----------------------------------------------------------------------------- column-wise / bootstrap helpers
+def auc_cols(S: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    """ROC-AUC of every column (Mann-Whitney with average ranks). S [N, P] scores, Y [N, P] bool. NaN if a column has no pos or no neg."""
+    n = len(S)
+    npos = Y.sum(0).astype(float)
+    nneg = n - npos
+    with np.errstate(invalid="ignore", divide="ignore"):
+        u = (rankdata(S, axis=0) * Y).sum(0) - npos * (npos + 1) / 2
+        out = u / (npos * nneg)
+    out[(npos == 0) | (nneg == 0)] = np.nan
+    return out
+
+
+def ap_cols(S: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    return np.array([average_precision_score(Y[:, j], S[:, j]) if Y[:, j].any() else np.nan for j in range(S.shape[1])])
+
+
+def cluster_indices(groups: np.ndarray, rng: np.random.Generator, n_boot: int) -> list[np.ndarray]:
+    """n_boot resamples of whole clusters (sites / recordists), each as a concatenated clip-index array."""
+    u = np.unique(groups)
+    members = {g: np.nonzero(groups == g)[0] for g in u}
+    return [np.concatenate([members[g] for g in rng.choice(u, len(u))]) for _ in range(n_boot)]

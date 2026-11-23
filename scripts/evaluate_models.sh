@@ -25,3 +25,10 @@ python scripts/compare_models.py \
     --model pretrained-xcl xcl outputs/features/responses_pretrained-xcl.pt \
     --model focal-only focal outputs/features/responses_focal-only.pt \
     --model soundscape-only soundscape outputs/features/responses_soundscape-only.pt
+
+# Canonical evaluation (protocol v1): the single scoring used for every reported number (CPU only).
+python scripts/canonical_eval.py \
+    --model pretrained-xcl outputs/features/responses_pretrained-xcl.pt \
+    --model focal-only outputs/features/responses_focal-only.pt \
+    --model soundscape-only outputs/features/responses_soundscape-only.pt \
+    --baseline pretrained-xcl --oracle soundscape-only
