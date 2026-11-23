@@ -8,6 +8,7 @@ import random
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
+import soundfile as sf
 import torch
 import torchaudio
 from torch.utils.data import DataLoader, Dataset
@@ -147,8 +148,16 @@ class BirdSetHSNDataset(Dataset):
         path = _value(record, "audio_path", "path", "filepath", "file")
         if path is None:
             raise KeyError("Each BirdSet record must contain audio_path or path")
-        waveform, input_rate = torchaudio.load(str(path))
-        waveform = waveform.mean(dim=0, keepdim=True)
+        try:  # soundfile first (already a dependency); torchaudio is the fallback for files it cannot decode
+            data, input_rate = sf.read(str(path), dtype="float32")
+            waveform = torch.from_numpy(data)
+            if waveform.ndim > 1:
+                waveform = waveform.t().mean(dim=0, keepdim=True)
+            elif waveform.ndim == 1:
+                waveform = waveform.unsqueeze(0)
+        except Exception:
+            waveform, input_rate = torchaudio.load(str(path))
+            waveform = waveform.mean(dim=0, keepdim=True)
         if input_rate != self.sample_rate:
             waveform = torchaudio.functional.resample(waveform, input_rate, self.sample_rate)
         waveform = waveform[:, : self.num_samples]
