@@ -79,8 +79,6 @@ re-running the analysis (needs the audio for the patch crops):
 python scripts/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
 ```
 
-`dashboard/plan.html` (linked from the main page) presents the unsupervised-adaptation problem, decisions, plan and success criteria, with an analysis of the existing results. Its numbers come from `python scripts/build_plan_data.py` (no GPU needed; reads `outputs/results/*.json`); its text is edited in `dashboard/plan_content.json`.
-
 Every finding is generated together with its evidence (chart data, key numbers, method note), so the
 text and the numbers come from the same computation; open `dashboard/index.html#finding-N` to link
 to a finding's evidence. Acceptance test (renders the page in jsdom and checks structure, evidence
