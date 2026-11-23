@@ -1,0 +1,28 @@
+{
+ "focal-only": {
+  "args": "outputs/runs/focal-only/args.json",
+  "commit": null,
+  "cv_fold": null,
+  "dirty": null,
+  "note": "trained before the registry existed; commit not recorded (args.json only)",
+  "results": "outputs/results/train_focal-only.json",
+  "rung": "baseline",
+  "seed": 0,
+  "select": "best",
+  "status": "done",
+  "train_domain": "focal"
+ },
+ "soundscape-only": {
+  "args": "outputs/runs/soundscape-only/args.json",
+  "commit": null,
+  "cv_fold": null,
+  "dirty": null,
+  "note": "trained before the registry existed; commit not recorded (args.json only)",
+  "results": "outputs/results/train_soundscape-only.json",
+  "rung": "baseline",
+  "seed": 0,
+  "select": "best",
+  "status": "done",
+  "train_domain": "soundscape"
+ }
+}
