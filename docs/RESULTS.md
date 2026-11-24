@@ -67,6 +67,12 @@ Metric definitions and the evaluation protocol: the docstring of `prototype_tran
 without opening any other file. `legacy: true` marks results copied from before the store existed: no commit was recorded
 for them, so they cannot be reproduced from a known state, and `--no-legacy` hides them.
 
+## Sharing results through git
+
+Commit `outputs/results/<dataset>/` (runs, summaries, `registry.jsonl`); features and checkpoints are git-ignored. `registry.jsonl` is append-only, so
+`.gitattributes` merges it with `merge=union`: when two branches each add runs, both sets of lines are kept. Use unique run ids (for example
+`<initials>-<idea>-<variant>`) so two people never write the same id.
+
 ## Writing results
 
 ```python

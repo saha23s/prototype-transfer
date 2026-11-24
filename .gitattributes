@@ -1,0 +1,2 @@
+# registry.jsonl is append-only, one independent JSON line per save: keep both sides on merge
+outputs/results/*/registry.jsonl merge=union
