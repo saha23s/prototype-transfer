@@ -1,16 +1,12 @@
-"""Plain-assert tests for the cross-validation folds in src/splits.py.  Run: python tests/test_splits.py"""
-import sys
+"""Plain-assert tests for the cross-validation folds in src/prototype_transfer/data/splits.py.  Run: python tests/test_splits.py"""
 import tempfile
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from train_protopnet import check_no_heldout  # noqa: E402
-from src.model import HSN_SPECIES_LIST  # noqa: E402
-from src.splits import site_of, soundscape_cv_folds  # noqa: E402
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
+from prototype_transfer.data.splits import check_no_heldout, fingerprint, site_of, soundscape_cv_folds, verify_split
 
 
 def _toy(n_sites: int = 31, clips: int = 6, seed: int = 0) -> pd.DataFrame:
@@ -63,8 +59,53 @@ def test_training_refuses_manifests_with_heldout_clips():
         try:
             check_no_heldout(d / "leaky.parquet", d / "heldout.parquet", "--bg-manifest")
             raise AssertionError("a manifest with held-out clips must be refused")
-        except SystemExit as e:
+        except ValueError as e:
             assert "held-out fold" in str(e)
+
+
+def _manifest(root: str, names: list[str], labels: list[list[str]]) -> pd.DataFrame:
+    return pd.DataFrame({"audio_path": [f"{root}/{n}" for n in names], "hsn_classes": labels})
+
+
+def test_fingerprint_ignores_location_and_order_but_not_clips_or_labels():
+    names, labels = ["a.ogg", "b.ogg", "c.ogg"], [["x"], [], ["y", "x"]]
+    base = fingerprint(_manifest("/data/one", names, labels))
+    assert base == fingerprint(_manifest("/elsewhere", names[::-1], labels[::-1]))          # other machine, other row order
+    assert base == fingerprint(_manifest("/data/one", names, [["x"], [], ["x", "y"]]))      # label order is irrelevant
+    assert base != fingerprint(_manifest("/data/one", names, [["x"], ["x"], ["y", "x"]]))   # a changed label
+    assert base != fingerprint(_manifest("/data/one", names[:2], labels[:2]))               # a missing clip
+    focal = pd.DataFrame({"audio_path": ["/d/XC1.ogg"], "ebird_code": ["amepip"], "recordist": ["r1"]})
+    assert fingerprint(focal) != fingerprint(focal.assign(recordist="r2"))                   # recordists enter the evaluation
+
+
+def test_verify_split_refuses_a_different_split_and_passes_unlisted_files():
+    import json
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        good = _manifest(str(tmp), ["a.ogg", "b.ogg"], [["x"], []])
+        good.to_parquet(tmp / "soundscape_test.parquet")
+        lock = tmp / "lock.json"
+        lock.write_text(json.dumps({"files": {"soundscape_test.parquet": fingerprint(good)}}))
+        verify_split(tmp / "soundscape_test.parquet", lock)
+        _manifest(str(tmp), ["a.ogg", "b.ogg"], [["x"], ["y"]]).to_parquet(tmp / "soundscape_test.parquet")
+        try:
+            verify_split(tmp / "soundscape_test.parquet", lock)
+        except ValueError as e:
+            assert "not the canonical split" in str(e) and "make_splits.py" in str(e)
+        else:
+            raise AssertionError("a different split must be refused")
+        good.to_parquet(tmp / "soundscape_background.parquet")     # derived manifests are not canonical splits
+        verify_split(tmp / "soundscape_background.parquet", lock)
+
+
+def test_committed_lock_covers_every_split_the_code_can_ask_for():
+    import json
+    from prototype_transfer.data.splits import SPLITS_LOCK
+    files = json.loads(SPLITS_LOCK.read_text())["files"]
+    wanted = {f"{d}_{p}.parquet" for d in ("focal", "soundscape") for p in ("train", "val", "test")}
+    wanted |= {f"soundscape_cv{f}_{p}.parquet" for f in range(3) for p in ("train", "heldout")}
+    assert wanted == set(files), wanted ^ set(files)
+    assert files["soundscape_test.parquet"]["n_clips"] == 3600 and files["focal_test.parquet"]["n_clips"] == 1157
 
 
 if __name__ == "__main__":

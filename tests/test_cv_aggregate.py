@@ -1,11 +1,8 @@
-"""Plain-assert tests for scripts/cv_aggregate.py.  Run: python tests/test_cv_aggregate.py"""
-import sys
-from pathlib import Path
+"""Plain-assert tests for src/prototype_transfer/evaluation/cv.py.  Run: python tests/test_cv_aggregate.py"""
 
 import numpy as np
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from cv_aggregate import KEYS, aggregate  # noqa: E402
+from prototype_transfer.evaluation.cv import KEYS, aggregate
 
 
 def _eval(fold: int, run_ap: float, base_ap: float) -> dict:

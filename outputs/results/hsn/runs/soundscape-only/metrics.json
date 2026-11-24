@@ -1,0 +1,28 @@
+{
+ "schema": 1,
+ "run_id": "soundscape-only",
+ "dataset": "hsn",
+ "sections": {
+  "train": {
+   "train_domain": "soundscape",
+   "selected_val": {
+    "focal": {
+     "cmAP": 0.7935799136673174,
+     "macro_auc": 0.9425387862364086
+    },
+    "soundscape": {
+     "cmAP": 0.6614018124861129,
+     "macro_auc": 0.9673205922859022
+    }
+   }
+  },
+  "prototype_transfer": {
+   "stats_file": "prototype_transfer.json",
+   "n_clips": {
+    "focal": 1157,
+    "soundscape": 3600
+   },
+   "min_soundscape_pos": 5
+  }
+ }
+}

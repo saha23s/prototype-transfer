@@ -1,5 +1,4 @@
-"""Plain-assert tests for src/mixing.py and the mixing options of src/train_dataset.py.  Run: python tests/test_mixing.py"""
-import sys
+"""Plain-assert tests for src/prototype_transfer/method/mixing.py and the mixing options of src/prototype_transfer/method/train_dataset.py.  Run: python tests/test_mixing.py"""
 import tempfile
 from pathlib import Path
 
@@ -8,9 +7,8 @@ import pandas as pd
 import soundfile as sf
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from src.mixing import coloured_noise, mix_at_snr, mix_background, mix_overlap, peak_guard, power, select_background  # noqa: E402
-from src.train_dataset import HSNPseudoDataset, HSNTrainDataset  # noqa: E402
+from prototype_transfer.method.mixing import coloured_noise, mix_at_snr, mix_background, mix_overlap, peak_guard, power, select_background
+from prototype_transfer.method.train_dataset import HSNPseudoDataset, HSNTrainDataset
 
 SR, T = 32_000, 160_000
 

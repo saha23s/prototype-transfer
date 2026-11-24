@@ -1,14 +1,10 @@
-"""Plain-assert tests for scripts/canonical_eval.py (pytest is not a project dependency).  Run: python tests/test_canonical_eval.py"""
-import sys
-from pathlib import Path
+"""Plain-assert tests for src/prototype_transfer/evaluation/canonical.py (pytest is not a project dependency).  Run: python tests/test_canonical_eval.py"""
 
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from canonical_eval import K, Model, metrics  # noqa: E402
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from src.metrics import ap_cols, auc_cols, cluster_indices  # noqa: E402
+from prototype_transfer.evaluation.canonical import K, Model, metrics
+from prototype_transfer.evaluation.metrics import ap_cols, auc_cols, cluster_indices
 
 
 def test_auc_cols_matches_sklearn_with_ties():

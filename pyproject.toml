@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [tool.uv]
-package = false
+package = true
 required-version = ">=0.11"
 # Only resolve for the platforms we actually use (Linux GPU boxes, macOS laptops).
 environments = ["sys_platform == 'linux'", "sys_platform == 'darwin'"]
@@ -38,3 +38,7 @@ torchaudio = [{ index = "pytorch-cu121", marker = "sys_platform == 'linux'" }]
 name = "pytorch-cu121"
 url = "https://download.pytorch.org/whl/cu121"
 explicit = true
+
+[build-system]
+requires = ["uv_build>=0.11,<0.14"]
+build-backend = "uv_build"
