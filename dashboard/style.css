@@ -228,3 +228,27 @@ svg .pt.mp.sel { opacity: 1; }
 svg .pt.mp.drift { stroke: var(--ink); stroke-width: 2; }
 #mp-table td .swatch { margin-right: 6px; }
 #mp-proto-table { font-size: 0.85rem; }
+
+/* Data splits and evaluation protocol (rendered by scripts/report/build_dashboard_protocol.py) */
+svg .seg.f-focal, svg .dot.focal { fill: var(--focal); }
+svg .seg.f-soundscape, svg .dot.soundscape { fill: var(--soundscape); }
+svg .cell { fill: var(--ink); font-size: 11px; font-variant-numeric: tabular-nums; }
+svg .role-P { fill: var(--ink); font-weight: 700; }
+svg .role-S, svg .role-none { fill: var(--ink-2); }
+#splits .chart, #protocol .chart { margin-top: 14px; }
+#splits h3, #protocol h3 { margin-top: 18px; }
+#splits .chart h3, #protocol .chart h3 { margin-top: 0; }
+.cv-grid { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 24px; align-items: start; }
+@media (max-width: 900px) { .cv-grid { grid-template-columns: 1fr; } }
+.cv-grid svg { max-width: 560px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.step { background: var(--card); border: 1px solid var(--grid); border-radius: 8px; padding: 12px 14px; }
+.step h3 { margin: 0 0 6px; }
+.step p { margin: 0; color: var(--ink-2); font-size: 0.9rem; }
+.step b { color: var(--ink); }
+table.mini { font-size: 0.85rem; }
+table.mini th, table.mini td { text-align: right; }
+table.mini th:first-child, table.mini td:first-child { text-align: left; }
+table.crit td, table.crit th { text-align: left; }
+table.crit td:first-child { width: 2em; }
+#splits code, #protocol code { font-size: 0.85em; }

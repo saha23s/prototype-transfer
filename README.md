@@ -16,7 +16,7 @@ On the held-out test sites, for the pretrained model on the 7 primary species:
 | macro AUC | 0.988 | 0.941 |
 
 Ranking still works on soundscapes (AUC drops little); the scores are what collapse. Prototype activations shrink to about 30% of their
-focal level, and 26 of 105 prototypes lose more than 0.1 AUC. What we found about why (diagnostics in
+focal level, and 26 of the 60 scored prototypes (12 species x 5) lose more than 0.1 AUC. What we found about why (diagnostics in
 `scripts/analysis/`, results in `outputs/results/hsn/summaries/diagnostics_stage2*.json`): it is not input normalisation; generic noise
 does not reproduce the shift; about half of the prototype-level drop comes from how focal clips are cropped (the loudest 5 s);
 false matches are mostly other birds. These diagnostics were run on the test split and should be repeated on validation / CV before
@@ -105,7 +105,9 @@ outputs/results/<dataset>/ committed results; outputs/features and outputs/check
 
 ### Dashboard
 
-`dashboard/index.html` is a static, offline page of the prototype-level findings (open it in a browser). Rebuild its data with
+`dashboard/index.html` is a static, offline page (open it in a browser): the data splits and the evaluation protocol, then the prototype-level
+findings. Re-render the splits and protocol sections after the splits or the baseline evaluation change with
+`python scripts/report/build_dashboard_protocol.py` (reads the results store only). Rebuild the findings data with
 `python scripts/report/build_dashboard_data.py` (needs the pretrained model's full-manifest responses:
 `scripts/analysis/extract_prototype_activations.py pretrained-xcl --tag full`, and the audio for the patch crops). Acceptance test:
 `npm i jsdom@24 && node dashboard/tests/check.mjs dashboard`.
