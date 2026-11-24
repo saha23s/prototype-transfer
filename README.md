@@ -85,7 +85,7 @@ responses of `scripts/analysis/diagnose_shift.py --task extract`. Cross-validati
 ## Layout
 
 ```
-src/prototype_transfer/   the package (editable install): data, models, method, training, evaluation, analysis
+src/prototype_transfer/   the package (editable install): data, models, method, training, evaluation, analysis, reporting
 scripts/                  thin command-line entry points: data/ train/ eval/ analysis/ method/ report/ slurm/
 configs/splits/hsn.json   checksums of the canonical splits
 docs/                     PROTOCOL.md (how models are scored), RESULTS.md (where numbers live)
@@ -99,9 +99,10 @@ outputs/results/<dataset>/ committed results; outputs/features and outputs/check
 | `data/` | loading, preprocessing (32 kHz, 5 s, 256-mel log-spectrogram, model's mean/std), splits and their checksums |
 | `models/` | the 21-class ProtoPNet and its checkpointing / prototype push |
 | `training/` | the four-phase trainer and losses |
-| `method/` | background mixing, species overlap, pseudo-label dataset (the recipe components) |
+| `method/` | background mixing, species overlap, pseudo-label dataset, label-free background / pseudo-label manifests (the recipe components) |
 | `evaluation/` | the canonical evaluation, CV aggregation, the results store |
 | `analysis/` | per-prototype responses and the domain-shift diagnostics |
+| `reporting/` | the dashboard's data bundle (statistics, findings, patches, model comparison) |
 
 ### Dashboard
 
