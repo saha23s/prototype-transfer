@@ -38131,5 +38131,5839 @@
     }
    }
   ]
+ },
+ "model_prototypes": {
+  "split": "test",
+  "species": [
+   "whcspa",
+   "amepip",
+   "rocwre",
+   "gcrfin",
+   "clanut",
+   "herthr",
+   "daejun",
+   "amerob",
+   "mouchi",
+   "foxspa",
+   "moublu",
+   "casfin",
+   "yerwar"
+  ],
+  "min_soundscape_pos": 5,
+  "drift_rule": "peak > 1 kHz on focal, < 0.2 kHz on soundscape",
+  "confusion_top_n": 20,
+  "models": [
+   {
+    "name": "pretrained-xcl",
+    "label": "Pretrained (XCL)",
+    "species": {
+     "gcrfin": {
+      "n": {
+       "focal": 3,
+       "soundscape": 165
+      },
+      "class_auc": {
+       "focal": 0.9263,
+       "soundscape": 0.9647
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.3725,
+        "focal": {
+         "auc": 0.7265,
+         "act_pos": 0.3283,
+         "act_neg": 0.0594,
+         "share": 0.1867,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9202,
+         "act_pos": 0.1226,
+         "act_neg": 0.0,
+         "share": 0.2344,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.408,
+         "top_species": "amepip",
+         "top_count": 6,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.0538,
+        "focal": {
+         "auc": 0.9887,
+         "act_pos": 0.5189,
+         "act_neg": 0.0664,
+         "share": 0.3743,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.8992,
+         "act_pos": 0.1666,
+         "act_neg": 0.0,
+         "share": 0.1868,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.408,
+         "top_species": "rocwre",
+         "top_count": 3,
+         "top_base": 0.067
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.3638,
+        "focal": {
+         "auc": 0.8749,
+         "act_pos": 0.3694,
+         "act_neg": 0.0667,
+         "share": 0.2556,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.8969,
+         "act_pos": 0.1448,
+         "act_neg": 0.0207,
+         "share": 0.2972,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.408,
+         "top_species": "amepip",
+         "top_count": 6,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.1719,
+        "focal": {
+         "auc": 0.712,
+         "act_pos": 0.0635,
+         "act_neg": 0.0352,
+         "share": 0.0727,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.7881,
+         "act_pos": 0.0496,
+         "act_neg": 0.0,
+         "share": 0.1068,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.206
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.5072,
+        "focal": {
+         "auc": 0.6961,
+         "act_pos": 0.0644,
+         "act_neg": 0.0475,
+         "share": 0.1108,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.848,
+         "act_pos": 0.0893,
+         "act_neg": 0.0,
+         "share": 0.1747,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.408,
+         "top_species": "amerob",
+         "top_count": 8,
+         "top_base": 0.011
+        },
+        "drift": false
+       }
+      ]
+     },
+     "whcspa": {
+      "n": {
+       "focal": 75,
+       "soundscape": 749
+      },
+      "class_auc": {
+       "focal": 0.9937,
+       "soundscape": 0.9232
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.6912,
+        "focal": {
+         "auc": 0.8916,
+         "act_pos": 0.172,
+         "act_neg": 0.0,
+         "share": 0.0707,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.6369,
+         "act_pos": 0.0,
+         "act_neg": 0.0,
+         "share": 0.0127,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.287,
+         "top_species": "clanut",
+         "top_count": 17,
+         "top_base": 0.04
+        },
+        "drift": true
+       },
+       {
+        "k": 2,
+        "weight": 2.3535,
+        "focal": {
+         "auc": 0.986,
+         "act_pos": 0.4056,
+         "act_neg": 0.0572,
+         "share": 0.3001,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9069,
+         "act_pos": 0.1448,
+         "act_neg": 0.0077,
+         "share": 0.3357,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.287,
+         "top_species": "rocwre",
+         "top_count": 3,
+         "top_base": 0.061
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.8546,
+        "focal": {
+         "auc": 0.9766,
+         "act_pos": 0.3053,
+         "act_neg": 0.0653,
+         "share": 0.1937,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8923,
+         "act_pos": 0.1389,
+         "act_neg": 0.0251,
+         "share": 0.2823,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.287,
+         "top_species": "herthr",
+         "top_count": 4,
+         "top_base": 0.032
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.3677,
+        "focal": {
+         "auc": 0.9824,
+         "act_pos": 0.3219,
+         "act_neg": 0.0772,
+         "share": 0.2578,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8984,
+         "act_pos": 0.1231,
+         "act_neg": 0.0173,
+         "share": 0.3065,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.287,
+         "top_species": "amepip",
+         "top_count": 3,
+         "top_base": 0.095
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.1277,
+        "focal": {
+         "auc": 0.8529,
+         "act_pos": 0.3731,
+         "act_neg": 0.0,
+         "share": 0.1776,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.62,
+         "act_pos": 0.0,
+         "act_neg": 0.0,
+         "share": 0.0628,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.287,
+         "top_species": "herthr",
+         "top_count": 14,
+         "top_base": 0.032
+        },
+        "drift": true
+       }
+      ]
+     },
+     "amepip": {
+      "n": {
+       "focal": 24,
+       "soundscape": 301
+      },
+      "class_auc": {
+       "focal": 0.9591,
+       "soundscape": 0.9271
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.6724,
+        "focal": {
+         "auc": 0.9499,
+         "act_pos": 0.1874,
+         "act_neg": 0.0307,
+         "share": 0.1743,
+         "peak_khz": 10.55
+        },
+        "soundscape": {
+         "auc": 0.7466,
+         "act_pos": 0.0309,
+         "act_neg": 0.0,
+         "share": 0.0928,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.2,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.8185,
+        "focal": {
+         "auc": 0.9017,
+         "act_pos": 0.3025,
+         "act_neg": 0.0368,
+         "share": 0.1903,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.86,
+         "act_pos": 0.0962,
+         "act_neg": 0.0,
+         "share": 0.1621,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.384,
+         "top_species": "gcrfin",
+         "top_count": 5,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.1483,
+        "focal": {
+         "auc": 0.9524,
+         "act_pos": 0.3127,
+         "act_neg": 0.0506,
+         "share": 0.2314,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8825,
+         "act_pos": 0.1303,
+         "act_neg": 0.0,
+         "share": 0.2711,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.0126,
+        "focal": {
+         "auc": 0.9575,
+         "act_pos": 0.2407,
+         "act_neg": 0.0443,
+         "share": 0.1975,
+         "peak_khz": 5.52
+        },
+        "soundscape": {
+         "auc": 0.7449,
+         "act_pos": 0.0572,
+         "act_neg": 0.0113,
+         "share": 0.2013,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.1744,
+        "focal": {
+         "auc": 0.9402,
+         "act_pos": 0.2654,
+         "act_neg": 0.0314,
+         "share": 0.2065,
+         "peak_khz": 7.63
+        },
+        "soundscape": {
+         "auc": 0.9126,
+         "act_pos": 0.1589,
+         "act_neg": 0.0,
+         "share": 0.2628,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.2,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.218
+        },
+        "drift": false
+       }
+      ]
+     },
+     "rocwre": {
+      "n": {
+       "focal": 22,
+       "soundscape": 237
+      },
+      "class_auc": {
+       "focal": 0.9993,
+       "soundscape": 0.9344
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.2943,
+        "focal": {
+         "auc": 0.9889,
+         "act_pos": 0.2274,
+         "act_neg": 0.0536,
+         "share": 0.0873,
+         "peak_khz": 2.65
+        },
+        "soundscape": {
+         "auc": 0.8031,
+         "act_pos": 0.0509,
+         "act_neg": 0.0104,
+         "share": 0.0851,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 7,
+         "top_base": 0.089
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.9034,
+        "focal": {
+         "auc": 0.9995,
+         "act_pos": 0.3493,
+         "act_neg": 0.0535,
+         "share": 0.2961,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9099,
+         "act_pos": 0.0987,
+         "act_neg": 0.0053,
+         "share": 0.2783,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 8,
+         "top_base": 0.089
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.7413,
+        "focal": {
+         "auc": 0.9997,
+         "act_pos": 0.3044,
+         "act_neg": 0.046,
+         "share": 0.2342,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8469,
+         "act_pos": 0.0752,
+         "act_neg": 0.0,
+         "share": 0.2216,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.204
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.6645,
+        "focal": {
+         "auc": 0.9911,
+         "act_pos": 0.1733,
+         "act_neg": 0.0,
+         "share": 0.0763,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7617,
+         "act_pos": 0.01,
+         "act_neg": 0.0,
+         "share": 0.0462,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 9,
+         "top_base": 0.089
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.7891,
+        "focal": {
+         "auc": 0.9989,
+         "act_pos": 0.384,
+         "act_neg": 0.0595,
+         "share": 0.3061,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8975,
+         "act_pos": 0.1501,
+         "act_neg": 0.0165,
+         "share": 0.3689,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 7,
+         "top_base": 0.089
+        },
+        "drift": false
+       }
+      ]
+     },
+     "daejun": {
+      "n": {
+       "focal": 93,
+       "soundscape": 47
+      },
+      "class_auc": {
+       "focal": 0.9839,
+       "soundscape": 0.8825
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.2948,
+        "focal": {
+         "auc": 0.9703,
+         "act_pos": 0.3278,
+         "act_neg": 0.0599,
+         "share": 0.3001,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.7831,
+         "act_pos": 0.046,
+         "act_neg": 0.0095,
+         "share": 0.2147,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 0.4225,
+        "focal": {
+         "auc": 0.7137,
+         "act_pos": 0.0319,
+         "act_neg": 0.0,
+         "share": 0.0094,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.5857,
+         "act_pos": 0.0,
+         "act_neg": 0.0,
+         "share": 0.014,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.21
+        },
+        "drift": true
+       },
+       {
+        "k": 3,
+        "weight": 2.5843,
+        "focal": {
+         "auc": 0.8913,
+         "act_pos": 0.3543,
+         "act_neg": 0.0298,
+         "share": 0.3027,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8387,
+         "act_pos": 0.1055,
+         "act_neg": 0.0,
+         "share": 0.2696,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 20,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.6276,
+        "focal": {
+         "auc": 0.9829,
+         "act_pos": 0.3179,
+         "act_neg": 0.0561,
+         "share": 0.3282,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8434,
+         "act_pos": 0.1006,
+         "act_neg": 0.0129,
+         "share": 0.337,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 20,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.0638,
+        "focal": {
+         "auc": 0.7142,
+         "act_pos": 0.0746,
+         "act_neg": 0.0515,
+         "share": 0.0596,
+         "peak_khz": 9.45
+        },
+        "soundscape": {
+         "auc": 0.7571,
+         "act_pos": 0.071,
+         "act_neg": 0.0101,
+         "share": 0.1648,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.21
+        },
+        "drift": false
+       }
+      ]
+     },
+     "foxspa": {
+      "n": {
+       "focal": 37,
+       "soundscape": 13
+      },
+      "class_auc": {
+       "focal": 0.9976,
+       "soundscape": 0.6405
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.9524,
+        "focal": {
+         "auc": 0.984,
+         "act_pos": 0.2563,
+         "act_neg": 0.0583,
+         "share": 0.1981,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.7162,
+         "act_pos": 0.056,
+         "act_neg": 0.0146,
+         "share": 0.4339,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 13,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.2268,
+        "focal": {
+         "auc": 0.9725,
+         "act_pos": 0.2572,
+         "act_neg": 0.0587,
+         "share": 0.2402,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.591,
+         "act_pos": 0.0099,
+         "act_neg": 0.0,
+         "share": 0.1435,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.2595,
+        "focal": {
+         "auc": 0.9215,
+         "act_pos": 0.3349,
+         "act_neg": 0.0518,
+         "share": 0.2578,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.6443,
+         "act_pos": 0.0089,
+         "act_neg": 0.0,
+         "share": 0.1805,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.3692,
+        "focal": {
+         "auc": 0.9783,
+         "act_pos": 0.247,
+         "act_neg": 0.0639,
+         "share": 0.1277,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.6156,
+         "act_pos": 0.0295,
+         "act_neg": 0.0083,
+         "share": 0.1582,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 9,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.5527,
+        "focal": {
+         "auc": 0.9138,
+         "act_pos": 0.3264,
+         "act_neg": 0.0453,
+         "share": 0.1762,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.5352,
+         "act_pos": 0.0116,
+         "act_neg": 0.007,
+         "share": 0.0839,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 9,
+         "top_base": 0.209
+        },
+        "drift": true
+       }
+      ]
+     },
+     "clanut": {
+      "n": {
+       "focal": 18,
+       "soundscape": 120
+      },
+      "class_auc": {
+       "focal": 0.999,
+       "soundscape": 0.944
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.0116,
+        "focal": {
+         "auc": 0.9963,
+         "act_pos": 0.3701,
+         "act_neg": 0.0512,
+         "share": 0.2823,
+         "peak_khz": 2.12
+        },
+        "soundscape": {
+         "auc": 0.903,
+         "act_pos": 0.1884,
+         "act_neg": 0.0234,
+         "share": 0.2296,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.416,
+         "top_species": "rocwre",
+         "top_count": 5,
+         "top_base": 0.064
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.2757,
+        "focal": {
+         "auc": 0.5188,
+         "act_pos": 0.0718,
+         "act_neg": 0.0563,
+         "share": 0.046,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.6128,
+         "act_pos": 0.0202,
+         "act_neg": 0.0,
+         "share": 0.0647,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 16,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.6378,
+        "focal": {
+         "auc": 0.9633,
+         "act_pos": 0.3358,
+         "act_neg": 0.0485,
+         "share": 0.3072,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.8763,
+         "act_pos": 0.1514,
+         "act_neg": 0.0345,
+         "share": 0.2974,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.2847,
+        "focal": {
+         "auc": 0.9919,
+         "act_pos": 0.3151,
+         "act_neg": 0.0092,
+         "share": 0.2237,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.8798,
+         "act_pos": 0.2132,
+         "act_neg": 0.0,
+         "share": 0.2174,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 8,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.3605,
+        "focal": {
+         "auc": 0.9466,
+         "act_pos": 0.2933,
+         "act_neg": 0.0865,
+         "share": 0.1408,
+         "peak_khz": 1.62
+        },
+        "soundscape": {
+         "auc": 0.8906,
+         "act_pos": 0.1844,
+         "act_neg": 0.0358,
+         "share": 0.1909,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.214
+        },
+        "drift": true
+       }
+      ]
+     },
+     "moublu": {
+      "n": {
+       "focal": 7,
+       "soundscape": 8
+      },
+      "class_auc": {
+       "focal": 0.904,
+       "soundscape": 0.9793
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.5402,
+        "focal": {
+         "auc": 0.7432,
+         "act_pos": 0.3736,
+         "act_neg": 0.0409,
+         "share": 0.2158,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9126,
+         "act_pos": 0.3707,
+         "act_neg": 0.0,
+         "share": 0.3952,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 7,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.6974,
+        "focal": {
+         "auc": 0.8289,
+         "act_pos": 0.1924,
+         "act_neg": 0.0622,
+         "share": 0.223,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9816,
+         "act_pos": 0.1478,
+         "act_neg": 0.0,
+         "share": 0.2201,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.5563,
+        "focal": {
+         "auc": 0.8906,
+         "act_pos": 0.2299,
+         "act_neg": 0.0435,
+         "share": 0.2366,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.8977,
+         "act_pos": 0.077,
+         "act_neg": 0.0,
+         "share": 0.107,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 9,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.8954,
+        "focal": {
+         "auc": 0.8708,
+         "act_pos": 0.1772,
+         "act_neg": 0.0608,
+         "share": 0.0991,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.8962,
+         "act_pos": 0.1211,
+         "act_neg": 0.0,
+         "share": 0.1219,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.208
+        },
+        "drift": true
+       },
+       {
+        "k": 5,
+        "weight": 1.628,
+        "focal": {
+         "auc": 0.9019,
+         "act_pos": 0.3126,
+         "act_neg": 0.0568,
+         "share": 0.2255,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9085,
+         "act_pos": 0.1181,
+         "act_neg": 0.0,
+         "share": 0.1557,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 8,
+         "top_base": 0.208
+        },
+        "drift": false
+       }
+      ]
+     },
+     "casfin": {
+      "n": {
+       "focal": 44,
+       "soundscape": 6
+      },
+      "class_auc": {
+       "focal": 0.9972,
+       "soundscape": 0.9982
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.9457,
+        "focal": {
+         "auc": 0.9652,
+         "act_pos": 0.2258,
+         "act_neg": 0.0438,
+         "share": 0.155,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9986,
+         "act_pos": 0.2574,
+         "act_neg": 0.0005,
+         "share": 0.2826,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 15,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.3172,
+        "focal": {
+         "auc": 0.9824,
+         "act_pos": 0.3679,
+         "act_neg": 0.0554,
+         "share": 0.1438,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.9757,
+         "act_pos": 0.2163,
+         "act_neg": 0.0077,
+         "share": 0.1388,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "gcrfin",
+         "top_count": 13,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.5383,
+        "focal": {
+         "auc": 0.9572,
+         "act_pos": 0.3458,
+         "act_neg": 0.0753,
+         "share": 0.1702,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.7392,
+         "act_pos": 0.0464,
+         "act_neg": 0.0192,
+         "share": 0.0474,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 10,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.1895,
+        "focal": {
+         "auc": 0.9968,
+         "act_pos": 0.4256,
+         "act_neg": 0.046,
+         "share": 0.2986,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9994,
+         "act_pos": 0.2564,
+         "act_neg": 0.0027,
+         "share": 0.3048,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 3,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.2475,
+        "focal": {
+         "auc": 0.9892,
+         "act_pos": 0.3405,
+         "act_neg": 0.041,
+         "share": 0.2324,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.8892,
+         "act_pos": 0.2313,
+         "act_neg": 0.0,
+         "share": 0.2265,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.208
+        },
+        "drift": false
+       }
+      ]
+     },
+     "herthr": {
+      "n": {
+       "focal": 75,
+       "soundscape": 95
+      },
+      "class_auc": {
+       "focal": 0.9876,
+       "soundscape": 0.9872
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.0798,
+        "focal": {
+         "auc": 0.9124,
+         "act_pos": 0.2117,
+         "act_neg": 0.0687,
+         "share": 0.0775,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.887,
+         "act_pos": 0.1043,
+         "act_neg": 0.017,
+         "share": 0.0934,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.1097,
+        "focal": {
+         "auc": 0.9316,
+         "act_pos": 0.3408,
+         "act_neg": 0.0306,
+         "share": 0.2142,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9914,
+         "act_pos": 0.2419,
+         "act_neg": 0.0,
+         "share": 0.328,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.2815,
+        "focal": {
+         "auc": 0.9353,
+         "act_pos": 0.3973,
+         "act_neg": 0.0426,
+         "share": 0.2592,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9825,
+         "act_pos": 0.2222,
+         "act_neg": 0.0,
+         "share": 0.3396,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.8303,
+        "focal": {
+         "auc": 0.9821,
+         "act_pos": 0.2133,
+         "act_neg": 0.0,
+         "share": 0.1263,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.646,
+         "act_pos": 0.0,
+         "act_neg": 0.0,
+         "share": 0.0154,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 18,
+         "top_base": 0.212
+        },
+        "drift": true
+       },
+       {
+        "k": 5,
+        "weight": 2.5532,
+        "focal": {
+         "auc": 0.9825,
+         "act_pos": 0.4049,
+         "act_neg": 0.0631,
+         "share": 0.3228,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9295,
+         "act_pos": 0.1154,
+         "act_neg": 0.0135,
+         "share": 0.2236,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 15,
+         "top_base": 0.212
+        },
+        "drift": false
+       }
+      ]
+     },
+     "amerob": {
+      "n": {
+       "focal": 120,
+       "soundscape": 38
+      },
+      "class_auc": {
+       "focal": 0.9918,
+       "soundscape": 0.9857
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.3137,
+        "focal": {
+         "auc": 0.9812,
+         "act_pos": 0.2721,
+         "act_neg": 0.0566,
+         "share": 0.2777,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9823,
+         "act_pos": 0.1168,
+         "act_neg": 0.0187,
+         "share": 0.3728,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.3717,
+        "focal": {
+         "auc": 0.7581,
+         "act_pos": 0.0921,
+         "act_neg": 0.0147,
+         "share": 0.0733,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9735,
+         "act_pos": 0.0761,
+         "act_neg": 0.0,
+         "share": 0.1613,
+         "peak_khz": 5.52
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.1345,
+        "focal": {
+         "auc": 0.9117,
+         "act_pos": 0.2172,
+         "act_neg": 0.0751,
+         "share": 0.1102,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.8811,
+         "act_pos": 0.0673,
+         "act_neg": 0.0222,
+         "share": 0.1181,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.0577,
+        "focal": {
+         "auc": 0.9595,
+         "act_pos": 0.3563,
+         "act_neg": 0.0523,
+         "share": 0.2967,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.8796,
+         "act_pos": 0.0519,
+         "act_neg": 0.0047,
+         "share": 0.2028,
+         "peak_khz": 4.41
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.43,
+         "top_species": "gcrfin",
+         "top_count": 5,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.0571,
+        "focal": {
+         "auc": 0.9708,
+         "act_pos": 0.2774,
+         "act_neg": 0.042,
+         "share": 0.2421,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.8933,
+         "act_pos": 0.0495,
+         "act_neg": 0.0,
+         "share": 0.1451,
+         "peak_khz": 5.52
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 3,
+         "top_base": 0.21
+        },
+        "drift": false
+       }
+      ]
+     },
+     "yerwar": {
+      "n": {
+       "focal": 43,
+       "soundscape": 5
+      },
+      "class_auc": {
+       "focal": 0.9357,
+       "soundscape": 0.977
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.4322,
+        "focal": {
+         "auc": 0.8953,
+         "act_pos": 0.2877,
+         "act_neg": 0.0944,
+         "share": 0.1949,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.991,
+         "act_pos": 0.215,
+         "act_neg": 0.0554,
+         "share": 0.3238,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 12,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.9014,
+        "focal": {
+         "auc": 0.8625,
+         "act_pos": 0.3405,
+         "act_neg": 0.0666,
+         "share": 0.2208,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8461,
+         "act_pos": 0.0591,
+         "act_neg": 0.0028,
+         "share": 0.1532,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.084,
+        "focal": {
+         "auc": 0.9304,
+         "act_pos": 0.3609,
+         "act_neg": 0.0667,
+         "share": 0.2911,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9061,
+         "act_pos": 0.1062,
+         "act_neg": 0.0043,
+         "share": 0.2277,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.337,
+        "focal": {
+         "auc": 0.8586,
+         "act_pos": 0.296,
+         "act_neg": 0.0846,
+         "share": 0.0482,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7401,
+         "act_pos": 0.0551,
+         "act_neg": 0.0013,
+         "share": 0.0196,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.1524,
+        "focal": {
+         "auc": 0.8981,
+         "act_pos": 0.3249,
+         "act_neg": 0.0434,
+         "share": 0.245,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9742,
+         "act_pos": 0.1414,
+         "act_neg": 0.0,
+         "share": 0.2757,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 17,
+         "top_base": 0.066
+        },
+        "drift": false
+       }
+      ]
+     },
+     "mouchi": {
+      "n": {
+       "focal": 52,
+       "soundscape": 16
+      },
+      "class_auc": {
+       "focal": 0.9824,
+       "soundscape": 0.9097
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.4175,
+        "focal": {
+         "auc": 0.9541,
+         "act_pos": 0.4201,
+         "act_neg": 0.0698,
+         "share": 0.2974,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8518,
+         "act_pos": 0.0981,
+         "act_neg": 0.0276,
+         "share": 0.2973,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 18,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.8601,
+        "focal": {
+         "auc": 0.9724,
+         "act_pos": 0.2277,
+         "act_neg": 0.0335,
+         "share": 0.1377,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.7713,
+         "act_pos": 0.0417,
+         "act_neg": 0.0,
+         "share": 0.0723,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 18,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.029,
+        "focal": {
+         "auc": 0.9792,
+         "act_pos": 0.3287,
+         "act_neg": 0.0475,
+         "share": 0.2154,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7961,
+         "act_pos": 0.0745,
+         "act_neg": 0.0177,
+         "share": 0.1859,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.4064,
+        "focal": {
+         "auc": 0.9769,
+         "act_pos": 0.3448,
+         "act_neg": 0.0484,
+         "share": 0.2658,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.85,
+         "act_pos": 0.109,
+         "act_neg": 0.007,
+         "share": 0.2902,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.433,
+         "top_species": "amepip",
+         "top_count": 10,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 0.9609,
+        "focal": {
+         "auc": 0.9761,
+         "act_pos": 0.2512,
+         "act_neg": 0.0514,
+         "share": 0.0837,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7994,
+         "act_pos": 0.127,
+         "act_neg": 0.0885,
+         "share": 0.1544,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.433,
+         "top_species": "herthr",
+         "top_count": 7,
+         "top_base": 0.025
+        },
+        "drift": false
+       }
+      ]
+     }
+    },
+    "summary": {
+     "n_protos": 65,
+     "auc_median": {
+      "focal": 0.9541,
+      "soundscape": 0.8798
+     },
+     "act_pos_median": {
+      "focal": 0.3126,
+      "soundscape": 0.1006
+     },
+     "act_neg_median": {
+      "focal": 0.0515,
+      "soundscape": 0.0013
+     },
+     "n_lose": 25,
+     "n_improve": 19,
+     "n_drift": 7,
+     "frac_other_median": 0.75,
+     "base_other_median": 0.428
+    }
+   },
+   {
+    "name": "focal-only",
+    "label": "Focal-only",
+    "species": {
+     "gcrfin": {
+      "n": {
+       "focal": 3,
+       "soundscape": 165
+      },
+      "class_auc": {
+       "focal": 0.9728,
+       "soundscape": 0.8917
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.386,
+        "focal": {
+         "auc": 0.7978,
+         "act_pos": 0.1867,
+         "act_neg": 0.1422,
+         "share": 0.128,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.7715,
+         "act_pos": 0.1616,
+         "act_neg": 0.1283,
+         "share": 0.2129,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.206
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.0688,
+        "focal": {
+         "auc": 0.9957,
+         "act_pos": 0.7648,
+         "act_neg": 0.2852,
+         "share": 0.4021,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7133,
+         "act_pos": 0.1228,
+         "act_neg": 0.1072,
+         "share": 0.1373,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.25,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.206
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.4104,
+        "focal": {
+         "auc": 0.9832,
+         "act_pos": 0.2351,
+         "act_neg": 0.1217,
+         "share": 0.2404,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8741,
+         "act_pos": 0.1237,
+         "act_neg": 0.0518,
+         "share": 0.1933,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.408,
+         "top_species": "amepip",
+         "top_count": 8,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.1822,
+        "focal": {
+         "auc": 0.794,
+         "act_pos": 0.1392,
+         "act_neg": 0.0872,
+         "share": 0.0829,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.7052,
+         "act_pos": 0.1198,
+         "act_neg": 0.0938,
+         "share": 0.1488,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.206
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.5189,
+        "focal": {
+         "auc": 0.7698,
+         "act_pos": 0.2213,
+         "act_neg": 0.1388,
+         "share": 0.1466,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.6367,
+         "act_pos": 0.1966,
+         "act_neg": 0.1844,
+         "share": 0.3077,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.408,
+         "top_species": "amerob",
+         "top_count": 8,
+         "top_base": 0.011
+        },
+        "drift": false
+       }
+      ]
+     },
+     "whcspa": {
+      "n": {
+       "focal": 75,
+       "soundscape": 749
+      },
+      "class_auc": {
+       "focal": 0.9925,
+       "soundscape": 0.8839
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.7025,
+        "focal": {
+         "auc": 0.9819,
+         "act_pos": 0.3879,
+         "act_neg": 0.1297,
+         "share": 0.1296,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8557,
+         "act_pos": 0.3303,
+         "act_neg": 0.2124,
+         "share": 0.1567,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.287,
+         "top_species": "amepip",
+         "top_count": 4,
+         "top_base": 0.095
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.3786,
+        "focal": {
+         "auc": 0.9625,
+         "act_pos": 0.361,
+         "act_neg": 0.154,
+         "share": 0.198,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8226,
+         "act_pos": 0.4065,
+         "act_neg": 0.2976,
+         "share": 0.2881,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.2,
+         "base_other": 0.287,
+         "top_species": "rocwre",
+         "top_count": 2,
+         "top_base": 0.061
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.8732,
+        "focal": {
+         "auc": 0.9806,
+         "act_pos": 0.4099,
+         "act_neg": 0.161,
+         "share": 0.1519,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8962,
+         "act_pos": 0.3617,
+         "act_neg": 0.2143,
+         "share": 0.187,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.287,
+         "top_species": "amepip",
+         "top_count": 4,
+         "top_base": 0.095
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.3906,
+        "focal": {
+         "auc": 0.9816,
+         "act_pos": 0.6864,
+         "act_neg": 0.1383,
+         "share": 0.2646,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7181,
+         "act_pos": 0.2633,
+         "act_neg": 0.2305,
+         "share": 0.2028,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.287,
+         "top_species": "amepip",
+         "top_count": 3,
+         "top_base": 0.095
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.1245,
+        "focal": {
+         "auc": 0.9814,
+         "act_pos": 0.7867,
+         "act_neg": 0.0868,
+         "share": 0.256,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7852,
+         "act_pos": 0.233,
+         "act_neg": 0.1699,
+         "share": 0.1655,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.287,
+         "top_species": "herthr",
+         "top_count": 6,
+         "top_base": 0.032
+        },
+        "drift": false
+       }
+      ]
+     },
+     "amepip": {
+      "n": {
+       "focal": 24,
+       "soundscape": 301
+      },
+      "class_auc": {
+       "focal": 0.9966,
+       "soundscape": 0.8705
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.7,
+        "focal": {
+         "auc": 0.9903,
+         "act_pos": 0.5429,
+         "act_neg": 0.1477,
+         "share": 0.1683,
+         "peak_khz": 11.66
+        },
+        "soundscape": {
+         "auc": 0.9038,
+         "act_pos": 0.2994,
+         "act_neg": 0.1016,
+         "share": 0.163,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.15,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 3,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.8492,
+        "focal": {
+         "auc": 0.9792,
+         "act_pos": 0.6139,
+         "act_neg": 0.1445,
+         "share": 0.191,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.846,
+         "act_pos": 0.402,
+         "act_neg": 0.2254,
+         "share": 0.2484,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.384,
+         "top_species": "gcrfin",
+         "top_count": 3,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.1889,
+        "focal": {
+         "auc": 0.9941,
+         "act_pos": 0.6453,
+         "act_neg": 0.0883,
+         "share": 0.229,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8366,
+         "act_pos": 0.3305,
+         "act_neg": 0.0985,
+         "share": 0.2117,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.2,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.0526,
+        "focal": {
+         "auc": 0.997,
+         "act_pos": 0.5657,
+         "act_neg": 0.0836,
+         "share": 0.2094,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7864,
+         "act_pos": 0.3096,
+         "act_neg": 0.1771,
+         "share": 0.2076,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 15,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.2138,
+        "focal": {
+         "auc": 0.9915,
+         "act_pos": 0.6058,
+         "act_neg": 0.062,
+         "share": 0.2023,
+         "peak_khz": 9.45
+        },
+        "soundscape": {
+         "auc": 0.8569,
+         "act_pos": 0.2733,
+         "act_neg": 0.0548,
+         "share": 0.1693,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.15,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 3,
+         "top_base": 0.218
+        },
+        "drift": false
+       }
+      ]
+     },
+     "rocwre": {
+      "n": {
+       "focal": 22,
+       "soundscape": 237
+      },
+      "class_auc": {
+       "focal": 0.9998,
+       "soundscape": 0.8903
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.2989,
+        "focal": {
+         "auc": 0.9968,
+         "act_pos": 0.7281,
+         "act_neg": 0.3493,
+         "share": 0.1266,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.8139,
+         "act_pos": 0.5118,
+         "act_neg": 0.4187,
+         "share": 0.2606,
+         "peak_khz": 1.02
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 5,
+         "top_base": 0.089
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.9074,
+        "focal": {
+         "auc": 0.9998,
+         "act_pos": 0.7105,
+         "act_neg": 0.1067,
+         "share": 0.2673,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8554,
+         "act_pos": 0.187,
+         "act_neg": 0.0854,
+         "share": 0.2059,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.396,
+         "top_species": "gcrfin",
+         "top_count": 7,
+         "top_base": 0.047
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.7435,
+        "focal": {
+         "auc": 0.9997,
+         "act_pos": 0.6539,
+         "act_neg": 0.1325,
+         "share": 0.2345,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8455,
+         "act_pos": 0.2003,
+         "act_neg": 0.121,
+         "share": 0.2191,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 8,
+         "top_base": 0.089
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.6599,
+        "focal": {
+         "auc": 0.896,
+         "act_pos": 0.5202,
+         "act_neg": 0.1443,
+         "share": 0.0971,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7802,
+         "act_pos": 0.1215,
+         "act_neg": 0.0957,
+         "share": 0.082,
+         "peak_khz": 1.02
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.204
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.7909,
+        "focal": {
+         "auc": 0.9998,
+         "act_pos": 0.7599,
+         "act_neg": 0.099,
+         "share": 0.2744,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8837,
+         "act_pos": 0.2263,
+         "act_neg": 0.0966,
+         "share": 0.2325,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.396,
+         "top_species": "amepip",
+         "top_count": 9,
+         "top_base": 0.089
+        },
+        "drift": false
+       }
+      ]
+     },
+     "daejun": {
+      "n": {
+       "focal": 93,
+       "soundscape": 47
+      },
+      "class_auc": {
+       "focal": 0.9888,
+       "soundscape": 0.8612
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.3257,
+        "focal": {
+         "auc": 0.9577,
+         "act_pos": 0.3791,
+         "act_neg": 0.1703,
+         "share": 0.2191,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8096,
+         "act_pos": 0.2747,
+         "act_neg": 0.2081,
+         "share": 0.2549,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 0.4316,
+        "focal": {
+         "auc": 0.9498,
+         "act_pos": 0.3201,
+         "act_neg": 0.139,
+         "share": 0.0309,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.822,
+         "act_pos": 0.1696,
+         "act_neg": 0.1166,
+         "share": 0.0327,
+         "peak_khz": 9.45
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 20,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.6119,
+        "focal": {
+         "auc": 0.9866,
+         "act_pos": 0.7738,
+         "act_neg": 0.11,
+         "share": 0.3811,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.869,
+         "act_pos": 0.2429,
+         "act_neg": 0.0955,
+         "share": 0.236,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.6594,
+        "focal": {
+         "auc": 0.9702,
+         "act_pos": 0.4285,
+         "act_neg": 0.1894,
+         "share": 0.2714,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.7813,
+         "act_pos": 0.3334,
+         "act_neg": 0.2479,
+         "share": 0.3499,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.0899,
+        "focal": {
+         "auc": 0.9424,
+         "act_pos": 0.3956,
+         "act_neg": 0.1575,
+         "share": 0.0975,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.897,
+         "act_pos": 0.2497,
+         "act_neg": 0.1444,
+         "share": 0.1265,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.21
+        },
+        "drift": false
+       }
+      ]
+     },
+     "foxspa": {
+      "n": {
+       "focal": 37,
+       "soundscape": 13
+      },
+      "class_auc": {
+       "focal": 0.9854,
+       "soundscape": 0.7751
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.9767,
+        "focal": {
+         "auc": 0.9873,
+         "act_pos": 0.6694,
+         "act_neg": 0.1356,
+         "share": 0.2295,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.6693,
+         "act_pos": 0.2083,
+         "act_neg": 0.1948,
+         "share": 0.1963,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.2408,
+        "focal": {
+         "auc": 0.9185,
+         "act_pos": 0.2814,
+         "act_neg": 0.1586,
+         "share": 0.1371,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7554,
+         "act_pos": 0.2837,
+         "act_neg": 0.2464,
+         "share": 0.2998,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.2825,
+        "focal": {
+         "auc": 0.9595,
+         "act_pos": 0.7599,
+         "act_neg": 0.1519,
+         "share": 0.2814,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.7328,
+         "act_pos": 0.2447,
+         "act_neg": 0.2274,
+         "share": 0.2668,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 13,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.3874,
+        "focal": {
+         "auc": 0.8808,
+         "act_pos": 0.6773,
+         "act_neg": 0.1872,
+         "share": 0.146,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.4887,
+         "act_pos": 0.1071,
+         "act_neg": 0.1081,
+         "share": 0.0713,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.5745,
+        "focal": {
+         "auc": 0.9801,
+         "act_pos": 0.7786,
+         "act_neg": 0.2027,
+         "share": 0.206,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.557,
+         "act_pos": 0.2146,
+         "act_neg": 0.2117,
+         "share": 0.1658,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.209
+        },
+        "drift": false
+       }
+      ]
+     },
+     "clanut": {
+      "n": {
+       "focal": 18,
+       "soundscape": 120
+      },
+      "class_auc": {
+       "focal": 0.9969,
+       "soundscape": 0.9654
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.0119,
+        "focal": {
+         "auc": 0.9965,
+         "act_pos": 0.6764,
+         "act_neg": 0.0758,
+         "share": 0.2122,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9232,
+         "act_pos": 0.3511,
+         "act_neg": 0.0829,
+         "share": 0.1823,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.416,
+         "top_species": "rocwre",
+         "top_count": 5,
+         "top_base": 0.064
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.2543,
+        "focal": {
+         "auc": 0.418,
+         "act_pos": 0.3496,
+         "act_neg": 0.352,
+         "share": 0.077,
+         "peak_khz": 5.52
+        },
+        "soundscape": {
+         "auc": 0.4938,
+         "act_pos": 0.3646,
+         "act_neg": 0.3646,
+         "share": 0.1515,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 18,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.6399,
+        "focal": {
+         "auc": 0.996,
+         "act_pos": 0.7724,
+         "act_neg": 0.1043,
+         "share": 0.3046,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9705,
+         "act_pos": 0.3822,
+         "act_neg": 0.1027,
+         "share": 0.2692,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.2828,
+        "focal": {
+         "auc": 0.998,
+         "act_pos": 0.7526,
+         "act_neg": 0.1619,
+         "share": 0.2583,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.9238,
+         "act_pos": 0.3864,
+         "act_neg": 0.1493,
+         "share": 0.2398,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.416,
+         "top_species": "rocwre",
+         "top_count": 6,
+         "top_base": 0.064
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.3518,
+        "focal": {
+         "auc": 0.9513,
+         "act_pos": 0.6864,
+         "act_neg": 0.2443,
+         "share": 0.1481,
+         "peak_khz": 0.08
+        },
+        "soundscape": {
+         "auc": 0.893,
+         "act_pos": 0.4136,
+         "act_neg": 0.2125,
+         "share": 0.1572,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.214
+        },
+        "drift": false
+       }
+      ]
+     },
+     "moublu": {
+      "n": {
+       "focal": 7,
+       "soundscape": 8
+      },
+      "class_auc": {
+       "focal": 0.8477,
+       "soundscape": 0.9592
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.5313,
+        "focal": {
+         "auc": 0.8579,
+         "act_pos": 0.5335,
+         "act_neg": 0.1004,
+         "share": 0.2238,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.8762,
+         "act_pos": 0.3319,
+         "act_neg": 0.0776,
+         "share": 0.2388,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 6,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.675,
+        "focal": {
+         "auc": 0.6055,
+         "act_pos": 0.1822,
+         "act_neg": 0.1573,
+         "share": 0.1537,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.3695,
+         "act_pos": 0.1866,
+         "act_neg": 0.1985,
+         "share": 0.1879,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.434,
+         "top_species": "herthr",
+         "top_count": 7,
+         "top_base": 0.026
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.5451,
+        "focal": {
+         "auc": 0.8675,
+         "act_pos": 0.4839,
+         "act_neg": 0.111,
+         "share": 0.2243,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9625,
+         "act_pos": 0.2876,
+         "act_neg": 0.0714,
+         "share": 0.2252,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.8748,
+        "focal": {
+         "auc": 0.8647,
+         "act_pos": 0.2978,
+         "act_neg": 0.1475,
+         "share": 0.0993,
+         "peak_khz": 0.08
+        },
+        "soundscape": {
+         "auc": 0.8262,
+         "act_pos": 0.1553,
+         "act_neg": 0.0516,
+         "share": 0.0757,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 10,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.6178,
+        "focal": {
+         "auc": 0.8404,
+         "act_pos": 0.5372,
+         "act_neg": 0.2495,
+         "share": 0.2989,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.8335,
+         "act_pos": 0.2826,
+         "act_neg": 0.2273,
+         "share": 0.2724,
+         "peak_khz": 1.2
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "amerob",
+         "top_count": 10,
+         "top_base": 0.011
+        },
+        "drift": false
+       }
+      ]
+     },
+     "casfin": {
+      "n": {
+       "focal": 44,
+       "soundscape": 6
+      },
+      "class_auc": {
+       "focal": 0.9975,
+       "soundscape": 0.9929
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.9676,
+        "focal": {
+         "auc": 0.9716,
+         "act_pos": 0.4005,
+         "act_neg": 0.2149,
+         "share": 0.1385,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9679,
+         "act_pos": 0.2851,
+         "act_neg": 0.1936,
+         "share": 0.1644,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 10,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.3376,
+        "focal": {
+         "auc": 0.9578,
+         "act_pos": 0.8071,
+         "act_neg": 0.2288,
+         "share": 0.1579,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7985,
+         "act_pos": 0.2293,
+         "act_neg": 0.2011,
+         "share": 0.0921,
+         "peak_khz": 0.35
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 15,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.5486,
+        "focal": {
+         "auc": 0.9647,
+         "act_pos": 0.6921,
+         "act_neg": 0.3466,
+         "share": 0.1726,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8125,
+         "act_pos": 0.5056,
+         "act_neg": 0.4525,
+         "share": 0.2378,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 6,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.2106,
+        "focal": {
+         "auc": 0.9977,
+         "act_pos": 0.6381,
+         "act_neg": 0.0894,
+         "share": 0.2346,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.969,
+         "act_pos": 0.4662,
+         "act_neg": 0.1071,
+         "share": 0.2591,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.435,
+         "top_species": "herthr",
+         "top_count": 4,
+         "top_base": 0.026
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.2681,
+        "focal": {
+         "auc": 0.9982,
+         "act_pos": 0.8345,
+         "act_neg": 0.1301,
+         "share": 0.2963,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9657,
+         "act_pos": 0.4025,
+         "act_neg": 0.2102,
+         "share": 0.2467,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 9,
+         "top_base": 0.066
+        },
+        "drift": false
+       }
+      ]
+     },
+     "herthr": {
+      "n": {
+       "focal": 75,
+       "soundscape": 95
+      },
+      "class_auc": {
+       "focal": 0.9843,
+       "soundscape": 0.8796
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.114,
+        "focal": {
+         "auc": 0.9378,
+         "act_pos": 0.6314,
+         "act_neg": 0.3132,
+         "share": 0.1172,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7717,
+         "act_pos": 0.2996,
+         "act_neg": 0.291,
+         "share": 0.1203,
+         "peak_khz": 0.25
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.1364,
+        "focal": {
+         "auc": 0.9796,
+         "act_pos": 0.7845,
+         "act_neg": 0.0855,
+         "share": 0.2203,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9545,
+         "act_pos": 0.499,
+         "act_neg": 0.1052,
+         "share": 0.2775,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 15,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.3101,
+        "focal": {
+         "auc": 0.9763,
+         "act_pos": 0.7802,
+         "act_neg": 0.0942,
+         "share": 0.2358,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8515,
+         "act_pos": 0.4441,
+         "act_neg": 0.1399,
+         "share": 0.2551,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.8671,
+        "focal": {
+         "auc": 0.9836,
+         "act_pos": 0.5263,
+         "act_neg": 0.0914,
+         "share": 0.1704,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8238,
+         "act_pos": 0.2498,
+         "act_neg": 0.135,
+         "share": 0.1373,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 16,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.5915,
+        "focal": {
+         "auc": 0.9739,
+         "act_pos": 0.7427,
+         "act_neg": 0.0938,
+         "share": 0.2563,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.7449,
+         "act_pos": 0.2726,
+         "act_neg": 0.177,
+         "share": 0.2098,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.212
+        },
+        "drift": false
+       }
+      ]
+     },
+     "amerob": {
+      "n": {
+       "focal": 120,
+       "soundscape": 38
+      },
+      "class_auc": {
+       "focal": 0.9949,
+       "soundscape": 0.9937
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.3677,
+        "focal": {
+         "auc": 0.9884,
+         "act_pos": 0.4696,
+         "act_neg": 0.1095,
+         "share": 0.2266,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9908,
+         "act_pos": 0.2854,
+         "act_neg": 0.0735,
+         "share": 0.2735,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.43,
+         "top_species": "gcrfin",
+         "top_count": 10,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.4191,
+        "focal": {
+         "auc": 0.9413,
+         "act_pos": 0.3695,
+         "act_neg": 0.1414,
+         "share": 0.1148,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9965,
+         "act_pos": 0.4298,
+         "act_neg": 0.1258,
+         "share": 0.2233,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 13,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.1875,
+        "focal": {
+         "auc": 0.9177,
+         "act_pos": 0.8143,
+         "act_neg": 0.3011,
+         "share": 0.1572,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.807,
+         "act_pos": 0.2853,
+         "act_neg": 0.2504,
+         "share": 0.1288,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.1107,
+        "focal": {
+         "auc": 0.9852,
+         "act_pos": 0.858,
+         "act_neg": 0.1552,
+         "share": 0.2873,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.5665,
+         "act_pos": 0.1647,
+         "act_neg": 0.1587,
+         "share": 0.143,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.114,
+        "focal": {
+         "auc": 0.9925,
+         "act_pos": 0.4968,
+         "act_neg": 0.1074,
+         "share": 0.214,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9889,
+         "act_pos": 0.2942,
+         "act_neg": 0.0792,
+         "share": 0.2315,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.43,
+         "top_species": "gcrfin",
+         "top_count": 4,
+         "top_base": 0.046
+        },
+        "drift": false
+       }
+      ]
+     },
+     "yerwar": {
+      "n": {
+       "focal": 43,
+       "soundscape": 5
+      },
+      "class_auc": {
+       "focal": 0.9787,
+       "soundscape": 0.9795
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.446,
+        "focal": {
+         "auc": 0.9434,
+         "act_pos": 0.6929,
+         "act_neg": 0.2464,
+         "share": 0.1873,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9922,
+         "act_pos": 0.6678,
+         "act_neg": 0.2547,
+         "share": 0.2477,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 16,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.9092,
+        "focal": {
+         "auc": 0.9772,
+         "act_pos": 0.7638,
+         "act_neg": 0.1844,
+         "share": 0.2471,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9374,
+         "act_pos": 0.4067,
+         "act_neg": 0.2922,
+         "share": 0.2225,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 10,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.0989,
+        "focal": {
+         "auc": 0.9781,
+         "act_pos": 0.7042,
+         "act_neg": 0.2087,
+         "share": 0.2674,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8601,
+         "act_pos": 0.4354,
+         "act_neg": 0.3406,
+         "share": 0.2609,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.435,
+         "top_species": "amepip",
+         "top_count": 6,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.3511,
+        "focal": {
+         "auc": 0.8637,
+         "act_pos": 0.7935,
+         "act_neg": 0.4829,
+         "share": 0.0539,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.5255,
+         "act_pos": 0.4433,
+         "act_neg": 0.4416,
+         "share": 0.0458,
+         "peak_khz": 1.02
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.1667,
+        "focal": {
+         "auc": 0.9795,
+         "act_pos": 0.5802,
+         "act_neg": 0.1307,
+         "share": 0.2444,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9643,
+         "act_pos": 0.3403,
+         "act_neg": 0.1762,
+         "share": 0.2231,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 16,
+         "top_base": 0.066
+        },
+        "drift": false
+       }
+      ]
+     },
+     "mouchi": {
+      "n": {
+       "focal": 52,
+       "soundscape": 16
+      },
+      "class_auc": {
+       "focal": 0.9962,
+       "soundscape": 0.7285
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.4183,
+        "focal": {
+         "auc": 0.9814,
+         "act_pos": 0.7562,
+         "act_neg": 0.1981,
+         "share": 0.2853,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.6978,
+         "act_pos": 0.3452,
+         "act_neg": 0.3004,
+         "share": 0.2214,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 10,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.8667,
+        "focal": {
+         "auc": 0.9875,
+         "act_pos": 0.6897,
+         "act_neg": 0.1192,
+         "share": 0.1998,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.6912,
+         "act_pos": 0.335,
+         "act_neg": 0.2865,
+         "share": 0.1667,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.433,
+         "top_species": "herthr",
+         "top_count": 12,
+         "top_base": 0.025
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.0312,
+        "focal": {
+         "auc": 0.9893,
+         "act_pos": 0.4379,
+         "act_neg": 0.1581,
+         "share": 0.1736,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7186,
+         "act_pos": 0.3207,
+         "act_neg": 0.2774,
+         "share": 0.2071,
+         "peak_khz": 9.45
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.4168,
+        "focal": {
+         "auc": 0.9926,
+         "act_pos": 0.6392,
+         "act_neg": 0.1852,
+         "share": 0.2602,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.7429,
+         "act_pos": 0.321,
+         "act_neg": 0.2815,
+         "share": 0.2513,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 0.9626,
+        "focal": {
+         "auc": 0.891,
+         "act_pos": 0.4716,
+         "act_neg": 0.1247,
+         "share": 0.0812,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.51,
+         "act_pos": 0.5803,
+         "act_neg": 0.5799,
+         "share": 0.1536,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.433,
+         "top_species": "herthr",
+         "top_count": 15,
+         "top_base": 0.025
+        },
+        "drift": false
+       }
+      ]
+     }
+    },
+    "summary": {
+     "n_protos": 65,
+     "auc_median": {
+      "focal": 0.9792,
+      "soundscape": 0.8238
+     },
+     "act_pos_median": {
+      "focal": 0.6381,
+      "soundscape": 0.2942
+     },
+     "act_neg_median": {
+      "focal": 0.1443,
+      "soundscape": 0.1771
+     },
+     "n_lose": 41,
+     "n_improve": 6,
+     "n_drift": 0,
+     "frac_other_median": 0.7,
+     "base_other_median": 0.428
+    }
+   },
+   {
+    "name": "soundscape-only",
+    "label": "Soundscape-only",
+    "species": {
+     "gcrfin": {
+      "n": {
+       "focal": 3,
+       "soundscape": 165
+      },
+      "class_auc": {
+       "focal": 0.9425,
+       "soundscape": 0.9813
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.4054,
+        "focal": {
+         "auc": 0.8951,
+         "act_pos": 0.4949,
+         "act_neg": 0.1712,
+         "share": 0.2315,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9753,
+         "act_pos": 0.578,
+         "act_neg": 0.1783,
+         "share": 0.22,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.408,
+         "top_species": "amepip",
+         "top_count": 6,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.0774,
+        "focal": {
+         "auc": 0.9882,
+         "act_pos": 0.793,
+         "act_neg": 0.241,
+         "share": 0.3002,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.9656,
+         "act_pos": 0.8098,
+         "act_neg": 0.4329,
+         "share": 0.2436,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.408,
+         "top_species": "rocwre",
+         "top_count": 4,
+         "top_base": 0.067
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.3921,
+        "focal": {
+         "auc": 0.9131,
+         "act_pos": 0.4602,
+         "act_neg": 0.1508,
+         "share": 0.2268,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9753,
+         "act_pos": 0.5436,
+         "act_neg": 0.1267,
+         "share": 0.2142,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.408,
+         "top_species": "amepip",
+         "top_count": 7,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.1699,
+        "focal": {
+         "auc": 0.7811,
+         "act_pos": 0.1854,
+         "act_neg": 0.1094,
+         "share": 0.0896,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9206,
+         "act_pos": 0.2864,
+         "act_neg": 0.0527,
+         "share": 0.112,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.206
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.5288,
+        "focal": {
+         "auc": 0.6918,
+         "act_pos": 0.2675,
+         "act_neg": 0.2059,
+         "share": 0.1519,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.904,
+         "act_pos": 0.4424,
+         "act_neg": 0.2544,
+         "share": 0.2103,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.408,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.206
+        },
+        "drift": false
+       }
+      ]
+     },
+     "whcspa": {
+      "n": {
+       "focal": 75,
+       "soundscape": 749
+      },
+      "class_auc": {
+       "focal": 0.983,
+       "soundscape": 0.9659
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.6061,
+        "focal": {
+         "auc": 0.9684,
+         "act_pos": 0.3863,
+         "act_neg": 0.0973,
+         "share": 0.1288,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9586,
+         "act_pos": 0.4331,
+         "act_neg": 0.0178,
+         "share": 0.1685,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.05,
+         "base_other": 0.287,
+         "top_species": "rocwre",
+         "top_count": 1,
+         "top_base": 0.061
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.2897,
+        "focal": {
+         "auc": 0.9515,
+         "act_pos": 0.4001,
+         "act_neg": 0.1401,
+         "share": 0.2143,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9534,
+         "act_pos": 0.6009,
+         "act_neg": 0.1452,
+         "share": 0.3004,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.1,
+         "base_other": 0.287,
+         "top_species": "gcrfin",
+         "top_count": 1,
+         "top_base": 0.044
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.7836,
+        "focal": {
+         "auc": 0.9568,
+         "act_pos": 0.5445,
+         "act_neg": 0.1566,
+         "share": 0.1698,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8732,
+         "act_pos": 0.3033,
+         "act_neg": 0.183,
+         "share": 0.1437,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.287,
+         "top_species": "herthr",
+         "top_count": 7,
+         "top_base": 0.032
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.2976,
+        "focal": {
+         "auc": 0.9785,
+         "act_pos": 0.6086,
+         "act_neg": 0.1373,
+         "share": 0.2529,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9321,
+         "act_pos": 0.4247,
+         "act_neg": 0.1627,
+         "share": 0.2264,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.287,
+         "top_species": "foxspa",
+         "top_count": 4,
+         "top_base": 0.005
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.011,
+        "focal": {
+         "auc": 0.9746,
+         "act_pos": 0.7252,
+         "act_neg": 0.0959,
+         "share": 0.2343,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9423,
+         "act_pos": 0.3421,
+         "act_neg": 0.004,
+         "share": 0.161,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.5,
+         "base_other": 0.287,
+         "top_species": "herthr",
+         "top_count": 6,
+         "top_base": 0.032
+        },
+        "drift": false
+       }
+      ]
+     },
+     "amepip": {
+      "n": {
+       "focal": 24,
+       "soundscape": 301
+      },
+      "class_auc": {
+       "focal": 0.9777,
+       "soundscape": 0.9792
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.5509,
+        "focal": {
+         "auc": 0.9155,
+         "act_pos": 0.5351,
+         "act_neg": 0.1861,
+         "share": 0.1818,
+         "peak_khz": 9.45
+        },
+        "soundscape": {
+         "auc": 0.7831,
+         "act_pos": 0.5587,
+         "act_neg": 0.2889,
+         "share": 0.1943,
+         "peak_khz": 9.45
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.15,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 3,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.7412,
+        "focal": {
+         "auc": 0.9267,
+         "act_pos": 0.3643,
+         "act_neg": 0.1086,
+         "share": 0.1409,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.938,
+         "act_pos": 0.26,
+         "act_neg": 0.0459,
+         "share": 0.1028,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.384,
+         "top_species": "rocwre",
+         "top_count": 9,
+         "top_base": 0.071
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.0619,
+        "focal": {
+         "auc": 0.9818,
+         "act_pos": 0.5131,
+         "act_neg": 0.2026,
+         "share": 0.2302,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9736,
+         "act_pos": 0.533,
+         "act_neg": 0.2619,
+         "share": 0.2567,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.384,
+         "top_species": "gcrfin",
+         "top_count": 4,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.9251,
+        "focal": {
+         "auc": 0.9787,
+         "act_pos": 0.4697,
+         "act_neg": 0.1266,
+         "share": 0.2203,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9669,
+         "act_pos": 0.4614,
+         "act_neg": 0.1628,
+         "share": 0.2268,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.218
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.0886,
+        "focal": {
+         "auc": 0.9622,
+         "act_pos": 0.4767,
+         "act_neg": 0.1074,
+         "share": 0.2268,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9683,
+         "act_pos": 0.4255,
+         "act_neg": 0.0886,
+         "share": 0.2195,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.384,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.218
+        },
+        "drift": false
+       }
+      ]
+     },
+     "rocwre": {
+      "n": {
+       "focal": 22,
+       "soundscape": 237
+      },
+      "class_auc": {
+       "focal": 0.9996,
+       "soundscape": 0.9702
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.1491,
+        "focal": {
+         "auc": 0.9962,
+         "act_pos": 0.7229,
+         "act_neg": 0.4341,
+         "share": 0.132,
+         "peak_khz": 1.02
+        },
+        "soundscape": {
+         "auc": 0.9646,
+         "act_pos": 0.6706,
+         "act_neg": 0.4374,
+         "share": 0.1529,
+         "peak_khz": 1.02
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.396,
+         "top_species": "gcrfin",
+         "top_count": 3,
+         "top_base": 0.047
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 2.726,
+        "focal": {
+         "auc": 0.9997,
+         "act_pos": 0.6452,
+         "act_neg": 0.1203,
+         "share": 0.2705,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9722,
+         "act_pos": 0.4795,
+         "act_neg": 0.0951,
+         "share": 0.2258,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.204
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.5661,
+        "focal": {
+         "auc": 0.9991,
+         "act_pos": 0.5789,
+         "act_neg": 0.2072,
+         "share": 0.2278,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.8988,
+         "act_pos": 0.5069,
+         "act_neg": 0.3187,
+         "share": 0.2488,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.204
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.4481,
+        "focal": {
+         "auc": 0.8155,
+         "act_pos": 0.479,
+         "act_neg": 0.1688,
+         "share": 0.094,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.7403,
+         "act_pos": 0.406,
+         "act_neg": 0.2192,
+         "share": 0.115,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.204
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.6188,
+        "focal": {
+         "auc": 0.9995,
+         "act_pos": 0.6757,
+         "act_neg": 0.1875,
+         "share": 0.2757,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9697,
+         "act_pos": 0.5379,
+         "act_neg": 0.2049,
+         "share": 0.2575,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.4,
+         "base_other": 0.396,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.204
+        },
+        "drift": false
+       }
+      ]
+     },
+     "daejun": {
+      "n": {
+       "focal": 93,
+       "soundscape": 47
+      },
+      "class_auc": {
+       "focal": 0.9527,
+       "soundscape": 0.8794
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.1842,
+        "focal": {
+         "auc": 0.9434,
+         "act_pos": 0.7423,
+         "act_neg": 0.1501,
+         "share": 0.2848,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8596,
+         "act_pos": 0.2915,
+         "act_neg": 0.1171,
+         "share": 0.3015,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.428,
+         "top_species": "rocwre",
+         "top_count": 6,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 0.2246,
+        "focal": {
+         "auc": 0.5755,
+         "act_pos": 0.2335,
+         "act_neg": 0.2251,
+         "share": 0.0157,
+         "peak_khz": 11.66
+        },
+        "soundscape": {
+         "auc": 0.5903,
+         "act_pos": 0.2526,
+         "act_neg": 0.2285,
+         "share": 0.0409,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 17,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.4689,
+        "focal": {
+         "auc": 0.9411,
+         "act_pos": 0.7441,
+         "act_neg": 0.1025,
+         "share": 0.3012,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8759,
+         "act_pos": 0.2646,
+         "act_neg": 0.0367,
+         "share": 0.2479,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 9,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.5123,
+        "focal": {
+         "auc": 0.9545,
+         "act_pos": 0.7673,
+         "act_neg": 0.1091,
+         "share": 0.3191,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8743,
+         "act_pos": 0.257,
+         "act_neg": 0.0535,
+         "share": 0.2561,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 0.9068,
+        "focal": {
+         "auc": 0.9315,
+         "act_pos": 0.3411,
+         "act_neg": 0.127,
+         "share": 0.0792,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.8704,
+         "act_pos": 0.3733,
+         "act_neg": 0.0655,
+         "share": 0.1537,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.428,
+         "top_species": "whcspa",
+         "top_count": 19,
+         "top_base": 0.21
+        },
+        "drift": false
+       }
+      ]
+     },
+     "foxspa": {
+      "n": {
+       "focal": 37,
+       "soundscape": 13
+      },
+      "class_auc": {
+       "focal": 0.807,
+       "soundscape": 0.904
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.6088,
+        "focal": {
+         "auc": 0.8172,
+         "act_pos": 0.2587,
+         "act_neg": 0.1524,
+         "share": 0.1886,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8923,
+         "act_pos": 0.63,
+         "act_neg": 0.1797,
+         "share": 0.2209,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.8556,
+        "focal": {
+         "auc": 0.7588,
+         "act_pos": 0.2548,
+         "act_neg": 0.1608,
+         "share": 0.213,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8706,
+         "act_pos": 0.554,
+         "act_neg": 0.1556,
+         "share": 0.2285,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 14,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.9012,
+        "focal": {
+         "auc": 0.7357,
+         "act_pos": 0.2576,
+         "act_neg": 0.1667,
+         "share": 0.2179,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8672,
+         "act_pos": 0.5134,
+         "act_neg": 0.1828,
+         "share": 0.2293,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 13,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.0381,
+        "focal": {
+         "auc": 0.5759,
+         "act_pos": 0.4054,
+         "act_neg": 0.3915,
+         "share": 0.2047,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.5503,
+         "act_pos": 0.7104,
+         "act_neg": 0.6725,
+         "share": 0.2003,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.1,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 1,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.2118,
+        "focal": {
+         "auc": 0.8211,
+         "act_pos": 0.3125,
+         "act_neg": 0.197,
+         "share": 0.1757,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.907,
+         "act_pos": 0.2999,
+         "act_neg": 0.1802,
+         "share": 0.1209,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.434,
+         "top_species": "herthr",
+         "top_count": 16,
+         "top_base": 0.026
+        },
+        "drift": false
+       }
+      ]
+     },
+     "clanut": {
+      "n": {
+       "focal": 18,
+       "soundscape": 120
+      },
+      "class_auc": {
+       "focal": 0.996,
+       "soundscape": 0.9943
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.8628,
+        "focal": {
+         "auc": 0.9913,
+         "act_pos": 0.6488,
+         "act_neg": 0.1221,
+         "share": 0.2139,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9908,
+         "act_pos": 0.5636,
+         "act_neg": 0.1301,
+         "share": 0.1915,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.3,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.1227,
+        "focal": {
+         "auc": 0.9753,
+         "act_pos": 0.2749,
+         "act_neg": 0.0881,
+         "share": 0.0641,
+         "peak_khz": 2.12
+        },
+        "soundscape": {
+         "auc": 0.989,
+         "act_pos": 0.2756,
+         "act_neg": 0.0486,
+         "share": 0.0729,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.214
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.5072,
+        "focal": {
+         "auc": 0.9929,
+         "act_pos": 0.7279,
+         "act_neg": 0.0788,
+         "share": 0.3141,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9954,
+         "act_pos": 0.5901,
+         "act_neg": 0.0825,
+         "share": 0.2819,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.35,
+         "base_other": 0.416,
+         "top_species": "rocwre",
+         "top_count": 5,
+         "top_base": 0.064
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.1143,
+        "focal": {
+         "auc": 0.9948,
+         "act_pos": 0.7601,
+         "act_neg": 0.1606,
+         "share": 0.2672,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9875,
+         "act_pos": 0.723,
+         "act_neg": 0.2245,
+         "share": 0.2914,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.25,
+         "base_other": 0.416,
+         "top_species": "rocwre",
+         "top_count": 4,
+         "top_base": 0.064
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.2178,
+        "focal": {
+         "auc": 0.9764,
+         "act_pos": 0.6441,
+         "act_neg": 0.175,
+         "share": 0.1406,
+         "peak_khz": 1.05
+        },
+        "soundscape": {
+         "auc": 0.9892,
+         "act_pos": 0.7287,
+         "act_neg": 0.1604,
+         "share": 0.1623,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.2,
+         "base_other": 0.416,
+         "top_species": "whcspa",
+         "top_count": 3,
+         "top_base": 0.214
+        },
+        "drift": true
+       }
+      ]
+     },
+     "moublu": {
+      "n": {
+       "focal": 7,
+       "soundscape": 8
+      },
+      "class_auc": {
+       "focal": 0.8611,
+       "soundscape": 0.9633
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.4664,
+        "focal": {
+         "auc": 0.7904,
+         "act_pos": 0.5527,
+         "act_neg": 0.1271,
+         "share": 0.2227,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9116,
+         "act_pos": 0.6373,
+         "act_neg": 0.1064,
+         "share": 0.2264,
+         "peak_khz": 1.85
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.434,
+         "top_species": "whcspa",
+         "top_count": 4,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.6142,
+        "focal": {
+         "auc": 0.8343,
+         "act_pos": 0.4044,
+         "act_neg": 0.1302,
+         "share": 0.2238,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9376,
+         "act_pos": 0.5254,
+         "act_neg": 0.1052,
+         "share": 0.2163,
+         "peak_khz": 2.4
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 6,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.4722,
+        "focal": {
+         "auc": 0.876,
+         "act_pos": 0.5028,
+         "act_neg": 0.1236,
+         "share": 0.2036,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9813,
+         "act_pos": 0.6091,
+         "act_neg": 0.0988,
+         "share": 0.2439,
+         "peak_khz": 2.12
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 9,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.8045,
+        "focal": {
+         "auc": 0.848,
+         "act_pos": 0.4363,
+         "act_neg": 0.2054,
+         "share": 0.1183,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.934,
+         "act_pos": 0.5336,
+         "act_neg": 0.1719,
+         "share": 0.1121,
+         "peak_khz": 0.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 6,
+         "top_base": 0.046
+        },
+        "drift": true
+       },
+       {
+        "k": 5,
+        "weight": 1.5616,
+        "focal": {
+         "auc": 0.9032,
+         "act_pos": 0.5003,
+         "act_neg": 0.0934,
+         "share": 0.2315,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.9817,
+         "act_pos": 0.5065,
+         "act_neg": 0.0527,
+         "share": 0.2012,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.434,
+         "top_species": "gcrfin",
+         "top_count": 6,
+         "top_base": 0.046
+        },
+        "drift": false
+       }
+      ]
+     },
+     "casfin": {
+      "n": {
+       "focal": 44,
+       "soundscape": 6
+      },
+      "class_auc": {
+       "focal": 0.9941,
+       "soundscape": 0.9864
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.753,
+        "focal": {
+         "auc": 0.9937,
+         "act_pos": 0.4506,
+         "act_neg": 0.1011,
+         "share": 0.2067,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9827,
+         "act_pos": 0.8278,
+         "act_neg": 0.0448,
+         "share": 0.2184,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.95,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.1154,
+        "focal": {
+         "auc": 0.9177,
+         "act_pos": 0.4623,
+         "act_neg": 0.331,
+         "share": 0.1351,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.709,
+         "act_pos": 0.5042,
+         "act_neg": 0.402,
+         "share": 0.1246,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.435,
+         "top_species": "gcrfin",
+         "top_count": 6,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.337,
+        "focal": {
+         "auc": 0.8186,
+         "act_pos": 0.5286,
+         "act_neg": 0.4505,
+         "share": 0.185,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8366,
+         "act_pos": 0.5051,
+         "act_neg": 0.4661,
+         "share": 0.1537,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.45,
+         "base_other": 0.435,
+         "top_species": "gcrfin",
+         "top_count": 3,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.9991,
+        "focal": {
+         "auc": 0.994,
+         "act_pos": 0.4546,
+         "act_neg": 0.0981,
+         "share": 0.2351,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.981,
+         "act_pos": 0.8357,
+         "act_neg": 0.0357,
+         "share": 0.2493,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.0539,
+        "focal": {
+         "auc": 0.994,
+         "act_pos": 0.4463,
+         "act_neg": 0.0969,
+         "share": 0.2381,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.98,
+         "act_pos": 0.8315,
+         "act_neg": 0.034,
+         "share": 0.254,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.208
+        },
+        "drift": false
+       }
+      ]
+     },
+     "herthr": {
+      "n": {
+       "focal": 75,
+       "soundscape": 95
+      },
+      "class_auc": {
+       "focal": 0.9672,
+       "soundscape": 0.9962
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 0.9118,
+        "focal": {
+         "auc": 0.8734,
+         "act_pos": 0.6047,
+         "act_neg": 0.3044,
+         "share": 0.0972,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.9555,
+         "act_pos": 0.6331,
+         "act_neg": 0.3194,
+         "share": 0.1042,
+         "peak_khz": 14.36
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 10,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.9614,
+        "focal": {
+         "auc": 0.9645,
+         "act_pos": 0.7743,
+         "act_neg": 0.0994,
+         "share": 0.2163,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9972,
+         "act_pos": 0.7519,
+         "act_neg": 0.0441,
+         "share": 0.2396,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 2.1344,
+        "focal": {
+         "auc": 0.9658,
+         "act_pos": 0.8433,
+         "act_neg": 0.1034,
+         "share": 0.2483,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9946,
+         "act_pos": 0.7924,
+         "act_neg": 0.0247,
+         "share": 0.264,
+         "peak_khz": 3.08
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 8,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.6556,
+        "focal": {
+         "auc": 0.9541,
+         "act_pos": 0.768,
+         "act_neg": 0.0977,
+         "share": 0.1803,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9906,
+         "act_pos": 0.6251,
+         "act_neg": 0.0457,
+         "share": 0.1655,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 12,
+         "top_base": 0.212
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 2.4077,
+        "focal": {
+         "auc": 0.9646,
+         "act_pos": 0.7318,
+         "act_neg": 0.1178,
+         "share": 0.2579,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9914,
+         "act_pos": 0.5509,
+         "act_neg": 0.0974,
+         "share": 0.2268,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.42,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.212
+        },
+        "drift": false
+       }
+      ]
+     },
+     "amerob": {
+      "n": {
+       "focal": 120,
+       "soundscape": 38
+      },
+      "class_auc": {
+       "focal": 0.9806,
+       "soundscape": 0.9995
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.1602,
+        "focal": {
+         "auc": 0.9655,
+         "act_pos": 0.2992,
+         "act_neg": 0.1149,
+         "share": 0.2131,
+         "peak_khz": 2.4
+        },
+        "soundscape": {
+         "auc": 0.9993,
+         "act_pos": 0.7162,
+         "act_neg": 0.0554,
+         "share": 0.2868,
+         "peak_khz": 4.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.43,
+         "top_species": "herthr",
+         "top_count": 5,
+         "top_base": 0.018
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.1974,
+        "focal": {
+         "auc": 0.9564,
+         "act_pos": 0.316,
+         "act_neg": 0.1102,
+         "share": 0.1218,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9997,
+         "act_pos": 0.8303,
+         "act_neg": 0.0677,
+         "share": 0.1911,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.9,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 7,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 0.9815,
+        "focal": {
+         "auc": 0.8561,
+         "act_pos": 0.724,
+         "act_neg": 0.4361,
+         "share": 0.2145,
+         "peak_khz": 1.85
+        },
+        "soundscape": {
+         "auc": 0.8503,
+         "act_pos": 0.4407,
+         "act_neg": 0.4252,
+         "share": 0.0854,
+         "peak_khz": 1.02
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.6,
+         "base_other": 0.43,
+         "top_species": "whcspa",
+         "top_count": 5,
+         "top_base": 0.21
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 1.8804,
+        "focal": {
+         "auc": 0.927,
+         "act_pos": 0.3702,
+         "act_neg": 0.2868,
+         "share": 0.2468,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.9098,
+         "act_pos": 0.3402,
+         "act_neg": 0.2788,
+         "share": 0.1443,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.43,
+         "top_species": "gcrfin",
+         "top_count": 8,
+         "top_base": 0.046
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.8981,
+        "focal": {
+         "auc": 0.9719,
+         "act_pos": 0.3444,
+         "act_neg": 0.114,
+         "share": 0.2038,
+         "peak_khz": 3.08
+        },
+        "soundscape": {
+         "auc": 0.9994,
+         "act_pos": 0.8017,
+         "act_neg": 0.0767,
+         "share": 0.2924,
+         "peak_khz": 6.88
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.7,
+         "base_other": 0.43,
+         "top_species": "herthr",
+         "top_count": 6,
+         "top_base": 0.018
+        },
+        "drift": false
+       }
+      ]
+     },
+     "yerwar": {
+      "n": {
+       "focal": 43,
+       "soundscape": 5
+      },
+      "class_auc": {
+       "focal": 0.8927,
+       "soundscape": 0.9908
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 1.2377,
+        "focal": {
+         "auc": 0.9244,
+         "act_pos": 0.6987,
+         "act_neg": 0.4472,
+         "share": 0.2494,
+         "peak_khz": 1.39
+        },
+        "soundscape": {
+         "auc": 0.9944,
+         "act_pos": 0.6555,
+         "act_neg": 0.4465,
+         "share": 0.2987,
+         "peak_khz": 1.39
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.65,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 9,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.6998,
+        "focal": {
+         "auc": 0.8865,
+         "act_pos": 0.6143,
+         "act_neg": 0.1288,
+         "share": 0.2125,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.984,
+         "act_pos": 0.3137,
+         "act_neg": 0.0661,
+         "share": 0.1839,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.435,
+         "top_species": "daejun",
+         "top_count": 8,
+         "top_base": 0.013
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.8748,
+        "focal": {
+         "auc": 0.8917,
+         "act_pos": 0.6725,
+         "act_neg": 0.1848,
+         "share": 0.2624,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9892,
+         "act_pos": 0.381,
+         "act_neg": 0.1713,
+         "share": 0.2544,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.435,
+         "top_species": "rocwre",
+         "top_count": 7,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 0.1221,
+        "focal": {
+         "auc": 0.8562,
+         "act_pos": 0.7435,
+         "act_neg": 0.5337,
+         "share": 0.0265,
+         "peak_khz": 14.36
+        },
+        "soundscape": {
+         "auc": 0.8977,
+         "act_pos": 0.7701,
+         "act_neg": 0.5662,
+         "share": 0.0325,
+         "peak_khz": 11.66
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 1.0,
+         "base_other": 0.435,
+         "top_species": "whcspa",
+         "top_count": 11,
+         "top_base": 0.208
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 1.9526,
+        "focal": {
+         "auc": 0.881,
+         "act_pos": 0.6271,
+         "act_neg": 0.1388,
+         "share": 0.2492,
+         "peak_khz": 6.14
+        },
+        "soundscape": {
+         "auc": 0.9851,
+         "act_pos": 0.335,
+         "act_neg": 0.08,
+         "share": 0.2305,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.435,
+         "top_species": "daejun",
+         "top_count": 7,
+         "top_base": 0.013
+        },
+        "drift": false
+       }
+      ]
+     },
+     "mouchi": {
+      "n": {
+       "focal": 52,
+       "soundscape": 16
+      },
+      "class_auc": {
+       "focal": 0.978,
+       "soundscape": 0.9788
+      },
+      "prototypes": [
+       {
+        "k": 1,
+        "weight": 2.2138,
+        "focal": {
+         "auc": 0.9751,
+         "act_pos": 0.6746,
+         "act_neg": 0.1469,
+         "share": 0.3148,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9587,
+         "act_pos": 0.5696,
+         "act_neg": 0.1767,
+         "share": 0.2871,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.433,
+         "top_species": "rocwre",
+         "top_count": 9,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 2,
+        "weight": 1.6502,
+        "focal": {
+         "auc": 0.9703,
+         "act_pos": 0.6566,
+         "act_neg": 0.1204,
+         "share": 0.2252,
+         "peak_khz": 3.91
+        },
+        "soundscape": {
+         "auc": 0.9672,
+         "act_pos": 0.5714,
+         "act_neg": 0.1003,
+         "share": 0.1994,
+         "peak_khz": 3.91
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.8,
+         "base_other": 0.433,
+         "top_species": "rocwre",
+         "top_count": 8,
+         "top_base": 0.066
+        },
+        "drift": false
+       },
+       {
+        "k": 3,
+        "weight": 1.8288,
+        "focal": {
+         "auc": 0.9249,
+         "act_pos": 0.3134,
+         "act_neg": 0.1457,
+         "share": 0.1641,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.8957,
+         "act_pos": 0.396,
+         "act_neg": 0.1503,
+         "share": 0.1924,
+         "peak_khz": 7.63
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.55,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 6,
+         "top_base": 0.209
+        },
+        "drift": false
+       },
+       {
+        "k": 4,
+        "weight": 2.2174,
+        "focal": {
+         "auc": 0.9805,
+         "act_pos": 0.3947,
+         "act_neg": 0.1126,
+         "share": 0.2154,
+         "peak_khz": 4.91
+        },
+        "soundscape": {
+         "auc": 0.9678,
+         "act_pos": 0.4331,
+         "act_neg": 0.1047,
+         "share": 0.2225,
+         "peak_khz": 6.14
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.75,
+         "base_other": 0.433,
+         "top_species": "amepip",
+         "top_count": 10,
+         "top_base": 0.084
+        },
+        "drift": false
+       },
+       {
+        "k": 5,
+        "weight": 0.762,
+        "focal": {
+         "auc": 0.9578,
+         "act_pos": 0.4589,
+         "act_neg": 0.3022,
+         "share": 0.0805,
+         "peak_khz": 11.66
+        },
+        "soundscape": {
+         "auc": 0.812,
+         "act_pos": 0.4883,
+         "act_neg": 0.3823,
+         "share": 0.0987,
+         "peak_khz": 11.66
+        },
+        "confusion": {
+         "n": 20,
+         "frac_other": 0.85,
+         "base_other": 0.433,
+         "top_species": "whcspa",
+         "top_count": 10,
+         "top_base": 0.209
+        },
+        "drift": false
+       }
+      ]
+     }
+    },
+    "summary": {
+     "n_protos": 65,
+     "auc_median": {
+      "focal": 0.9515,
+      "soundscape": 0.9587
+     },
+     "act_pos_median": {
+      "focal": 0.5028,
+      "soundscape": 0.533
+     },
+     "act_neg_median": {
+      "focal": 0.1401,
+      "soundscape": 0.1452
+     },
+     "n_lose": 4,
+     "n_improve": 34,
+     "n_drift": 2,
+     "frac_other_median": 0.6,
+     "base_other_median": 0.428
+    }
+   }
+  ]
  }
 }

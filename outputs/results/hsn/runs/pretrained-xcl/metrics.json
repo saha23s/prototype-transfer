@@ -1,0 +1,104 @@
+{
+ "schema": 1,
+ "run_id": "pretrained-xcl",
+ "dataset": "hsn",
+ "sections": {
+  "canonical_test": {
+   "protocol": "v1",
+   "split": "test",
+   "fold": null,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": null,
+   "n_clips": {
+    "focal": 1157,
+    "soundscape": 3600
+   },
+   "n_clusters": {
+    "recordists": 110,
+    "sites": 30
+   },
+   "point": {
+    "sc_ap_primary": 0.6438337399626372,
+    "sc_auc_primary": 0.9406084813182299,
+    "sc_cmap_12": 0.5394886980320577,
+    "sc_auc_12": 0.9240716892492813,
+    "f_auc_primary": 0.9877725115698924,
+    "f_ap_primary": 0.947052425904419,
+    "f_auc_12": 0.9776049448314668,
+    "n_fail": 26,
+    "n_improve": 11,
+    "median_delta": -0.08415860510229378,
+    "n_fail_birds": 42,
+    "median_delta_birds": -0.15894869601677564
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.4980248998532758,
+     0.7220630803993368
+    ],
+    "sc_auc_primary": [
+     0.9118094960319422,
+     0.9538545561089812
+    ],
+    "sc_cmap_12": [
+     0.3979944495152051,
+     0.5934535349920923
+    ],
+    "sc_auc_12": [
+     0.8907706517991395,
+     0.9460121754718714
+    ],
+    "f_auc_primary": [
+     0.9727708979365796,
+     0.9957461171892944
+    ],
+    "f_ap_primary": [
+     0.9195934605245121,
+     0.9625538688923616
+    ],
+    "f_auc_12": [
+     0.9692919408171422,
+     0.9906251217263928
+    ],
+    "n_fail": [
+     19.0,
+     33.0
+    ],
+    "n_improve": [
+     5.0,
+     15.0
+    ],
+    "median_delta": [
+     -0.12240248290897257,
+     -0.06251332973491314
+    ],
+    "n_fail_birds": [
+     31.0,
+     45.0
+    ],
+    "median_delta_birds": [
+     -0.21119652017166438,
+     -0.13291206352134094
+    ]
+   }
+  },
+  "prototype_transfer": {
+   "stats_file": "prototype_transfer.json",
+   "n_clips": {
+    "focal": 1157,
+    "soundscape": 3600
+   },
+   "min_soundscape_pos": 5
+  },
+  "prototype_transfer_full": {
+   "stats_file": "prototype_transfer_full.json",
+   "n_clips": {
+    "focal": 5460,
+    "soundscape": 12000
+   },
+   "min_soundscape_pos": 10
+  }
+ }
+}

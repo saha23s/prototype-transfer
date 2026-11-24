@@ -1,0 +1,36 @@
+{
+ "schema": 1,
+ "run_id": "focal-only",
+ "dataset": "hsn",
+ "args": {
+  "train_domain": "focal",
+  "name": "None",
+  "splits_dir": "data/HSN/splits",
+  "batch_size": "32",
+  "num_workers": "10",
+  "warm_epochs": "2",
+  "joint_epochs": "12",
+  "last_epochs": "4",
+  "lr_backbone": "2e-05",
+  "lr_prototypes": "0.001",
+  "lr_last": "0.001",
+  "weight_decay": "0.0001",
+  "ortho_weight": "0.01",
+  "max_train_batches": "None",
+  "max_eval_samples": "None",
+  "seed": "0"
+ },
+ "legacy_registry": {
+  "args": "outputs/runs/focal-only/args.json",
+  "commit": null,
+  "cv_fold": null,
+  "dirty": null,
+  "note": "trained before the registry existed; commit not recorded (args.json only)",
+  "results": "outputs/results/train_focal-only.json",
+  "rung": "baseline",
+  "seed": 0,
+  "select": "best",
+  "status": "done",
+  "train_domain": "focal"
+ }
+}

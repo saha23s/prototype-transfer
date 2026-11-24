@@ -211,6 +211,56 @@ if (zimg) {
   }
 }
 
+// Per-model prototype transfer (test split): summary table, model-toggled scatter, per-species prototype table.
+{
+  const mp = data.model_prototypes;
+  ok(!!mp && mp.models.length === 3 && mp.species.length > 0, "data has model_prototypes for 3 models");
+  const rows = [...d.querySelectorAll("#mp-table tbody tr[data-model]")];
+  ok(rows.length === 3, "#mp-table has one row per model");
+  for (const m of mp.models) {
+    const r = rows.find((x) => x.dataset.model === m.name), sm = m.summary;
+    ok(r && r.textContent.includes(m.label) && r.textContent.includes(`${sm.n_lose} / ${sm.n_protos}`) &&
+       r.textContent.includes(sm.act_neg_median.soundscape.toFixed(3)), `#mp-table row ${m.name} shows losing count and soundscape negative activation`);
+  }
+  const btn = (n) => d.querySelector(`#model-protos .seg button[data-model="${n}"]`);
+  const nPts = (m) => mp.species.reduce((a, sp) => a + m.species[sp].prototypes.filter((p) => p.focal.auc != null && p.soundscape.auc != null).length, 0);
+  const pts = () => [...d.querySelectorAll("#mp-scatter svg circle[data-mp][data-species][data-proto]")];
+  for (const m of mp.models) {
+    btn(m.name)?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 20));
+    ok(btn(m.name)?.getAttribute("aria-selected") === "true", `model toggle selects ${m.name}`);
+    ok(pts().length === nPts(m) && pts().every((c) => c.dataset.mp === m.name), `#mp-scatter shows ${nPts(m)} ${m.name} prototypes`);
+    ok(d.querySelectorAll("#mp-scatter circle.drift").length === mp.species.reduce((a, sp) => a + m.species[sp].prototypes.filter((p) => p.drift && p.focal.auc != null && p.soundscape.auc != null).length, 0),
+       `${m.name}: drifting prototypes are ringed`);
+    ok(d.querySelector("#mp-table tr.active")?.dataset.model === m.name, `${m.name}: summary row highlighted`);
+  }
+  const fo = mp.models.find((m) => m.name === "focal-only") || mp.models[0];
+  btn(fo.name)?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+  const sp = mp.species[0];
+  sel.value = sp; sel.dispatchEvent(new w.Event("change", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+  const prow = [...d.querySelectorAll("#mp-proto-table tbody tr[data-proto]")];
+  ok(prow.length === 5 && d.querySelector("#mp-species-title")?.textContent.includes(sp), `#mp-proto-table shows 5 prototypes of ${sp}`);
+  const p1 = fo.species[sp].prototypes[0];
+  ok(prow[0]?.textContent.includes(p1.soundscape.auc.toFixed(3)) && (!p1.confusion?.top_species || prow[0].textContent.includes(p1.confusion.top_species)),
+     "#mp-proto-table P1 shows soundscape AUC and top false-match species");
+  ok(d.querySelectorAll(`#mp-scatter circle.sel[data-species="${sp}"]`).length >= 1, "selected species highlighted in #mp-scatter");
+  const c = d.querySelector(`#mp-scatter circle[data-species="${mp.species[2]}"]`);
+  const tip3 = d.querySelector("#tooltip");
+  c?.dispatchEvent(new w.MouseEvent("mouseover", { bubbles: true, clientX: 60, clientY: 60 }));
+  ok(!tip3.hasAttribute("hidden") && tip3.textContent.includes(fo.label) && tip3.textContent.includes(mp.species[2]), "#mp-scatter tooltip names model and species");
+  c?.dispatchEvent(new w.MouseEvent("mouseout", { bubbles: true }));
+  c?.dispatchEvent(new w.MouseEvent("click", { bubbles: true }));
+  await new Promise((r) => setTimeout(r, 30));
+  ok(sel.value === mp.species[2] && d.querySelector("#mp-species-title")?.textContent.includes(mp.species[2]), "clicking an #mp-scatter dot selects its species");
+  const notIn = codes.find((x) => !mp.species.includes(x));
+  if (notIn) {
+    sel.value = notIn; sel.dispatchEvent(new w.Event("change", { bubbles: true }));
+    await new Promise((r) => setTimeout(r, 30));
+    ok(/not analysed/i.test(d.querySelector("#mp-species-title")?.textContent || ""), `species without test stats (${notIn}) handled`);
+  }
+}
+
 ok(d.querySelectorAll("#proto-table tbody tr").length === S.length * 5, `#proto-table has ${S.length * 5} rows`);
 ok(d.querySelectorAll("#caveats li").length === data.caveats.length, `#caveats lists ${data.caveats.length} items`);
 ok(errors.length === 0, `no script errors after interaction (${errors.slice(0, 3).join(" | ")})`);

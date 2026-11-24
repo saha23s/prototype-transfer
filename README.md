@@ -1,102 +1,133 @@
 # prototype-transfer
 
-Runs [AudioProtoPNet-5-BirdSet-XCL](https://huggingface.co/DBD-research-group/AudioProtoPNet-5-BirdSet-XCL)
-on the 21-species High Sierra Nevada (HSN) subset of
-[BirdSet](https://huggingface.co/datasets/DBD-research-group/BirdSet), and compares behaviour on
-**focal** (Xeno-Canto) vs **soundscape** (passive acoustic monitoring) recordings
-(cmAP, ROC-AUC, top-1, prototype activation maps).
+**Goal:** close the gap between how well a bird-sound classifier works on clean *focal* recordings (Xeno-Canto) and how well it
+works on field *soundscapes* (passive acoustic monitoring), using prototype-based models.
+
+The model is [AudioProtoPNet-5-BirdSet-XCL](https://huggingface.co/DBD-research-group/AudioProtoPNet-5-BirdSet-XCL) on the
+21-species High Sierra Nevada (HSN) subset of [BirdSet](https://huggingface.co/datasets/DBD-research-group/BirdSet).
+
+## The gap (what we measured)
+
+On the held-out test sites, for the pretrained model on the 7 primary species:
+
+| | focal | soundscape |
+|---|---|---|
+| macro AP | 0.947 | **0.644** |
+| macro AUC | 0.988 | 0.941 |
+
+Ranking still works on soundscapes (AUC drops little); the scores are what collapse. Prototype activations shrink to about 30% of their
+focal level, and 26 of the 60 scored prototypes (12 species x 5) lose more than 0.1 AUC. What we found about why (diagnostics in
+`scripts/analysis/`, results in `outputs/results/hsn/summaries/diagnostics_stage2*.json`): it is not input normalisation; generic noise
+does not reproduce the shift; about half of the prototype-level drop comes from how focal clips are cropped (the loudest 5 s);
+false matches are mostly other birds. These diagnostics were run on the test split and should be repeated on validation / CV before
+publication.
+
+## How results are judged (the protocol)
+
+One fixed protocol, v1: see [docs/PROTOCOL.md](docs/PROTOCOL.md). In short: headline metric is soundscape macro AP on the 7 primary species,
+uncertainty is a cluster bootstrap over sites and recordists, development uses the validation split or 3-fold site-grouped
+cross-validation and never the test sites, and the splits themselves are pinned by checksum so everyone scores the same clips.
 
 ## Quickstart
 
-Requires [uv](https://docs.astral.sh/uv/) and ~15 GB of free disk (full run).
+Requires [uv](https://docs.astral.sh/uv/) and ~15 GB of free disk. Run on a compute node (a GPU is used if available).
 
 ```bash
-# 1. One-time: put data/models/venv on a big disk, symlink into the repo, install deps
-scripts/setup_storage.sh /path/to/big/disk/prototype-transfer
-
-# 2. Quick check (16 clips per type; writes to outputs/smoke/)
-scripts/run_pipeline.sh --smoke
-
-# 3. Full run (all focal shards, up to 1050 focal + 1000 soundscape clips; writes to outputs/)
-scripts/run_pipeline.sh
-# or on SLURM:
-sbatch scripts/slurm/pipeline.sbatch
+scripts/setup_storage.sh /path/to/big/disk/prototype-transfer   # once: data/models/venv on a big disk, then `uv sync --locked`
+source .venv/bin/activate
+scripts/run_pipeline.sh --smoke     # 16 clips per domain, checks the plumbing; writes only under outputs/results/smoke/
+scripts/run_pipeline.sh             # download -> manifests -> canonical splits -> pretrained responses -> canonical evaluation
 ```
 
-Run on a compute node (a GPU is used automatically if available; CPU works but is slow:
-~40 s per batch of 16 clips on 4 CPUs).
+## Use it
 
-## Pipeline
+```bash
+# 1. canonical splits (the pipeline does this too); must print "splits are canonical"
+python scripts/data/make_splits.py && python scripts/data/check_splits.py
 
-| Step | Script | Output |
-|---|---|---|
-| Download HSN (metadata, audio) | `scripts/download_hsn.py` | `data/HSN/raw/` |
-| Build manifests | `scripts/preprocess_hsn.py` | `data/HSN/preprocessed/*.parquet` |
-| Inference + metrics | `scripts/run_inference.py` | `outputs/results/*.json`, `eval_cache.pt` |
-| Figures | `scripts/visualize_analysis.py` | `outputs/figures/fig*.png` |
-| Full manifests (no caps) | `scripts/preprocess_hsn.py --full` | `data/HSN/preprocessed/*_full.parquet` |
-| Per-prototype responses | `scripts/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
-| Prototype-transfer figures | `scripts/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
-| Dashboard data | `scripts/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
+# 2. train one model on one domain, starting from the pretrained model
+python scripts/train/train_protopnet.py --train-domain focal --name my-run --rung R0 --anchored
+#    on SLURM, train + extract + score in one job (add --array=0-2 for 3-fold cross-validation):
+sbatch scripts/slurm/run_recipe.sbatch my-run R0 --train-domain focal --anchored
 
-### Prototype transfer (focal -> soundscape)
+# 3. score it with the canonical evaluation (CPU); use --split val while developing, test only for final numbers
+python scripts/analysis/extract_prototype_activations.py my-run \
+    --focal-manifest data/HSN/splits/focal_test.parquet --soundscape-manifest data/HSN/splits/soundscape_test.parquet
+python scripts/eval/canonical_eval.py --model pretrained-xcl --model my-run --baseline pretrained-xcl
 
-`extract_prototype_activations.py` records, for every clip, the max activation and peak
-(frequency row, time column) of all 105 HSN prototypes (21 species x 5), plus full heatmaps
-and the latent patch at each peak for clips containing the species. `prototype_transfer.json`
-reports, per prototype and domain: median activation on positives/negatives, detection
-ROC-AUC, share of the class evidence (`w_k * a_k / sum_j w_j * a_j`), and peak frequency.
-Only species with >= 10 soundscape positives are plotted. Note that the focal recordings are
-Xeno-Canto, i.e. part of the model's XCL training data, so focal numbers are an in-domain
-reference rather than a held-out score.
+# 4. look at results
+python scripts/report/results.py list
+python scripts/report/results.py show my-run
+```
 
-Spectrograms are computed on the fly from the audio (`src/preprocessing.py`: 32 kHz, 5 s, 256-mel
-log-spectrogram, normalised with the model's training mean/std). Pass `--cache-tensors` to
-`preprocess_hsn.py` to pre-compute them to disk.
+Every number is saved in the results store and found with `scripts/report/results.py`; see [docs/RESULTS.md](docs/RESULTS.md).
+
+### Training options
+
+`scripts/train/train_protopnet.py` trains in four phases (warm, joint, push, last layer) and has these options, all off by default so
+the earlier focal-only and soundscape-only runs reproduce. `--rung` is a free label recorded with the run (e.g. to group runs of one
+recipe in `results.py list --rung`).
+
+| Option | Effect |
+|---|---|
+| `--anchored` | skip the joint phase: backbone stays frozen |
+| `--bg-kind noise` / `real --bg-manifest M` | mix generic noise / real soundscape background into focal clips (SNR U[-5, 20] dB, probability 0.5) |
+| `--overlap-prob P` | overlay a second focal species (labels = union) |
+| `--pseudo-manifest M --pseudo-weight W` | soft pseudo-label loss on unlabeled soundscape-train clips (teacher = pretrained model) |
+| `--train-labels N` | use only N labeled clips at constant optimiser steps (label budget; needs `--train-domain soundscape --select last`) |
+| `--select best` / `last` | keep the epoch with the best in-domain val cmAP / the last epoch of each phase (no validation labels) |
+| `--cv-fold F` | cross-validation fold F: train without its sites; it is scored with `canonical_eval.py --split cv --fold F` |
+
+Background and pseudo-label manifests are built without any annotation by `scripts/method/make_background_manifest.py` from the pretrained
+responses of `scripts/analysis/diagnose_shift.py --task extract`. Cross-validation folds are combined with
+`scripts/eval/cv_aggregate.py NAME` (mean ± sd over folds next to the pretrained baseline on the same sites).
 
 ## Layout
 
 ```
-configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size, output dirs)
-src/       dataset, preprocessing, model wrapper, metrics, plotting
-scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/pipeline.sbatch
+src/prototype_transfer/   the package (editable install): data, models, method, training, evaluation, analysis, reporting
+scripts/                  thin command-line entry points: data/ train/ eval/ analysis/ method/ report/ slurm/
+configs/splits/hsn.json   checksums of the canonical splits
+docs/                     PROTOCOL.md (how models are scored), RESULTS.md (where numbers live)
+tests/                    plain-assert tests, no pytest needed: for t in tests/test_*.py; do python $t; done
+dashboard/                static summary page (see below)
+outputs/results/<dataset>/ committed results; outputs/features and outputs/checkpoints are not committed
 ```
 
-`run_inference.py` reads its defaults (device, batch size, output dir) from
-`configs/model_protonet.yaml`; any of them can be overridden on the command line.
+| Package | What |
+|---|---|
+| `data/` | loading, preprocessing (32 kHz, 5 s, 256-mel log-spectrogram, model's mean/std), splits and their checksums |
+| `models/` | the 21-class ProtoPNet and its checkpointing / prototype push |
+| `training/` | the four-phase trainer and losses |
+| `method/` | background mixing, species overlap, pseudo-label dataset, label-free background / pseudo-label manifests (the recipe components) |
+| `evaluation/` | the canonical evaluation, CV aggregation, the results store |
+| `analysis/` | per-prototype responses and the domain-shift diagnostics |
+| `reporting/` | the dashboard's data bundle (statistics, findings, patches, model comparison) |
 
 ### Dashboard
 
-`dashboard/index.html` is a static, offline dashboard of the main findings: summary stats, findings,
-class- and prototype-level AUC charts, per-species prototype cards with top-activating patches,
-and a data table. Open it directly in a browser (no server needed). Rebuild its data after
-re-running the analysis (needs the audio for the patch crops):
-
-```bash
-python scripts/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
-```
-
-Every finding is generated together with its evidence (chart data, key numbers, method note), so the
-text and the numbers come from the same computation; open `dashboard/index.html#finding-N` to link
-to a finding's evidence. Acceptance test (renders the page in jsdom and checks structure, evidence
-for every finding, interactions and patch zoom): `npm i jsdom@24 && node dashboard/tests/check.mjs dashboard`.
+`dashboard/index.html` is a static, offline page (open it in a browser): the data splits and the evaluation protocol, then the prototype-level
+findings. Re-render the splits and protocol sections after the splits or the baseline evaluation change with
+`python scripts/report/build_dashboard_protocol.py` (reads the results store only). Rebuild the findings data with
+`python scripts/report/build_dashboard_data.py` (needs the pretrained model's full-manifest responses:
+`scripts/analysis/extract_prototype_activations.py pretrained-xcl --tag full`, and the audio for the patch crops). Acceptance test:
+`npm i jsdom@24 && node dashboard/tests/check.mjs dashboard`.
 
 ## Environment (uv)
 
-Dependencies are managed with uv and locked in `uv.lock`; always install with
-`uv sync --locked` (done by `setup_storage.sh`) so the environment matches the lock exactly.
+Dependencies are managed with uv and locked in `uv.lock`; always install with `uv sync --locked` (done by `setup_storage.sh`).
 Python is pinned by `.python-version`.
 
-- **CUDA build.** On Linux, `torch`/`torchaudio` come from the PyTorch **cu121** index
-  (`[tool.uv.sources]` in `pyproject.toml`), because the GPU machines run NVIDIA driver 535
-  (CUDA 12.2), which cannot run the default PyPI wheels (CUDA 13). macOS uses the PyPI wheels.
+- **CUDA build.** On Linux, `torch`/`torchaudio` come from the PyTorch **cu121** index (`[tool.uv.sources]` in `pyproject.toml`), because
+  the GPU machines run NVIDIA driver 535 (CUDA 12.2), which cannot run the default PyPI wheels (CUDA 13). macOS uses the PyPI wheels.
   `setup_storage.sh` fails loudly if a GPU is present but torch cannot use it.
-- **Changing dependencies.** `uv add <pkg>` (or edit `pyproject.toml` then `uv lock`), commit
-  `pyproject.toml` + `uv.lock` together. To bump torch, change the pin *and* the index URL
-  together, after checking `nvidia-smi` on the target machine.
+- **Changing dependencies.** `uv add <pkg>` (or edit `pyproject.toml` then `uv lock`), commit `pyproject.toml` + `uv.lock` together. To bump
+  torch, change the pin *and* the index URL together, after checking `nvidia-smi` on the target machine.
 
 ## Notes
 
 - `transformers` must stay `<5.0`: the model's remote code is incompatible with 5.x (pinned in `pyproject.toml`).
-- The model is loaded with `trust_remote_code=True` from the Hugging Face Hub at a pinned commit (`MODEL_REVISION` in `src/model.py`), so weights and modeling code can't change under you; the HF cache is kept in `models/hf`.
+- The model is loaded with `trust_remote_code=True` from the Hugging Face Hub at a pinned commit (`MODEL_REVISION` in
+  `src/prototype_transfer/models/classifier.py`), so weights and modeling code can't change under you; the HF cache is kept in `models/hf`.
+- Focal recordings are Xeno-Canto, which is part of the model's XCL training data, so focal numbers are an in-domain reference, not a held-out score.
 - `data/`, `models/` and `.venv` are symlinks created by `setup_storage.sh` and are git-ignored.

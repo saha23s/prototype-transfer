@@ -11,3 +11,6 @@ outputs/features/
 outputs/smoke/
 *.pt
 slurm-*.out
+outputs/checkpoints/
+outputs/results/*/.lock
+outputs/results/smoke/

@@ -1,0 +1,54 @@
+"""Dashboard data bundle pieces (prototype_transfer.reporting.dashboard_data). Run: python tests/test_dashboard_data.py"""
+import numpy as np
+
+from prototype_transfer.reporting import dashboard_data as dd
+
+
+def _domain(n, rng, species_col, other_col):
+    t = np.zeros((n, 21), dtype=bool)
+    t[: n // 4, species_col] = True        # the first quarter contains the species
+    t[n // 2 : n // 2 + 20, other_col] = True
+    act = rng.random((n, 21, 5)).astype(np.float32) * 0.1
+    act[: n // 4, species_col, :] += 0.4   # strong on positives
+    act[n // 2 : n // 2 + 20, species_col, 0] = 0.9   # prototype 1 also fires on clips of the other species
+    return {"targets": t, "proto_max": act}
+
+
+def test_cdf_is_monotone_and_reaches_one():
+    c = dd.cdf(np.random.default_rng(0).random(500) * 0.5)
+    assert all(b >= a for a, b in zip(c, c[1:])) and c[-1] == 1.0 and c[0] >= 0
+
+
+def test_confusion_names_the_species_a_prototype_is_confused_with():
+    rng = np.random.default_rng(0)
+    sp = ["s%02d" % i for i in range(21)]
+    data = {"soundscape": _domain(200, rng, 0, 1), "focal": _domain(100, rng, 0, 1)}
+    conf = dd.confusion_stats(data, 0, sp, top_n=20)
+    assert len(conf) == 5
+    assert conf[0]["top_species"] == "s01" and conf[0]["top_count"] == 20 and conf[0]["frac_other"] == 1.0
+    assert conf[1]["frac_other"] < conf[0]["frac_other"]
+
+
+def test_species_activation_cdfs_has_every_view_for_both_domains():
+    rng = np.random.default_rng(0)
+    data = {"soundscape": _domain(200, rng, 0, 1), "focal": _domain(100, rng, 0, 1)}
+    out = dd.species_activation_cdfs(data, 0)
+    assert set(out["series"]) == {"all", "max", "1", "2", "3", "4", "5"}
+    assert set(out["series"]["all"]) == {"focal_pos", "focal_neg", "soundscape_pos", "soundscape_neg"}
+    assert out["n"]["soundscape_pos"] == 50 and out["medians"]["max"]["soundscape_pos"] > out["medians"]["max"]["soundscape_neg"]
+
+
+def test_model_blocks_read_the_results_store_and_label_models():
+    from prototype_transfer.evaluation import results
+    store = results.Store("hsn")
+    block = dd.model_comparison_block(store.summary("model_comparison"))
+    assert [m["name"] for m in block["models"]] == ["pretrained-xcl", "focal-only", "soundscape-only"]
+    assert block["models"][0]["label"] == "Pretrained (XCL)"
+    assert dd.model_comparison_block(store.summary("does-not-exist")) is None
+
+
+if __name__ == "__main__":
+    tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
+    for fn in tests:
+        fn()
+    print(f"{len(tests)} tests OK")
