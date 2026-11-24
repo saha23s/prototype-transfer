@@ -51,7 +51,8 @@ extract() {  # run_id [extra args]   (a trained run is read from outputs/checkpo
         --min-soundscape-pos 5 "$@"
 }
 if [[ ! -f $BASE ]]; then   # pretrained responses on the held-out fold are cheap to extract; the test baseline must exist
-    [[ -n $FOLD ]] || { echo "missing $BASE (baseline responses; see scripts/eval/evaluate_models.sh)" >&2; exit 1; }
+    [[ -n $FOLD ]] || { echo "missing $BASE (the pretrained model's responses on the test split). Create it once with:
+  python scripts/analysis/extract_prototype_activations.py pretrained-xcl --focal-manifest $SPL/focal_test.parquet --soundscape-manifest $SPL/soundscape_test.parquet --min-soundscape-pos 5" >&2; exit 1; }
     extract pretrained-xcl "${BASE_TAG[@]}"
 fi
 hostname; nvidia-smi --query-gpu=name,memory.total --format=csv
