@@ -79,7 +79,8 @@ def evaluate(model: nn.Module, loader: DataLoader, device: str) -> dict:
 def run_epoch(model: nn.Module, loader: DataLoader, opt: torch.optim.Optimizer, sched, device: str, ortho_w: float,
               pseudo_iter=None, pseudo_w: float = 0.0) -> float:
     # The model's own asymmetric multi-label loss (remote code), as used to train AudioProtoPNet.
-    asl = sys.modules[type(model).__module__].AsymmetricLossMultiLabel()
+    # reduction="sum" because the class defaults to "mean"; with / n_lab below, the term is per clip, like the pseudo-label term.
+    asl = sys.modules[type(model).__module__].AsymmetricLossMultiLabel(reduction="sum")
     model.train()
     tot, n = 0.0, 0
     for b in loader:
