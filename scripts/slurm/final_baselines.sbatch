@@ -34,7 +34,6 @@ done
 [[ -f $BASE ]] || python scripts/analysis/extract_prototype_activations.py pretrained-xcl --focal-manifest $SPL/focal_test.parquet \
     --soundscape-manifest $SPL/soundscape_test.parquet --min-soundscape-pos 5 --num-workers "$W"
 
-for DOM in soundscape focal; do
-    bash scripts/slurm/run_recipe.sbatch "$DOM-only" baseline --train-domain "$DOM" --select last
-done
+bash scripts/slurm/run_recipe.sbatch soundscape-only oracle --train-domain soundscape --select last    # rungs as in the CV runs
+bash scripts/slurm/run_recipe.sbatch focal-only baseline --train-domain focal --select last
 echo "FINAL BASELINES DONE"
