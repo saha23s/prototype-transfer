@@ -13,6 +13,8 @@
 # Needs data/HSN/splits (scripts/data/make_splits.py), outputs/features/hsn/pretrained-xcl/responses.pt (the baseline on test; see
 # scripts/eval/evaluate_models.sh) and, for background / pseudo-label rungs, the manifests of scripts/method/make_background_manifest.py
 # (per fold with --fold F). Pretrained responses on each held-out fold are extracted here if missing.
+# The gap fraction and success criteria need the oracle's responses (run soundscape-only, per fold soundscape-only-cvF), so
+# train it first; without them the evaluation warns and omits both.
 # Resources: 1 GPU, 8 CPUs for audio decoding, 32 GB RAM; the earlier focal-only / soundscape-only runs took 13 / 23 min.
 # Outputs (RUN = NAME or NAME-cvF; see docs/RESULTS.md): outputs/results/hsn/runs/RUN/ (config, train log, metrics incl. the
 #          canonical_test or canonical_cv<F> section), outputs/features/hsn/RUN/responses.pt and outputs/checkpoints/hsn/RUN/
@@ -60,8 +62,9 @@ hostname; nvidia-smi --query-gpu=name,memory.total --format=csv
 python scripts/train/train_protopnet.py --name "$RUN" --rung "$RUNG" --num-workers "${SLURM_CPUS_PER_TASK:-8}" "${TRAIN_EXTRA[@]}" "$@"
 extract "$RUN"
 
+ORACLE=soundscape-only${FOLD:+-cv$FOLD}   # a fold is compared with the oracle trained without the same sites
 MODELS=(--model pretrained-xcl "$BASE")
-[[ -z $FOLD && -f $FEAT/soundscape-only/responses.pt ]] && MODELS+=(--model soundscape-only)
+[[ $RUN != "$ORACLE" && -f $FEAT/$ORACLE/responses.pt ]] && MODELS+=(--model "$ORACLE")
 MODELS+=(--model "$RUN")
-python scripts/eval/canonical_eval.py "${MODELS[@]}" --baseline pretrained-xcl --oracle soundscape-only "${EVAL[@]}" \
+python scripts/eval/canonical_eval.py "${MODELS[@]}" --baseline pretrained-xcl --oracle "$ORACLE" "${EVAL[@]}" \
     --summary-name "canonical_eval_$RUN"

@@ -5,8 +5,9 @@ Fitted for fold F on the unlabeled soundscape activations of the OTHER folds' he
 soundscape_cv{F}_train, checked) and on the focal-train activations; no labels are used. Applied to fold F's cached
 focal_val and held-out soundscape activations. Writes outputs/features/<dataset>/<run_id>/responses.pt with run id
 tf-<method>-cv<F>, and its settings to the results store. Score it with scripts/eval/canonical_eval.py:
-  python scripts/eval/canonical_eval.py --split cv --fold F --baseline pretrained-xcl --summary-name canonical_eval_tf-quantile-cvF \
-      --model pretrained-xcl outputs/features/hsn/pretrained-xcl/responses_cvF.pt --model tf-quantile-cvF
+  python scripts/eval/canonical_eval.py --split cv --fold F --baseline pretrained-xcl --oracle soundscape-only-cvF \
+      --summary-name canonical_eval_tf-quantile-cvF --model pretrained-xcl outputs/features/hsn/pretrained-xcl/responses_cvF.pt \
+      --model soundscape-only-cvF --model tf-quantile-cvF
 The methods are in prototype_transfer.method.training_free.
 """
 

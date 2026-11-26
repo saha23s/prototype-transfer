@@ -93,7 +93,7 @@ def evaluate(models: list[Model], baseline: str, oracle: str | None, split: str,
     Args:
         models: responses of every model on the same clips; the first one defines species, clips and labels.
         baseline: name of the model the success criteria are measured against (must be in `models`).
-        oracle: name of the supervised in-domain reference for the gap fraction; ignored if it is not in `models`.
+        oracle: name of the supervised in-domain reference for the gap fraction; ignored with a warning if it is not in `models`.
         split: "test", "val" or "cv" (recorded in the output; the responses must be exactly this split's clips).
         fold: cross-validation fold (only with split == "cv").
         focal_manifest: gives the recordist of each focal clip (the focal bootstrap cluster).
@@ -115,7 +115,9 @@ def evaluate(models: list[Model], baseline: str, oracle: str | None, split: str,
         f"({len(set(ref.paths['soundscape']) - want)} extra, {len(want - set(ref.paths['soundscape']))} missing)")
     names = [m.name for m in models]
     assert baseline in names, f"--baseline {baseline} is not among the models {names}"
-    oracle = oracle if oracle in names else None
+    if oracle and oracle not in names:
+        logger.warning(f"--oracle {oracle} is not among the models {names}: gap fraction and success criteria are omitted")
+        oracle = None
 
     sp = ref.species
     npos_f, npos_s = ref.y_f.sum(0), ref.y_s.sum(0)
