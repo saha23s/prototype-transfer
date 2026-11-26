@@ -1,0 +1,69 @@
+{
+ "schema": 1,
+ "run_id": "r0-cv1",
+ "dataset": "hsn",
+ "args": {
+  "train_domain": "focal",
+  "name": "r0-cv1",
+  "dataset": "hsn",
+  "splits_dir": "data/HSN/splits",
+  "batch_size": 32,
+  "num_workers": 8,
+  "warm_epochs": 2,
+  "joint_epochs": 0,
+  "last_epochs": 4,
+  "lr_backbone": 2e-05,
+  "lr_prototypes": 0.001,
+  "lr_last": 0.001,
+  "weight_decay": 0.0001,
+  "ortho_weight": 0.01,
+  "rung": "R0",
+  "select": "last",
+  "cv_fold": 1,
+  "anchored": true,
+  "train_labels": null,
+  "bg_kind": "none",
+  "bg_manifest": null,
+  "bg_prob": 0.5,
+  "snr_min": -5.0,
+  "snr_max": 20.0,
+  "overlap_prob": 0.0,
+  "overlap_gain_min": -10.0,
+  "overlap_gain_max": 0.0,
+  "pseudo_manifest": null,
+  "pseudo_weight": 0.2,
+  "pseudo_batch_size": 16,
+  "max_train_batches": null,
+  "max_eval_samples": null,
+  "seed": 0
+ },
+ "effective": {
+  "cv_fold": 1,
+  "mixing": {
+   "bg_kind": "none",
+   "bg_prob": 0.0,
+   "snr_db": [
+    -5.0,
+    20.0
+   ],
+   "overlap_prob": 0.0,
+   "overlap_gain_db": [
+    -10.0,
+    0.0
+   ]
+  },
+  "select": "last",
+  "joint_epochs": 0,
+  "train_labels": null,
+  "n_train_clips": 3695,
+  "steps_per_epoch": 115,
+  "pseudo_weight": 0.0,
+  "pseudo_manifest": "None"
+ },
+ "commit": "8dfba2edf2675b6d68a4a624e134a8bfe5d1a209",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

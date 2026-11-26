@@ -1,0 +1,26 @@
+{
+ "schema": 1,
+ "run_id": "tf-quantile-cv1",
+ "dataset": "hsn",
+ "args": {
+  "method": "quantile",
+  "fold": 1,
+  "dataset": "hsn",
+  "splits_dir": "data/HSN/splits",
+  "n_quantiles": 1001,
+  "top_fraction": 0.05
+ },
+ "settings": {
+  "n_quantiles": 1001,
+  "zeros": "kept at zero"
+ },
+ "target_clips": 5640,
+ "reference_clips": 3695,
+ "uses_labels": false,
+ "commit": "8dfba2edf2675b6d68a4a624e134a8bfe5d1a209",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

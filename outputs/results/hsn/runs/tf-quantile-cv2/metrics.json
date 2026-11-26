@@ -1,0 +1,152 @@
+{
+ "schema": 1,
+ "run_id": "tf-quantile-cv2",
+ "dataset": "hsn",
+ "sections": {
+  "adaptation": {
+   "method": "quantile",
+   "n_quantiles": 1001,
+   "zeros": "kept at zero",
+   "target_clips": 5640,
+   "reference_clips": 3695
+  },
+  "canonical_cv2": {
+   "protocol": "v1",
+   "split": "cv",
+   "fold": 2,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only-cv2",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "n_clusters": {
+    "recordists": 69,
+    "sites": 23
+   },
+   "point": {
+    "sc_ap_primary": 0.685532509487682,
+    "sc_auc_primary": 0.934752893419576,
+    "sc_cmap_12": 0.5995282604507063,
+    "sc_auc_12": 0.9334329392086789,
+    "f_auc_primary": 0.9931416578531608,
+    "f_ap_primary": 0.9276187543828683,
+    "f_auc_12": 0.9871877857620625,
+    "n_fail": 25,
+    "n_improve": 9,
+    "median_delta": -0.09930898381064612,
+    "n_fail_birds": 31,
+    "median_delta_birds": -0.1737559635146551
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.45048984832511574,
+     0.7906599370776556
+    ],
+    "sc_auc_primary": [
+     0.8729813398916365,
+     0.9682413971464852
+    ],
+    "sc_cmap_12": [
+     0.42172639104828086,
+     0.6896972826475237
+    ],
+    "sc_auc_12": [
+     0.8730155390763361,
+     0.9657244434096471
+    ],
+    "f_auc_primary": [
+     0.988932996113692,
+     0.9980364566510688
+    ],
+    "f_ap_primary": [
+     0.905454902535616,
+     0.9771783251279977
+    ],
+    "f_auc_12": [
+     0.8413812044327473,
+     0.9951598418777847
+    ],
+    "n_fail": [
+     5.0,
+     26.0
+    ],
+    "n_improve": [
+     2.0,
+     11.0
+    ],
+    "median_delta": [
+     -0.15509211091095151,
+     -0.02223614082350596
+    ],
+    "n_fail_birds": [
+     7.0,
+     33.0
+    ],
+    "median_delta_birds": [
+     -0.24576689400525034,
+     -0.06469045855613809
+    ]
+   },
+   "vs_baseline": {
+    "sc_ap_primary": {
+     "diff": -0.027672459910529357,
+     "ci95": [
+      -0.03792939677197357,
+      0.00014623972870733907
+     ]
+    },
+    "sc_auc_primary": {
+     "diff": -0.0005920360935278701,
+     "ci95": [
+      -0.005610770046903366,
+      0.0026058334118049583
+     ]
+    },
+    "sc_cmap_12": {
+     "diff": -0.023030757871814966,
+     "ci95": [
+      -0.03174959949998125,
+      -0.002103052251297434
+     ]
+    },
+    "f_auc_primary": {
+     "diff": -0.00361955284865223,
+     "ci95": [
+      -0.005400720196894126,
+      -0.00016427629734752744
+     ]
+    },
+    "n_fail": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    },
+    "n_fail_birds": {
+     "diff": 0.0,
+     "ci95": [
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "gap_fraction": {
+    "value": -0.21350892075139305,
+    "ci95": [
+     -0.4522687273809825,
+     0.0019519102997369875
+    ]
+   },
+   "criteria": {
+    "1_ap_gap_closed": false,
+    "2_auc_not_below_baseline": false,
+    "3_failing_prototypes_halved": false,
+    "4_focal_retained": true
+   }
+  }
+ }
+}
