@@ -40084,7 +40084,7 @@
       "soundscape": 0.0013
      },
      "n_lose": 25,
-     "n_improve": 19,
+     "n_improve": 15,
      "n_drift": 7,
      "frac_other_median": 0.75,
      "base_other_median": 0.428
@@ -42021,7 +42021,7 @@
       "soundscape": 0.1771
      },
      "n_lose": 41,
-     "n_improve": 6,
+     "n_improve": 4,
      "n_drift": 0,
      "frac_other_median": 0.7,
      "base_other_median": 0.428
@@ -43958,7 +43958,7 @@
       "soundscape": 0.1452
      },
      "n_lose": 4,
-     "n_improve": 34,
+     "n_improve": 26,
      "n_drift": 2,
      "frac_other_median": 0.6,
      "base_other_median": 0.428

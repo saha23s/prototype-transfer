@@ -201,6 +201,7 @@ def train(args: argparse.Namespace) -> None:
     joint_ckpt = ckpt_dir / ("joint_best.pt" if args.select == "best" else "joint_last.pt")
     if args.joint_epochs == 0:   # anchored: nothing to train jointly, carry the warm-phase model forward
         save_checkpoint(model, joint_ckpt, {"epoch": 0, "val": ev})
+        saved = {"phase": history[-1]["phase"], "val": ev}   # the model that goes into the push, and its val scores
     set_trainable(model, {"backbone", "prototypes", "last_layer"})
     steps = len(train_dl) * args.joint_epochs
     opt, sched = make_opt(model, {"backbone": args.lr_backbone, "prototypes": args.lr_prototypes / 10,
@@ -211,6 +212,7 @@ def train(args: argparse.Namespace) -> None:
         if args.select == "last" or ev[in_dom]["cmAP"] > best:
             best, best_ep = ev[in_dom]["cmAP"], e
             save_checkpoint(model, joint_ckpt, {"epoch": e, "val": ev})
+            saved = {"phase": "joint", "epoch": e, "val": ev}
     logger.info(f"Selected joint epoch {best_ep} (--select {args.select}; {in_dom} val cmAP {best:.3f})")
     model = load_checkpoint(joint_ckpt, device)
 
@@ -224,7 +226,7 @@ def train(args: argparse.Namespace) -> None:
         if args.train_labels:   # push reads labels too: it must stay within the label budget, on the same clips as training
             push_ds.df = train_ds.df
         push_info = push_prototypes(model, push_ds, device, num_workers=args.num_workers)
-        log_eval("push", 0, None)
+        saved = {"phase": "push", "val": log_eval("push", 0, None)}
 
     # 4. last layer
     set_trainable(model, {"last_layer"})
@@ -236,9 +238,9 @@ def train(args: argparse.Namespace) -> None:
         if args.select == "last" or ev[in_dom]["cmAP"] > best:
             best, best_ev = ev[in_dom]["cmAP"], ev
             save_checkpoint(model, ckpt_dir / "best.pt", {"phase": "last", "epoch": e, "val": ev})
-    if args.last_epochs == 0:
-        best_ev = history[-1]
-        save_checkpoint(model, ckpt_dir / "best.pt", {"phase": history[-1]["phase"], "val": best_ev})
+    if args.last_epochs == 0:   # with --no-push under --select best, `saved` can be older than the last logged epoch
+        best_ev = saved["val"]
+        save_checkpoint(model, ckpt_dir / "best.pt", saved)
 
     final_val = {d: {k: history[-1][f"val_{d}_{k}"] for k in ("cmAP", "macro_auc")} for d in DOMAINS}   # last epoch, whatever --select chose
     headline = {f"{which}_{d}_{k}": v[d][k] for which, v in (("val", best_ev), ("last_val", final_val))

@@ -47,6 +47,26 @@ def test_model_blocks_read_the_results_store_and_label_models():
     assert dd.model_comparison_block(store.summary("does-not-exist")) is None
 
 
+def test_improving_prototypes_use_the_evaluation_threshold():
+    import json
+    import tempfile
+    from pathlib import Path
+
+    from prototype_transfer.evaluation import canonical, results
+
+    deltas = [-0.2, 0.0, canonical.IMPROVE / 2, canonical.IMPROVE + 0.01, 0.1]   # two of these improve
+    side = lambda auc: {"n_pos": 20, "class_auc": 0.9, "prototypes": [
+        {"auc": a, "act_pos": 0.5, "act_neg": 0.1, "logit_share": 0.2, "peak_khz": 4.0} for a in auc]}
+    stats = {"min_soundscape_pos": 10, "species": {"s00": {"analysed": True, "last_layer_weights": [1.0] * 5, "domains": {
+        "focal": side([0.5] * 5), "soundscape": side([0.5 + d for d in deltas])}}}}
+    with tempfile.TemporaryDirectory() as tmp:
+        store = results.Store("toy", Path(tmp))
+        store.run_dir("m").mkdir(parents=True)
+        (store.run_dir("m") / "prototype_transfer.json").write_text(json.dumps(stats))
+        summary = dd.model_prototypes_block(["m"], store)["models"][0]["summary"]
+    assert (summary["n_improve"], summary["n_lose"], summary["n_protos"]) == (2, 1, 5), summary
+
+
 if __name__ == "__main__":
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in tests:

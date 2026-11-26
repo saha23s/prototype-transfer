@@ -19,6 +19,7 @@ from matplotlib.image import imsave
 from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
 from prototype_transfer.data.preprocessing import AudioPreprocessor
 from prototype_transfer.evaluation import results
+from prototype_transfer.evaluation.canonical import IMPROVE
 from prototype_transfer.models.classifier import MODEL_REVISION
 
 logger = logging.getLogger(__name__)
@@ -417,7 +418,7 @@ def model_prototypes_block(names: list[str], store: results.Store) -> dict | Non
                 "auc_median": {d: med([e[d]["auc"] for e in both]) for d in DOMAINS},
                 "act_pos_median": {d: med([e[d]["act_pos"] for e in pooled]) for d in DOMAINS},
                 "act_neg_median": {d: med([e[d]["act_neg"] for e in pooled]) for d in DOMAINS},
-                "n_lose": sum(x < -0.1 for x in dauc), "n_improve": sum(x > 0 for x in dauc),
+                "n_lose": sum(x < -0.1 for x in dauc), "n_improve": sum(x > IMPROVE for x in dauc),
                 "n_drift": sum(e["drift"] for e in pooled),
                 "frac_other_median": med([e["confusion"]["frac_other"] for e in pooled if "confusion" in e]),
                 "base_other_median": med([e["confusion"]["base_other"] for e in pooled if "confusion" in e]),
