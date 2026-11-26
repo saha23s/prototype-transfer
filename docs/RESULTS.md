@@ -26,7 +26,7 @@ a wrong metric path lists what is available at that level.
 outputs/results/<dataset>/            committed (small)
     registry.jsonl                    the index: one JSON line per save; the LAST line of a run_id is current
     runs/<run_id>/
-        config.json                   how the run was made: all arguments, effective settings, git commit + dirty flag, versions
+        config.json                   how the run was made: all arguments, effective settings, git commit + dirty flag (uncommitted changes to tracked files outside outputs/results/), versions
         metrics.json                  {"sections": {<section>: {...}}}: every metric of the run
         train_log.csv                 per-epoch log of a training run (phase, epoch, loss, val metrics for both domains)
         push.json, prototype_transfer*.json, canonical_*_prototypes.json   other small per-run files

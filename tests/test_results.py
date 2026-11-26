@@ -2,6 +2,8 @@
 
 import json
 import multiprocessing as mp
+import os
+import subprocess
 import tempfile
 from pathlib import Path
 
@@ -12,6 +14,31 @@ from prototype_transfer.evaluation import results as R
 
 def _store(tmp: str) -> R.Store:
     return R.Store("toy", Path(tmp))
+
+
+def test_dirty_flags_code_changes_but_not_rewritten_results():
+    with tempfile.TemporaryDirectory() as tmp:
+        git = lambda *a: subprocess.run(["git", "-C", tmp, "-c", "user.name=t", "-c", "user.email=t@example.com",
+                                         "-c", "commit.gpgsign=false", *a], capture_output=True, check=True)
+        code, res = Path(tmp) / "src" / "model.py", Path(tmp) / "outputs" / "results" / "hsn" / "registry.jsonl"
+        for path in (code, res):
+            path.parent.mkdir(parents=True)
+            path.write_text("1\n")
+        git("init", "-q"); git("add", "-A"); git("commit", "-q", "-m", "init")
+        cwd = os.getcwd()
+        try:
+            for where in (Path(tmp), code.parent):                     # the answer must not depend on the directory
+                os.chdir(where)
+                assert R.provenance()["dirty"] is False
+                res.write_text("2\n")
+                assert R.provenance()["dirty"] is False, "a rewritten result file is not a code change"
+                git("add", "-A")                                       # ... staged or not
+                assert R.provenance()["dirty"] is False
+                code.write_text("2\n")
+                assert R.provenance()["dirty"] is True, "an edited source file is"
+                git("reset", "-q", "--hard")
+        finally:
+            os.chdir(cwd)
 
 
 def test_roundtrip_and_merge():

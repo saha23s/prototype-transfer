@@ -1,4 +1,4 @@
-"""Plain-assert test of the loss scale in training/trainer.run_epoch.  Run: python tests/test_train_loss.py
+"""Plain-assert test of the loss scale and the non-finite gradient check in training/trainer.run_epoch.  Run: python tests/test_train_loss.py
 
 The model's loss class comes from its remote code, so a stand-in with the same `reduction` argument and the same
 default ("mean") is used here; no model download is needed. The expected loss is: supervised term summed over
@@ -67,6 +67,21 @@ def test_pseudo_term_is_on_the_same_scale_as_the_supervised_term():
     b, p = _batch(32), _batch(16, soft=True)
     got, want = _run(model, b, p, 0.2), _per_clip_bce(model, b) + 0.2 * _per_clip_bce(model, p)
     assert np.isclose(got, want, rtol=1e-5), f"loss {got:.6g}, expected {want:.6g}"
+
+def test_a_non_finite_gradient_stops_before_the_optimizer_step():
+    torch.manual_seed(2)
+    for bad in (float("nan"), float("inf")):
+        model = TinyModel()
+        before = {k: v.clone() for k, v in model.state_dict().items()}
+        model.linear.weight.register_hook(lambda g: g * bad)          # the loss stays finite, only the gradient is bad
+        opt = torch.optim.SGD(model.parameters(), lr=0.1)
+        try:
+            run_epoch(model, [_batch(4)], opt, None, "cpu", 0.0)
+        except FloatingPointError as e:
+            assert "non-finite gradient" in str(e), e
+        else:
+            raise AssertionError(f"a {bad} gradient must stop training")
+        assert all(torch.equal(v, before[k]) for k, v in model.state_dict().items()), "the weights were updated"
 
 
 if __name__ == "__main__":

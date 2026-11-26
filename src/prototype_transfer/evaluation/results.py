@@ -95,10 +95,12 @@ def now() -> str:
 
 
 def provenance() -> dict:
-    """What produced a result: the git commit (and whether the tree had uncommitted changes) and library versions."""
+    """What produced a result: the git commit, library versions, and `dirty`: whether tracked files had uncommitted changes.
+    outputs/results/ is left out of `dirty`, because the pipeline itself rewrites tracked files there."""
     run = lambda *a: subprocess.run(["git", *a], capture_output=True, text=True, check=True).stdout.strip()
     try:
-        git = {"commit": run("rev-parse", "HEAD"), "dirty": bool(run("status", "--porcelain", "--untracked-files=no"))}
+        changed = run("status", "--porcelain", "--untracked-files=no", "--", ":(top)", ":(top,exclude)outputs/results")
+        git = {"commit": run("rev-parse", "HEAD"), "dirty": bool(changed)}
     except (OSError, subprocess.CalledProcessError):
         git = {"commit": None, "dirty": None}
     env = {"python": platform.python_version()}

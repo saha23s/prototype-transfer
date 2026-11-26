@@ -104,7 +104,10 @@ def run_epoch(model: nn.Module, loader: DataLoader, opt: torch.optim.Optimizer, 
             raise FloatingPointError(f"non-finite loss ({float(loss)}) at {b['audio_path'][:3]}...; stopping instead of training on NaNs")
         opt.zero_grad(set_to_none=True)
         loss.backward()
-        torch.nn.utils.clip_grad_norm_([p for g in opt.param_groups for p in g["params"]], 5.0)
+        grad_norm = torch.nn.utils.clip_grad_norm_([p for g in opt.param_groups for p in g["params"]], 5.0)
+        if not torch.isfinite(grad_norm):   # a finite loss can still have NaN / Inf gradients
+            raise FloatingPointError(f"non-finite gradient norm ({float(grad_norm)}) at {b['audio_path'][:3]}...; "
+                                     "stopping before the optimizer step")
         opt.step()
         if sched is not None:
             sched.step()
