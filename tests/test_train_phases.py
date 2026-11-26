@@ -53,6 +53,7 @@ def _train(tmp: str, joint_epochs: int, select: str, no_push: bool) -> tuple[dic
         return Toy(float(torch.load(path, weights_only=False)["state_dict"]["score"]))
 
     store = results.Store("toy", Path(tmp))
+    results.save_results(store, "toy", "train", {}, entry={"legacy": True, "note": "copied old result"})
     stubs = {"HSNTrainDataset": ToyData, "HSNInferenceDataset": ToyData, "build_hsn_protopnet": Toy, "load_checkpoint": load,
              "split_manifest": lambda *a: Path(tmp) / "unused.parquet", "set_trainable": lambda model, groups: None,
              "make_opt": lambda model, lrs, steps, wd: (None, None),
@@ -78,6 +79,8 @@ def _train(tmp: str, joint_epochs: int, select: str, no_push: bool) -> tuple[dic
         for k, v in real.items():
             setattr(trainer, k, v)
         results.Store, results.provenance = real_store, real_prov
+    entry = results.read_registry(store)["toy"]
+    assert entry["legacy"] is False and entry["note"] is None, f"a freshly trained run is not the old copied one: {entry}"
     return (results.load_metrics(store, "toy")["sections"]["train"],
             torch.load(store.checkpoints("toy") / "best.pt", weights_only=False))
 

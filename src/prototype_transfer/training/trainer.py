@@ -53,8 +53,8 @@ def validate(args: argparse.Namespace) -> None:
         if path is None:
             continue
         check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "test"), flag, "the test split")
-        if args.cv_fold is not None:
-            check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "val", args.cv_fold), flag)
+        check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "val", args.cv_fold), flag,
+                         "the validation split" if args.cv_fold is None else "the held-out fold")
 
 
 def cycle(loader: DataLoader):
@@ -165,7 +165,8 @@ def train(args: argparse.Namespace) -> None:
     config = {"args": vars(args), "effective": effective, **prov}
     logger.info(f"resolved args: {vars(args)}")
     logger.info(f"effective settings: {effective}; git {prov['commit']} dirty={prov['dirty']}")
-    index = {"rung": args.rung, "seed": args.seed, "cv_fold": args.cv_fold, "commit": prov["commit"], "dirty": prov["dirty"]}
+    index = {"rung": args.rung, "seed": args.seed, "cv_fold": args.cv_fold, "commit": prov["commit"], "dirty": prov["dirty"],
+             "legacy": False, "note": None}   # a rerun under the id of a copied pre-store result replaces these fields
     results.save_results(store, name, "train", {"status": "running"}, config=config,
                          entry={**index, "status": "running", "started": results.now()})
     val_dl = {d: DataLoader(HSNInferenceDataset(manifest(d, "val"), is_soundscape=d == "soundscape",

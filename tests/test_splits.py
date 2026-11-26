@@ -1,5 +1,6 @@
 """Plain-assert tests for the cross-validation folds in src/prototype_transfer/data/splits.py.  Run: python tests/test_splits.py"""
 import json
+import argparse
 import tempfile
 from pathlib import Path
 
@@ -62,6 +63,28 @@ def test_training_refuses_manifests_with_heldout_clips():
             raise AssertionError("a manifest with held-out clips must be refused")
         except ValueError as e:
             assert "held-out fold" in str(e)
+
+
+def test_adaptation_lists_may_not_hold_validation_clips_with_or_without_cv():
+    from prototype_transfer.training import trainer
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        for name, clips in {"val": ["v"], "test": ["t"], "clean": ["a"], "has_val": ["a", "v"]}.items():
+            pd.DataFrame({"audio_path": clips}).to_parquet(d / f"{name}.parquet", index=False)
+        args = lambda manifest, fold: argparse.Namespace(train_domain="focal", bg_kind="real", bg_manifest=manifest,
+                                                         pseudo_manifest=None, cv_fold=fold, select="best", splits_dir=d)
+        real, trainer.split_manifest = trainer.split_manifest, lambda splits, domain, part, fold=None: d / f"{part}.parquet"
+        try:
+            for fold in (None, 0):
+                trainer.validate(args(d / "clean.parquet", fold))
+                try:
+                    trainer.validate(args(d / "has_val.parquet", fold))
+                except ValueError as e:
+                    assert "--bg-manifest" in str(e)
+                else:
+                    raise AssertionError(f"validation clips must be refused (cv fold {fold})")
+        finally:
+            trainer.split_manifest = real
 
 
 def test_heldout_clips_are_found_under_another_data_root():
