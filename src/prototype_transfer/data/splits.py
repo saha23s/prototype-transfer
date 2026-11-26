@@ -142,21 +142,26 @@ def fingerprint(df: pd.DataFrame) -> dict:
     return {"n_clips": len(df), "sha256": hashlib.sha256("\n".join(lines).encode()).hexdigest()}
 
 
-def verify_split(manifest: Path, lock: Path = SPLITS_LOCK) -> None:
-    """Refuse a canonical split manifest that differs from the committed fingerprint. Manifests that are not listed in the
-    lock file (e.g. background manifests, which depend on a model) pass.
+def verify_split(manifest: Path, lock: Path = SPLITS_LOCK, canonical: str | None = None) -> None:
+    """Refuse a canonical split manifest that differs from the committed fingerprint. Without `canonical`, the split is
+    identified by the manifest's file name, and manifests that are not listed in the lock file (e.g. background
+    manifests, which depend on a model) pass. With `canonical` (a file name in the lock file), the manifest must be that
+    split, whatever it is called.
 
     Raises:
-        ValueError: if the manifest's clips or labels differ from the canonical split; the message says how to regenerate.
+        ValueError: if the manifest's clips or labels differ from the canonical split (the message says how to
+            regenerate), or `canonical` is given and the lock file has no fingerprint for it.
     """
     expected = json.loads(lock.read_text())["files"] if lock.exists() else {}
-    want = expected.get(Path(manifest).name)
+    want = expected.get(canonical or Path(manifest).name)
     if want is None:
+        if canonical:
+            raise ValueError(f"cannot verify {manifest}: no fingerprint for {canonical} in {lock} (run from the repo root)")
         return
     got = fingerprint(pd.read_parquet(manifest))
     if got != want:
         raise ValueError(
-            f"{manifest} is not the canonical split: {got['n_clips']} clips (expected {want['n_clips']}), "
+            f"{manifest} is not the canonical split{f' {canonical}' if canonical else ''}: {got['n_clips']} clips (expected {want['n_clips']}), "
             f"checksum {'differs' if got['sha256'] != want['sha256'] else 'matches'}. Regenerate with "
             "`python scripts/data/make_splits.py` (seed 0) and run `python scripts/data/check_splits.py`; "
             "results on different splits are not comparable.")
@@ -173,13 +178,15 @@ def split_manifest(splits_dir: Path, domain: str, part: str, cv_fold: int | None
     return path
 
 
-def check_no_heldout(manifest: Path, heldout: Path, what: str) -> None:
-    """Refuse a manifest that lists any clip of the held-out fold (its audio must not be used for adaptation either).
+def check_no_heldout(manifest: Path, heldout: Path, what: str, label: str = "the held-out fold") -> None:
+    """Refuse a manifest that lists any clip of `heldout`, a split whose audio must not be used for adaptation either
+    (`label` names it in the error). Clips are matched by file name, so the data location does not matter.
 
     Raises:
-        ValueError: if `manifest` and `heldout` share an audio_path.
+        ValueError: if `manifest` and `heldout` share a clip.
     """
-    leaked = set(pd.read_parquet(manifest)["audio_path"]) & set(pd.read_parquet(heldout)["audio_path"])
+    names = lambda path: {Path(q).name for q in pd.read_parquet(path)["audio_path"]}
+    leaked = names(manifest) & names(heldout)
     if leaked:
-        raise ValueError(f"{what} {manifest} contains {len(leaked)} clips of the held-out fold ({heldout}); "
-                         "build it with scripts/method/make_background_manifest.py --fold F")
+        raise ValueError(f"{what} {manifest} contains {len(leaked)} clips of {label} ({heldout}); "
+                         "build it with scripts/method/make_background_manifest.py (--fold F for cross-validation)")

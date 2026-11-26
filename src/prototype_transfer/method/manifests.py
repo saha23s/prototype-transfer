@@ -11,6 +11,9 @@ sites, so no held-out audio is used for adaptation. The CLI is scripts/method/ma
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
@@ -18,11 +21,14 @@ import torch
 from prototype_transfer.method.mixing import select_background
 
 
-def load_responses(sources: list[str]) -> tuple[np.ndarray, list[str]]:
+def load_responses(sources: list[str], test_clips: Iterable[str]) -> tuple[np.ndarray, list[str]]:
     """Concatenate the probabilities and audio paths of `FILE:KEY` entries of response files (as written by diagnose_shift.py).
 
+    `test_clips` are the audio paths of the soundscape test split. They are matched by file name, because a response
+    file's key does not say which split it holds (extract_prototype_activations.py writes `soundscape` for any split).
+
     Raises:
-        AssertionError: for a test-split entry (never used for adaptation), duplicate clips or misaligned arrays.
+        AssertionError: for a test-split entry or clip (never used for adaptation), duplicate clips or misaligned arrays.
     """
     probs_l, paths = [], []
     for src in sources:
@@ -32,6 +38,8 @@ def load_responses(sources: list[str]) -> tuple[np.ndarray, list[str]]:
         probs_l.append(np.asarray(entry["probs"])); paths += list(entry["audio_path"])      # only probs and paths: annotations are never read
     probs = np.concatenate(probs_l)                                                          # [N, 21]
     assert len(probs) == len(paths) and len(set(paths)) == len(paths), "duplicate or misaligned clips"
+    leaked = {Path(q).name for q in paths} & {Path(q).name for q in test_clips}
+    assert not leaked, f"{len(leaked)} clips of the test split in {sources}; the test split is never used for adaptation"
     return probs, paths
 
 

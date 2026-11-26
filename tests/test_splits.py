@@ -1,4 +1,5 @@
 """Plain-assert tests for the cross-validation folds in src/prototype_transfer/data/splits.py.  Run: python tests/test_splits.py"""
+import json
 import tempfile
 from pathlib import Path
 
@@ -63,6 +64,19 @@ def test_training_refuses_manifests_with_heldout_clips():
             assert "held-out fold" in str(e)
 
 
+def test_heldout_clips_are_found_under_another_data_root():
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        pd.DataFrame({"audio_path": ["/here/HSN_001_a.ogg"]}).to_parquet(d / "heldout.parquet", index=False)
+        pd.DataFrame({"audio_path": ["/there/HSN_001_a.ogg"]}).to_parquet(d / "leaky.parquet", index=False)
+        try:
+            check_no_heldout(d / "leaky.parquet", d / "heldout.parquet", "--bg-manifest")
+        except ValueError as e:
+            assert "held-out fold" in str(e)
+        else:
+            raise AssertionError("the same clip under another directory must be refused")
+
+
 def _manifest(root: str, names: list[str], labels: list[list[str]]) -> pd.DataFrame:
     return pd.DataFrame({"audio_path": [f"{root}/{n}" for n in names], "hsn_classes": labels})
 
@@ -96,6 +110,26 @@ def test_verify_split_refuses_a_different_split_and_passes_unlisted_files():
             raise AssertionError("a different split must be refused")
         good.to_parquet(tmp / "soundscape_background.parquet")     # derived manifests are not canonical splits
         verify_split(tmp / "soundscape_background.parquet", lock)
+
+
+def test_verify_split_with_a_canonical_name_checks_renamed_files():
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        full = _manifest("/a", ["HSN_001_a.ogg", "HSN_002_b.ogg"], [["whcspa"], []])
+        lock = d / "lock.json"
+        lock.write_text(json.dumps({"files": {"soundscape_test.parquet": fingerprint(full)}}))
+        full.to_parquet(d / "renamed_copy.parquet", index=False)
+        full.iloc[:1].to_parquet(d / "my_subset.parquet", index=False)
+        verify_split(d / "renamed_copy.parquet", lock, canonical="soundscape_test.parquet")    # same clips and labels: fine
+        for path, name, where, message in (("my_subset.parquet", "soundscape_test.parquet", lock, "is not the canonical split"),
+                                           ("renamed_copy.parquet", "focal_val.parquet", lock, "no fingerprint"),
+                                           ("renamed_copy.parquet", "soundscape_test.parquet", d / "absent.json", "no fingerprint")):
+            try:
+                verify_split(d / path, where, canonical=name)
+            except ValueError as e:
+                assert message in str(e), e
+            else:
+                raise AssertionError(f"{path} accepted as {name} (lock {where.name})")
 
 
 def test_committed_lock_covers_every_split_the_code_can_ask_for():

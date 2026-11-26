@@ -25,6 +25,7 @@ the results store, see `save`); this module holds the computation.
 from __future__ import annotations
 
 import logging
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -96,7 +97,7 @@ def evaluate(models: list[Model], baseline: str, oracle: str | None, split: str,
         oracle: name of the supervised in-domain reference for the gap fraction; ignored with a warning if it is not in `models`.
         split: "test", "val" or "cv" (recorded in the output; the responses must be exactly this split's clips).
         fold: cross-validation fold (only with split == "cv").
-        focal_manifest: gives the recordist of each focal clip (the focal bootstrap cluster).
+        focal_manifest: the clips the focal responses must match; gives each one's recordist (the focal bootstrap cluster).
         soundscape_manifest: the clips the soundscape responses must match.
         n_boot, seed: cluster-bootstrap resamples (shared across models) and their seed.
 
@@ -108,11 +109,11 @@ def evaluate(models: list[Model], baseline: str, oracle: str | None, split: str,
     for m in models[1:]:  # identical species, labels and clips for every model
         assert m.species == ref.species and m.paths == ref.paths, f"{m.name} was evaluated on different clips than {ref.name}"
         assert (m.y_f == ref.y_f).all() and (m.y_s == ref.y_s).all(), f"{m.name}: targets differ"
-    # the responses must be exactly the clips of the requested split (soundscape labels are only ever read for that split)
-    want = set(pd.read_parquet(soundscape_manifest)["audio_path"].map(lambda q: Path(q).name))
-    assert set(ref.paths["soundscape"]) == want, (
-        f"--split {split}: the soundscape responses are not the clips of {soundscape_manifest} "
-        f"({len(set(ref.paths['soundscape']) - want)} extra, {len(want - set(ref.paths['soundscape']))} missing)")
+    # the responses must be exactly the clips of the requested split, each once (soundscape labels are only ever read for that split)
+    for domain, manifest in (("focal", focal_manifest), ("soundscape", soundscape_manifest)):
+        got, want = Counter(ref.paths[domain]), Counter(pd.read_parquet(manifest)["audio_path"].map(lambda q: Path(q).name))
+        assert got == want, (f"--split {split}: the {domain} responses are not the clips of {manifest} "
+                             f"({sum((got - want).values())} extra, {sum((want - got).values())} missing)")
     names = [m.name for m in models]
     assert baseline in names, f"--baseline {baseline} is not among the models {names}"
     if oracle and oracle not in names:

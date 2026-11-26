@@ -26,8 +26,8 @@ def main() -> None:
                         "val: soundscape_val + focal_val, for development without touching test. "
                         "cv: held-out sites of --fold + focal_val (cross-validation, K=3 folds over the non-test sites)")
     p.add_argument("--fold", type=int, default=None, help="cross-validation fold (required with --split cv)")
-    p.add_argument("--focal-manifest", type=Path, default=None, help="gives the recordist of each focal clip (default: focal_test, or focal_val for --split val / cv)")
-    p.add_argument("--soundscape-manifest", type=Path, default=None, help="clips the soundscape responses must match (default: soundscape_<split>, or soundscape_cv<fold>_heldout)")
+    p.add_argument("--focal-manifest", type=Path, default=None, help="another copy of focal_test (focal_val for --split val / cv; the default); gives each focal clip's recordist")
+    p.add_argument("--soundscape-manifest", type=Path, default=None, help="another copy of soundscape_<split> or soundscape_cv<fold>_heldout (the default): the clips the responses must match")
     p.add_argument("--n-boot", type=int, default=1000)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--summary-name", default=None, help="name of the summary file (default: canonical_eval[_val|_cv<fold>])")
@@ -38,12 +38,15 @@ def main() -> None:
         p.error("--model takes RUN_ID and an optional RESPONSES_PT")
     store = results.Store(args.dataset)
     spl = Path("data/HSN/splits")
-    focal_manifest = args.focal_manifest or spl / ("focal_test.parquet" if args.split == "test" else "focal_val.parquet")
-    soundscape_manifest = args.soundscape_manifest or spl / (f"soundscape_cv{args.fold}_heldout.parquet" if args.split == "cv" else f"soundscape_{args.split}.parquet")
+    focal_name = "focal_test.parquet" if args.split == "test" else "focal_val.parquet"
+    soundscape_name = f"soundscape_cv{args.fold}_heldout.parquet" if args.split == "cv" else f"soundscape_{args.split}.parquet"
+    focal_manifest = args.focal_manifest or spl / focal_name
+    soundscape_manifest = args.soundscape_manifest or spl / soundscape_name
 
-    for manifest in (focal_manifest, soundscape_manifest):   # scores on non-canonical splits are not comparable
+    # scores on non-canonical splits are not comparable, so a manifest passed on the command line must be the split too
+    for manifest, name in ((focal_manifest, focal_name), (soundscape_manifest, soundscape_name)):
         try:
-            verify_split(manifest)
+            verify_split(manifest, canonical=name)
         except ValueError as e:
             p.error(str(e))
     models = [canonical.Model(m[0], Path(m[1]) if len(m) == 2 else store.features(m[0]) / "responses.pt") for m in args.model]

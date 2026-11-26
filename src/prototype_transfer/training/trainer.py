@@ -47,12 +47,14 @@ def validate(args: argparse.Namespace) -> None:
         raise ValueError("--bg-kind real needs --bg-manifest")
     if args.pseudo_manifest is not None and is_sc:
         raise ValueError("--pseudo-manifest adds unlabeled soundscape clips to FOCAL training; it is not for --train-domain soundscape")
-    if args.cv_fold is not None:
-        if is_sc and args.select != "last":
-            raise ValueError("--cv-fold with --train-domain soundscape needs --select last: the held-out fold must not choose a checkpoint")
-        for flag, path in (("--bg-manifest", args.bg_manifest), ("--pseudo-manifest", args.pseudo_manifest)):
-            if path is not None:
-                check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "val", args.cv_fold), flag)
+    if args.cv_fold is not None and is_sc and args.select != "last":
+        raise ValueError("--cv-fold with --train-domain soundscape needs --select last: the held-out fold must not choose a checkpoint")
+    for flag, path in (("--bg-manifest", args.bg_manifest), ("--pseudo-manifest", args.pseudo_manifest)):
+        if path is None:
+            continue
+        check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "test"), flag, "the test split")
+        if args.cv_fold is not None:
+            check_no_heldout(path, split_manifest(args.splits_dir, "soundscape", "val", args.cv_fold), flag)
 
 
 def cycle(loader: DataLoader):

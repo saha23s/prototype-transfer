@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from prototype_transfer.data.splits import split_manifest
 from prototype_transfer.method import manifests
 
 logger = logging.getLogger("make_background_manifest")
@@ -40,7 +41,9 @@ def main() -> None:
     p.add_argument("--out-dir", type=Path, default=Path("data/HSN/splits"))
     args = p.parse_args()
 
-    probs, paths = manifests.load_responses(args.source or ["outputs/features/hsn/pretrained-xcl/diag_responses.pt:soundscape_train"])
+    test_clips = pd.read_parquet(split_manifest(args.splits_dir, "soundscape", "test"))["audio_path"]
+    probs, paths = manifests.load_responses(args.source or ["outputs/features/hsn/pretrained-xcl/diag_responses.pt:soundscape_train"],
+                                            test_clips)
     suffix = ""
     if args.fold is not None:
         keep_paths = set(pd.read_parquet(args.splits_dir / f"soundscape_cv{args.fold}_train.parquet")["audio_path"])

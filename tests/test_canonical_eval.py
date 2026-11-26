@@ -1,9 +1,14 @@
 """Plain-assert tests for src/prototype_transfer/evaluation/canonical.py (pytest is not a project dependency).  Run: python tests/test_canonical_eval.py"""
 
+import tempfile
+from pathlib import Path
+
 import numpy as np
+import pandas as pd
+import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from prototype_transfer.evaluation.canonical import K, Model, metrics
+from prototype_transfer.evaluation.canonical import K, Model, evaluate, metrics
 from prototype_transfer.evaluation.metrics import ap_cols, auc_cols, cluster_indices
 
 
@@ -57,6 +62,34 @@ def test_cluster_bootstrap_is_deterministic_and_whole_clusters():
         for grp in "abc":
             members = set(np.nonzero(g == grp)[0])
             assert members <= set(idx) or not (members & set(idx))
+
+def test_evaluate_needs_every_clip_of_both_splits_exactly_once():
+    rng = np.random.default_rng(0)
+    n, n_sp = 80, 3
+    names = [f"HSN_{i % 8:03d}_{i}.ogg" for i in range(n)]
+    entry = {"targets": rng.random((n, n_sp)) < 0.5, "probs": rng.random((n, n_sp)), "proto_max": rng.random((n, n_sp, K))}
+
+    def score(root: Path, focal: list[int], soundscape: list[int]) -> None:
+        z = {dom: {**{k: v[i] for k, v in entry.items()}, "audio_path": [names[j] for j in i]}
+             for dom, i in (("focal", focal), ("soundscape", soundscape))}
+        torch.save({"species_list": ["a", "b", "c"], **z}, root / "r.pt")
+        evaluate([Model("m", root / "r.pt")], "m", None, "test", None, root / "focal.parquet", root / "sc.parquet", 2, 0)
+
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        man = pd.DataFrame({"audio_path": [f"/data/{q}" for q in names], "recordist": [f"r{i % 5}" for i in range(n)]})
+        for f in ("focal.parquet", "sc.parquet"):
+            man.to_parquet(d / f, index=False)
+        full = list(range(n))
+        score(d, full, full[::-1])                                            # complete, any order: fine
+        for what, bad in (("missing", full[:-4]), ("duplicated", full + [0])):
+            for domain, args in (("focal", (bad, full)), ("soundscape", (full, bad))):
+                try:
+                    score(d, *args)
+                except AssertionError as e:
+                    assert f"the {domain} responses are not the clips" in str(e), e
+                else:
+                    raise AssertionError(f"{what} {domain} clips accepted")
 
 
 if __name__ == "__main__":
