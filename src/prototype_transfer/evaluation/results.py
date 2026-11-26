@@ -247,6 +247,13 @@ def _num(v: Any) -> float | int | None:
     raise TypeError(f"headline values must be numbers, got {type(v).__name__}")
 
 
+def portable_path(path: str | Path) -> str:
+    """A clip path as written into committed result files: `data/...` for a file in the data directory (also when `data` is a
+    symlink), otherwise only the file name, so that no machine or user directory gets published."""
+    full, root = Path(path).resolve(), Path("data").resolve()
+    return (Path("data") / full.relative_to(root)).as_posix() if full.is_relative_to(root) else full.name
+
+
 def log_csv(rows: list[dict]) -> str:
     cols: list[str] = []
     for r in rows:

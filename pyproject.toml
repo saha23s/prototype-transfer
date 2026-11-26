@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "AudioProtoPNet-5-BirdSet-XCL on BirdSet HSN: focal vs soundscape analysis"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-    # Pinned to the CUDA 12.1 build on Linux (see [tool.uv.sources]): filo's NVIDIA
+    # Pinned to the CUDA 12.1 build on Linux (see [tool.uv.sources]): the training machine's NVIDIA
     # driver (535, CUDA 12.2) cannot run newer cu12.4+/cu13 wheels. Bump together
     # with the index below only after checking `nvidia-smi` on the target machines.
     "torch==2.5.1",

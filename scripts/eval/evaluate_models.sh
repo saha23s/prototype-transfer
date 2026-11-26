@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Evaluate pretrained XCL, focal-only and soundscape-only models on the held-out TEST splits,
-# then compare them. Run on filo after scripts/train/train_protopnet.py (both domains).
+# then compare them. Run after scripts/train/train_protopnet.py (both domains).
 #   scripts/eval/evaluate_models.sh            (uses the GPU reservation wrapper if present)
 # Results go to the results store (docs/RESULTS.md): responses in outputs/features/hsn/<run_id>/, statistics in
 # outputs/results/hsn/runs/<run_id>/, the comparisons in outputs/results/hsn/summaries/.

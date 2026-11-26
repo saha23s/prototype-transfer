@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import AutoConfig, AutoModelForSequenceClassification
 
+from prototype_transfer.evaluation.results import portable_path
 from prototype_transfer.models.classifier import HSN_SPECIES_LIST, MODEL_REVISION
 
 logger = logging.getLogger("protopnet")
@@ -112,7 +113,7 @@ def push_prototypes(model: nn.Module, dataset: Dataset, device: str, batch_size:
             r, c = divmod(a, W)
             best_act[p] = bval[p]
             best_vec[p] = feats[b, :, r, c].view_as(best_vec[p])
-            best_src[p] = {"audio_path": batch["audio_path"][b], "row": r, "col": c, "activation": float(bval[p])}
+            best_src[p] = {"audio_path": portable_path(batch["audio_path"][b]), "row": r, "col": c, "activation": float(bval[p])}
     pushed = best_act > -1
     with torch.no_grad():
         head.prototype_vectors.copy_(torch.where(pushed[:, None, None, None], best_vec, head.prototype_vectors.cpu()).to(device))

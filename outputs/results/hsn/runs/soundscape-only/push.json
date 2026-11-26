@@ -3,7 +3,7 @@
   "prototype": 0,
   "species": "gcrfin",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_210_215.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_210_215.ogg",
   "row": 10,
   "col": 34,
   "activation": 0.6288700699806213
@@ -12,7 +12,7 @@
   "prototype": 1,
   "species": "gcrfin",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_074_20150711_090105_010_015.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_074_20150711_090105_010_015.ogg",
   "row": 15,
   "col": 36,
   "activation": 0.8074783682823181
@@ -21,7 +21,7 @@
   "prototype": 2,
   "species": "gcrfin",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_013_20150709_080105_130_135.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_013_20150709_080105_130_135.ogg",
   "row": 9,
   "col": 16,
   "activation": 0.7138547897338867
@@ -30,7 +30,7 @@
   "prototype": 3,
   "species": "gcrfin",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_044_20150710_091105_440_445.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_044_20150710_091105_440_445.ogg",
   "row": 8,
   "col": 23,
   "activation": 0.5892188549041748
@@ -39,7 +39,7 @@
   "prototype": 4,
   "species": "gcrfin",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_008_20150709_064805_515_520.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_008_20150709_064805_515_520.ogg",
   "row": 6,
   "col": 33,
   "activation": 0.6215219497680664
@@ -48,7 +48,7 @@
   "prototype": 5,
   "species": "whcspa",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_055_20150711_065805_410_415.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_055_20150711_065805_410_415.ogg",
   "row": 11,
   "col": 12,
   "activation": 0.4615527391433716
@@ -57,7 +57,7 @@
   "prototype": 6,
   "species": "whcspa",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_022_20150709_084805_270_275.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_022_20150709_084805_270_275.ogg",
   "row": 13,
   "col": 4,
   "activation": 0.6225812435150146
@@ -66,7 +66,7 @@
   "prototype": 7,
   "species": "whcspa",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_420_425.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_420_425.ogg",
   "row": 9,
   "col": 15,
   "activation": 0.5424175262451172
@@ -75,7 +75,7 @@
   "prototype": 8,
   "species": "whcspa",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_048_20150711_062105_030_035.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_048_20150711_062105_030_035.ogg",
   "row": 9,
   "col": 12,
   "activation": 0.5638749599456787
@@ -84,7 +84,7 @@
   "prototype": 9,
   "species": "whcspa",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_036_20150710_080105_030_035.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_036_20150710_080105_030_035.ogg",
   "row": 9,
   "col": 8,
   "activation": 0.5361974835395813
@@ -93,7 +93,7 @@
   "prototype": 10,
   "species": "amepip",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_071_20150711_083805_360_365.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_071_20150711_083805_360_365.ogg",
   "row": 13,
   "col": 7,
   "activation": 0.4675290882587433
@@ -102,7 +102,7 @@
   "prototype": 11,
   "species": "amepip",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_069_20150711_082805_250_255.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_069_20150711_082805_250_255.ogg",
   "row": 11,
   "col": 10,
   "activation": 0.5276480913162231
@@ -111,7 +111,7 @@
   "prototype": 12,
   "species": "amepip",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_330_335.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_330_335.ogg",
   "row": 9,
   "col": 33,
   "activation": 0.6166055202484131
@@ -120,7 +120,7 @@
   "prototype": 13,
   "species": "amepip",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_375_380.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_082_20150712_071105_375_380.ogg",
   "row": 11,
   "col": 9,
   "activation": 0.540137529373169
@@ -129,7 +129,7 @@
   "prototype": 14,
   "species": "amepip",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_044_20150710_091105_120_125.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_044_20150710_091105_120_125.ogg",
   "row": 11,
   "col": 5,
   "activation": 0.5248092412948608
@@ -138,7 +138,7 @@
   "prototype": 15,
   "species": "sposan",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_155_160.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_155_160.ogg",
   "row": 6,
   "col": 4,
   "activation": 0.13834118843078613
@@ -147,7 +147,7 @@
   "prototype": 16,
   "species": "sposan",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_490_495.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_490_495.ogg",
   "row": 8,
   "col": 21,
   "activation": 0.5522337555885315
@@ -156,7 +156,7 @@
   "prototype": 17,
   "species": "sposan",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_505_510.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_505_510.ogg",
   "row": 9,
   "col": 16,
   "activation": 0.47314217686653137
@@ -165,7 +165,7 @@
   "prototype": 18,
   "species": "sposan",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_150_155.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_150_155.ogg",
   "row": 15,
   "col": 37,
   "activation": 0.3258839547634125
@@ -174,7 +174,7 @@
   "prototype": 19,
   "species": "sposan",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_230_235.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_001_20150708_061805_230_235.ogg",
   "row": 8,
   "col": 13,
   "activation": 0.5482102036476135
@@ -183,7 +183,7 @@
   "prototype": 20,
   "species": "rocwre",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_250_255.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_088_20150712_075105_250_255.ogg",
   "row": 4,
   "col": 7,
   "activation": 0.5057361125946045
@@ -192,7 +192,7 @@
   "prototype": 21,
   "species": "rocwre",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_037_20150710_081805_180_185.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_037_20150710_081805_180_185.ogg",
   "row": 9,
   "col": 13,
   "activation": 0.5172479152679443
@@ -201,7 +201,7 @@
   "prototype": 22,
   "species": "rocwre",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_046_20150711_061805_365_370.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_046_20150711_061805_365_370.ogg",
   "row": 10,
   "col": 5,
   "activation": 0.46876803040504456
@@ -210,7 +210,7 @@
   "prototype": 23,
   "species": "rocwre",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_560_565.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_560_565.ogg",
   "row": 15,
   "col": 34,
   "activation": 0.3912992477416992
@@ -219,7 +219,7 @@
   "prototype": 24,
   "species": "rocwre",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_405_410.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_405_410.ogg",
   "row": 10,
   "col": 35,
   "activation": 0.5466966032981873
@@ -258,7 +258,7 @@
   "prototype": 30,
   "species": "daejun",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_079_20150712_065105_185_190.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_079_20150712_065105_185_190.ogg",
   "row": 10,
   "col": 17,
   "activation": 0.47131043672561646
@@ -267,7 +267,7 @@
   "prototype": 31,
   "species": "daejun",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_073_20150711_085105_190_195.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_073_20150711_085105_190_195.ogg",
   "row": 13,
   "col": 15,
   "activation": 0.2848678231239319
@@ -276,7 +276,7 @@
   "prototype": 32,
   "species": "daejun",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_020_025.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_020_025.ogg",
   "row": 11,
   "col": 4,
   "activation": 0.501491367816925
@@ -285,7 +285,7 @@
   "prototype": 33,
   "species": "daejun",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_065_070.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_065_070.ogg",
   "row": 10,
   "col": 27,
   "activation": 0.4567630887031555
@@ -294,7 +294,7 @@
   "prototype": 34,
   "species": "daejun",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_575_580.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_575_580.ogg",
   "row": 13,
   "col": 15,
   "activation": 0.46461352705955505
@@ -303,7 +303,7 @@
   "prototype": 35,
   "species": "foxspa",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_110_115.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_110_115.ogg",
   "row": 11,
   "col": 17,
   "activation": 0.21840862929821014
@@ -312,7 +312,7 @@
   "prototype": 36,
   "species": "foxspa",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_330_335.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_330_335.ogg",
   "row": 12,
   "col": 8,
   "activation": 0.4664823114871979
@@ -321,7 +321,7 @@
   "prototype": 37,
   "species": "foxspa",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_330_335.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_330_335.ogg",
   "row": 13,
   "col": 9,
   "activation": 0.17791935801506042
@@ -330,7 +330,7 @@
   "prototype": 38,
   "species": "foxspa",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_320_325.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_320_325.ogg",
   "row": 15,
   "col": 5,
   "activation": 0.22308564186096191
@@ -339,7 +339,7 @@
   "prototype": 39,
   "species": "foxspa",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_300_305.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_300_305.ogg",
   "row": 7,
   "col": 37,
   "activation": 0.15301212668418884
@@ -348,7 +348,7 @@
   "prototype": 40,
   "species": "clanut",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_365_370.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_365_370.ogg",
   "row": 7,
   "col": 31,
   "activation": 0.519733726978302
@@ -357,7 +357,7 @@
   "prototype": 41,
   "species": "clanut",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_010_015.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_010_015.ogg",
   "row": 6,
   "col": 37,
   "activation": 0.30068904161453247
@@ -366,7 +366,7 @@
   "prototype": 42,
   "species": "clanut",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_115_120.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_115_120.ogg",
   "row": 5,
   "col": 33,
   "activation": 0.6120662093162537
@@ -375,7 +375,7 @@
   "prototype": 43,
   "species": "clanut",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_050_20150711_063105_150_155.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_050_20150711_063105_150_155.ogg",
   "row": 6,
   "col": 11,
   "activation": 0.5368924140930176
@@ -384,7 +384,7 @@
   "prototype": 44,
   "species": "clanut",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_079_20150712_065105_205_210.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_079_20150712_065105_205_210.ogg",
   "row": 0,
   "col": 31,
   "activation": 0.6218922734260559
@@ -393,7 +393,7 @@
   "prototype": 45,
   "species": "moublu",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_140_145.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_140_145.ogg",
   "row": 7,
   "col": 26,
   "activation": 0.5862222909927368
@@ -402,7 +402,7 @@
   "prototype": 46,
   "species": "moublu",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_255_260.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_255_260.ogg",
   "row": 7,
   "col": 15,
   "activation": 0.5246766805648804
@@ -411,7 +411,7 @@
   "prototype": 47,
   "species": "moublu",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_400_405.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_400_405.ogg",
   "row": 7,
   "col": 10,
   "activation": 0.4790808856487274
@@ -420,7 +420,7 @@
   "prototype": 48,
   "species": "moublu",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_240_245.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_240_245.ogg",
   "row": 0,
   "col": 14,
   "activation": 0.6036728024482727
@@ -429,7 +429,7 @@
   "prototype": 49,
   "species": "moublu",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_595_600.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_595_600.ogg",
   "row": 5,
   "col": 28,
   "activation": 0.5587019324302673
@@ -438,7 +438,7 @@
   "prototype": 50,
   "species": "casfin",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
   "row": 8,
   "col": 21,
   "activation": 0.37289994955062866
@@ -447,7 +447,7 @@
   "prototype": 51,
   "species": "casfin",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_525_530.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_525_530.ogg",
   "row": 15,
   "col": 34,
   "activation": 0.33980897068977356
@@ -456,7 +456,7 @@
   "prototype": 52,
   "species": "casfin",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_525_530.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_032_20150710_071105_525_530.ogg",
   "row": 8,
   "col": 29,
   "activation": 0.39189964532852173
@@ -465,7 +465,7 @@
   "prototype": 53,
   "species": "casfin",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
   "row": 9,
   "col": 20,
   "activation": 0.41805124282836914
@@ -474,7 +474,7 @@
   "prototype": 54,
   "species": "casfin",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_560_565.ogg",
   "row": 8,
   "col": 20,
   "activation": 0.3925957977771759
@@ -483,7 +483,7 @@
   "prototype": 55,
   "species": "mallar3",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
   "row": 2,
   "col": 10,
   "activation": 0.48805466294288635
@@ -492,7 +492,7 @@
   "prototype": 56,
   "species": "mallar3",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
   "row": 7,
   "col": 14,
   "activation": 0.42861661314964294
@@ -501,7 +501,7 @@
   "prototype": 57,
   "species": "mallar3",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_555_560.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_555_560.ogg",
   "row": 8,
   "col": 16,
   "activation": 0.43781641125679016
@@ -510,7 +510,7 @@
   "prototype": 58,
   "species": "mallar3",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
   "row": 4,
   "col": 16,
   "activation": 0.42191073298454285
@@ -519,7 +519,7 @@
   "prototype": 59,
   "species": "mallar3",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_017_20150709_082805_575_580.ogg",
   "row": 15,
   "col": 31,
   "activation": 0.15300191938877106
@@ -528,7 +528,7 @@
   "prototype": 60,
   "species": "herthr",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_535_540.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_535_540.ogg",
   "row": 15,
   "col": 26,
   "activation": 0.3254927098751068
@@ -537,7 +537,7 @@
   "prototype": 61,
   "species": "herthr",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_340_345.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_340_345.ogg",
   "row": 8,
   "col": 22,
   "activation": 0.52357017993927
@@ -546,7 +546,7 @@
   "prototype": 62,
   "species": "herthr",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_530_535.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_530_535.ogg",
   "row": 9,
   "col": 26,
   "activation": 0.5340174436569214
@@ -555,7 +555,7 @@
   "prototype": 63,
   "species": "herthr",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_060_065.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_060_065.ogg",
   "row": 11,
   "col": 17,
   "activation": 0.3618921637535095
@@ -564,7 +564,7 @@
   "prototype": 64,
   "species": "herthr",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_430_435.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_430_435.ogg",
   "row": 10,
   "col": 19,
   "activation": 0.5579533576965332
@@ -573,7 +573,7 @@
   "prototype": 65,
   "species": "amerob",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_140_145.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_140_145.ogg",
   "row": 10,
   "col": 6,
   "activation": 0.49971336126327515
@@ -582,7 +582,7 @@
   "prototype": 66,
   "species": "amerob",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_051_20150711_063105_470_475.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_051_20150711_063105_470_475.ogg",
   "row": 11,
   "col": 28,
   "activation": 0.363576203584671
@@ -591,7 +591,7 @@
   "prototype": 67,
   "species": "amerob",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_380_385.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_031_20150710_065105_380_385.ogg",
   "row": 0,
   "col": 21,
   "activation": 0.34173962473869324
@@ -600,7 +600,7 @@
   "prototype": 68,
   "species": "amerob",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_130_135.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_130_135.ogg",
   "row": 6,
   "col": 31,
   "activation": 0.4793383777141571
@@ -609,7 +609,7 @@
   "prototype": 69,
   "species": "amerob",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_025_030.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_025_030.ogg",
   "row": 12,
   "col": 23,
   "activation": 0.4263998866081238
@@ -618,7 +618,7 @@
   "prototype": 70,
   "species": "yerwar",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
   "row": 5,
   "col": 36,
   "activation": 0.5306440591812134
@@ -627,7 +627,7 @@
   "prototype": 71,
   "species": "yerwar",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
   "row": 11,
   "col": 37,
   "activation": 0.42397189140319824
@@ -636,7 +636,7 @@
   "prototype": 72,
   "species": "yerwar",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_270_275.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_270_275.ogg",
   "row": 12,
   "col": 37,
   "activation": 0.48798754811286926
@@ -645,7 +645,7 @@
   "prototype": 73,
   "species": "yerwar",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_405_410.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_405_410.ogg",
   "row": 15,
   "col": 3,
   "activation": 0.40491676330566406
@@ -654,7 +654,7 @@
   "prototype": 74,
   "species": "yerwar",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_365_370.ogg",
   "row": 10,
   "col": 34,
   "activation": 0.3672163486480713
@@ -663,7 +663,7 @@
   "prototype": 75,
   "species": "yelwar",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
   "row": 0,
   "col": 26,
   "activation": 0.09929204732179642
@@ -672,7 +672,7 @@
   "prototype": 76,
   "species": "yelwar",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
   "row": 8,
   "col": 5,
   "activation": 0.07148367166519165
@@ -681,7 +681,7 @@
   "prototype": 77,
   "species": "yelwar",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
   "row": 15,
   "col": 25,
   "activation": 0.05595375970005989
@@ -690,7 +690,7 @@
   "prototype": 78,
   "species": "yelwar",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
   "row": 9,
   "col": 29,
   "activation": 0.08863286674022675
@@ -699,7 +699,7 @@
   "prototype": 79,
   "species": "yelwar",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_033_20150710_072105_000_005.ogg",
   "row": 11,
   "col": 30,
   "activation": 0.12101007252931595
@@ -708,7 +708,7 @@
   "prototype": 80,
   "species": "dusfly",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
   "row": 11,
   "col": 7,
   "activation": 0.3867448568344116
@@ -717,7 +717,7 @@
   "prototype": 81,
   "species": "dusfly",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
   "row": 11,
   "col": 9,
   "activation": 0.42375874519348145
@@ -726,7 +726,7 @@
   "prototype": 82,
   "species": "dusfly",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
   "row": 9,
   "col": 3,
   "activation": 0.21075494587421417
@@ -735,7 +735,7 @@
   "prototype": 83,
   "species": "dusfly",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_075_080.ogg",
   "row": 11,
   "col": 8,
   "activation": 0.1704336255788803
@@ -744,7 +744,7 @@
   "prototype": 84,
   "species": "dusfly",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_030_035.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_086_20150712_073105_030_035.ogg",
   "row": 11,
   "col": 32,
   "activation": 0.1235581785440445
@@ -753,7 +753,7 @@
   "prototype": 85,
   "species": "mouchi",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_445_450.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_445_450.ogg",
   "row": 8,
   "col": 1,
   "activation": 0.5835363864898682
@@ -762,7 +762,7 @@
   "prototype": 86,
   "species": "mouchi",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_355_360.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_355_360.ogg",
   "row": 8,
   "col": 14,
   "activation": 0.2872847318649292
@@ -771,7 +771,7 @@
   "prototype": 87,
   "species": "mouchi",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_410_415.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_410_415.ogg",
   "row": 12,
   "col": 8,
   "activation": 0.41221940517425537
@@ -780,7 +780,7 @@
   "prototype": 88,
   "species": "mouchi",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_071_20150711_083805_000_005.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_071_20150711_083805_000_005.ogg",
   "row": 11,
   "col": 11,
   "activation": 0.5466036796569824
@@ -789,7 +789,7 @@
   "prototype": 89,
   "species": "mouchi",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_445_450.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_041_20150710_085105_445_450.ogg",
   "row": 15,
   "col": 3,
   "activation": 0.41608259081840515
@@ -798,7 +798,7 @@
   "prototype": 90,
   "species": "orcwar",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
   "row": 11,
   "col": 23,
   "activation": 0.3623600900173187
@@ -807,7 +807,7 @@
   "prototype": 91,
   "species": "orcwar",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
   "row": 11,
   "col": 23,
   "activation": 0.20418234169483185
@@ -816,7 +816,7 @@
   "prototype": 92,
   "species": "orcwar",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_310_315.ogg",
   "row": 11,
   "col": 23,
   "activation": 0.3911587595939636
@@ -825,7 +825,7 @@
   "prototype": 93,
   "species": "orcwar",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_315_320.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_315_320.ogg",
   "row": 7,
   "col": 18,
   "activation": 0.1568441241979599
@@ -834,7 +834,7 @@
   "prototype": 94,
   "species": "orcwar",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_265_270.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_063_20150711_073105_265_270.ogg",
   "row": 13,
   "col": 19,
   "activation": 0.2699410617351532
@@ -843,7 +843,7 @@
   "prototype": 95,
   "species": "warvir",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_125_130.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_125_130.ogg",
   "row": 9,
   "col": 3,
   "activation": 0.4661707580089569
@@ -852,7 +852,7 @@
   "prototype": 96,
   "species": "warvir",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_060_065.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_060_065.ogg",
   "row": 11,
   "col": 24,
   "activation": 0.285646915435791
@@ -861,7 +861,7 @@
   "prototype": 97,
   "species": "warvir",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_140_145.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_140_145.ogg",
   "row": 8,
   "col": 34,
   "activation": 0.463424414396286
@@ -870,7 +870,7 @@
   "prototype": 98,
   "species": "warvir",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_130_135.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_130_135.ogg",
   "row": 15,
   "col": 25,
   "activation": 0.2872506380081177
@@ -879,7 +879,7 @@
   "prototype": 99,
   "species": "warvir",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_140_145.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_077_20150712_062105_140_145.ogg",
   "row": 3,
   "col": 35,
   "activation": 0.48885053396224976
@@ -888,7 +888,7 @@
   "prototype": 100,
   "species": "norfli",
   "k": 1,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_245_250.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_245_250.ogg",
   "row": 15,
   "col": 34,
   "activation": 0.16120100021362305
@@ -897,7 +897,7 @@
   "prototype": 101,
   "species": "norfli",
   "k": 2,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
   "row": 7,
   "col": 14,
   "activation": 0.43106386065483093
@@ -906,7 +906,7 @@
   "prototype": 102,
   "species": "norfli",
   "k": 3,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_230_235.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_230_235.ogg",
   "row": 9,
   "col": 25,
   "activation": 0.4094139337539673
@@ -915,7 +915,7 @@
   "prototype": 103,
   "species": "norfli",
   "k": 4,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
   "row": 5,
   "col": 15,
   "activation": 0.3718290328979492
@@ -924,7 +924,7 @@
   "prototype": 104,
   "species": "norfli",
   "k": 5,
-  "audio_path": "/home/fpaissan/datasets/prototype-transfer/data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
+  "audio_path": "data/HSN/raw/audio_soundscape/HSN_078_20150712_063805_240_245.ogg",
   "row": 2,
   "col": 15,
   "activation": 0.43431851267814636

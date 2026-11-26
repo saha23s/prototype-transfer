@@ -3,7 +3,7 @@
   "prototype": 0,
   "species": "gcrfin",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC143942.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC143942.ogg",
   "row": 9,
   "col": 15,
   "activation": 0.5465666651725769
@@ -12,7 +12,7 @@
   "prototype": 1,
   "species": "gcrfin",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC143945.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC143945.ogg",
   "row": 15,
   "col": 25,
   "activation": 0.6713878512382507
@@ -21,7 +21,7 @@
   "prototype": 2,
   "species": "gcrfin",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC143943.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC143943.ogg",
   "row": 9,
   "col": 18,
   "activation": 0.5876081585884094
@@ -30,7 +30,7 @@
   "prototype": 3,
   "species": "gcrfin",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC143944.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC143944.ogg",
   "row": 7,
   "col": 37,
   "activation": 0.6015598177909851
@@ -39,7 +39,7 @@
   "prototype": 4,
   "species": "gcrfin",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC143942.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC143942.ogg",
   "row": 6,
   "col": 18,
   "activation": 0.5252289772033691
@@ -48,7 +48,7 @@
   "prototype": 5,
   "species": "whcspa",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC681255.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC681255.ogg",
   "row": 10,
   "col": 7,
   "activation": 0.44250476360321045
@@ -57,7 +57,7 @@
   "prototype": 6,
   "species": "whcspa",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC114666.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC114666.ogg",
   "row": 13,
   "col": 4,
   "activation": 0.5446823239326477
@@ -66,7 +66,7 @@
   "prototype": 7,
   "species": "whcspa",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC328627.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC328627.ogg",
   "row": 8,
   "col": 23,
   "activation": 0.45534127950668335
@@ -75,7 +75,7 @@
   "prototype": 8,
   "species": "whcspa",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC174937.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC174937.ogg",
   "row": 9,
   "col": 3,
   "activation": 0.49450790882110596
@@ -84,7 +84,7 @@
   "prototype": 9,
   "species": "whcspa",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC698537.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC698537.ogg",
   "row": 9,
   "col": 8,
   "activation": 0.5652745962142944
@@ -93,7 +93,7 @@
   "prototype": 10,
   "species": "amepip",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC339906.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC339906.ogg",
   "row": 13,
   "col": 32,
   "activation": 0.5380304455757141
@@ -102,7 +102,7 @@
   "prototype": 11,
   "species": "amepip",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC179713.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC179713.ogg",
   "row": 10,
   "col": 31,
   "activation": 0.5062974691390991
@@ -111,7 +111,7 @@
   "prototype": 12,
   "species": "amepip",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC51412.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC51412.ogg",
   "row": 10,
   "col": 31,
   "activation": 0.5134554505348206
@@ -120,7 +120,7 @@
   "prototype": 13,
   "species": "amepip",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC638208.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC638208.ogg",
   "row": 10,
   "col": 3,
   "activation": 0.552125871181488
@@ -129,7 +129,7 @@
   "prototype": 14,
   "species": "amepip",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC339906.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC339906.ogg",
   "row": 13,
   "col": 31,
   "activation": 0.47325390577316284
@@ -138,7 +138,7 @@
   "prototype": 15,
   "species": "sposan",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC598768.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC598768.ogg",
   "row": 9,
   "col": 5,
   "activation": 0.49500617384910583
@@ -147,7 +147,7 @@
   "prototype": 16,
   "species": "sposan",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC139790.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC139790.ogg",
   "row": 8,
   "col": 13,
   "activation": 0.5548045039176941
@@ -156,7 +156,7 @@
   "prototype": 17,
   "species": "sposan",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC498128.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC498128.ogg",
   "row": 12,
   "col": 6,
   "activation": 0.5514452457427979
@@ -165,7 +165,7 @@
   "prototype": 18,
   "species": "sposan",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC391160.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC391160.ogg",
   "row": 15,
   "col": 5,
   "activation": 0.38282644748687744
@@ -174,7 +174,7 @@
   "prototype": 19,
   "species": "sposan",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC264262.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC264262.ogg",
   "row": 9,
   "col": 7,
   "activation": 0.49673473834991455
@@ -183,7 +183,7 @@
   "prototype": 20,
   "species": "rocwre",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC534463.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC534463.ogg",
   "row": 10,
   "col": 28,
   "activation": 0.46404826641082764
@@ -192,7 +192,7 @@
   "prototype": 21,
   "species": "rocwre",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC554567.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC554567.ogg",
   "row": 9,
   "col": 19,
   "activation": 0.49323511123657227
@@ -201,7 +201,7 @@
   "prototype": 22,
   "species": "rocwre",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC233375.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC233375.ogg",
   "row": 9,
   "col": 5,
   "activation": 0.4867672920227051
@@ -210,7 +210,7 @@
   "prototype": 23,
   "species": "rocwre",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC711396.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC711396.ogg",
   "row": 15,
   "col": 6,
   "activation": 0.33191290497779846
@@ -219,7 +219,7 @@
   "prototype": 24,
   "species": "rocwre",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC711396.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC711396.ogg",
   "row": 10,
   "col": 6,
   "activation": 0.5051805377006531
@@ -228,7 +228,7 @@
   "prototype": 25,
   "species": "brebla",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC350052.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC350052.ogg",
   "row": 9,
   "col": 37,
   "activation": 0.6663429141044617
@@ -237,7 +237,7 @@
   "prototype": 26,
   "species": "brebla",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC113814.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC113814.ogg",
   "row": 9,
   "col": 36,
   "activation": 0.4129011929035187
@@ -246,7 +246,7 @@
   "prototype": 27,
   "species": "brebla",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC205761.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC205761.ogg",
   "row": 12,
   "col": 24,
   "activation": 0.5300177931785583
@@ -255,7 +255,7 @@
   "prototype": 28,
   "species": "brebla",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC727776.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC727776.ogg",
   "row": 11,
   "col": 30,
   "activation": 0.3681534230709076
@@ -264,7 +264,7 @@
   "prototype": 29,
   "species": "brebla",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC113814.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC113814.ogg",
   "row": 11,
   "col": 36,
   "activation": 0.5601877570152283
@@ -273,7 +273,7 @@
   "prototype": 30,
   "species": "daejun",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC598456.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC598456.ogg",
   "row": 11,
   "col": 10,
   "activation": 0.47809016704559326
@@ -282,7 +282,7 @@
   "prototype": 31,
   "species": "daejun",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC282434.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC282434.ogg",
   "row": 13,
   "col": 28,
   "activation": 0.5603384971618652
@@ -291,7 +291,7 @@
   "prototype": 32,
   "species": "daejun",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC600769.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC600769.ogg",
   "row": 11,
   "col": 28,
   "activation": 0.520671010017395
@@ -300,7 +300,7 @@
   "prototype": 33,
   "species": "daejun",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC325254.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC325254.ogg",
   "row": 11,
   "col": 34,
   "activation": 0.47397804260253906
@@ -309,7 +309,7 @@
   "prototype": 34,
   "species": "daejun",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC358194.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC358194.ogg",
   "row": 13,
   "col": 22,
   "activation": 0.5063368082046509
@@ -318,7 +318,7 @@
   "prototype": 35,
   "species": "foxspa",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC535166.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC535166.ogg",
   "row": 9,
   "col": 28,
   "activation": 0.4693450331687927
@@ -327,7 +327,7 @@
   "prototype": 36,
   "species": "foxspa",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC132871.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC132871.ogg",
   "row": 13,
   "col": 6,
   "activation": 0.5598304271697998
@@ -336,7 +336,7 @@
   "prototype": 37,
   "species": "foxspa",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC535166.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC535166.ogg",
   "row": 8,
   "col": 25,
   "activation": 0.5235531330108643
@@ -345,7 +345,7 @@
   "prototype": 38,
   "species": "foxspa",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC381922.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC381922.ogg",
   "row": 15,
   "col": 18,
   "activation": 0.42095574736595154
@@ -354,7 +354,7 @@
   "prototype": 39,
   "species": "foxspa",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC149321.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC149321.ogg",
   "row": 9,
   "col": 21,
   "activation": 0.49288785457611084
@@ -363,7 +363,7 @@
   "prototype": 40,
   "species": "clanut",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC702352.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC702352.ogg",
   "row": 7,
   "col": 19,
   "activation": 0.5180280208587646
@@ -372,7 +372,7 @@
   "prototype": 41,
   "species": "clanut",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC757949.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC757949.ogg",
   "row": 6,
   "col": 4,
   "activation": 0.3282662630081177
@@ -381,7 +381,7 @@
   "prototype": 42,
   "species": "clanut",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC702352.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC702352.ogg",
   "row": 5,
   "col": 19,
   "activation": 0.6111186742782593
@@ -390,7 +390,7 @@
   "prototype": 43,
   "species": "clanut",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC145721.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC145721.ogg",
   "row": 5,
   "col": 30,
   "activation": 0.4529414474964142
@@ -399,7 +399,7 @@
   "prototype": 44,
   "species": "clanut",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC702352.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC702352.ogg",
   "row": 0,
   "col": 20,
   "activation": 0.5993198752403259
@@ -408,7 +408,7 @@
   "prototype": 45,
   "species": "moublu",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC777079.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC777079.ogg",
   "row": 6,
   "col": 29,
   "activation": 0.5159404873847961
@@ -417,7 +417,7 @@
   "prototype": 46,
   "species": "moublu",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC386247.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC386247.ogg",
   "row": 7,
   "col": 14,
   "activation": 0.5745233297348022
@@ -426,7 +426,7 @@
   "prototype": 47,
   "species": "moublu",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC205426.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC205426.ogg",
   "row": 6,
   "col": 34,
   "activation": 0.40584033727645874
@@ -435,7 +435,7 @@
   "prototype": 48,
   "species": "moublu",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC540023.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC540023.ogg",
   "row": 0,
   "col": 35,
   "activation": 0.5156084895133972
@@ -444,7 +444,7 @@
   "prototype": 49,
   "species": "moublu",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC477814.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC477814.ogg",
   "row": 6,
   "col": 0,
   "activation": 0.5259255170822144
@@ -453,7 +453,7 @@
   "prototype": 50,
   "species": "casfin",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC369971.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC369971.ogg",
   "row": 8,
   "col": 19,
   "activation": 0.41632747650146484
@@ -462,7 +462,7 @@
   "prototype": 51,
   "species": "casfin",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC418276.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC418276.ogg",
   "row": 15,
   "col": 10,
   "activation": 0.5135308504104614
@@ -471,7 +471,7 @@
   "prototype": 52,
   "species": "casfin",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC841827.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC841827.ogg",
   "row": 9,
   "col": 12,
   "activation": 0.5647158622741699
@@ -480,7 +480,7 @@
   "prototype": 53,
   "species": "casfin",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC369971.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC369971.ogg",
   "row": 8,
   "col": 6,
   "activation": 0.5443582534790039
@@ -489,7 +489,7 @@
   "prototype": 54,
   "species": "casfin",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC753689.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC753689.ogg",
   "row": 9,
   "col": 20,
   "activation": 0.4632794260978699
@@ -498,7 +498,7 @@
   "prototype": 55,
   "species": "mallar3",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC615312.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC615312.ogg",
   "row": 3,
   "col": 10,
   "activation": 0.6380061507225037
@@ -507,7 +507,7 @@
   "prototype": 56,
   "species": "mallar3",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC443649.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC443649.ogg",
   "row": 7,
   "col": 13,
   "activation": 0.6029984354972839
@@ -516,7 +516,7 @@
   "prototype": 57,
   "species": "mallar3",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC291133.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC291133.ogg",
   "row": 6,
   "col": 9,
   "activation": 0.6535825729370117
@@ -525,7 +525,7 @@
   "prototype": 58,
   "species": "mallar3",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC720576.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC720576.ogg",
   "row": 0,
   "col": 37,
   "activation": 0.5769656896591187
@@ -534,7 +534,7 @@
   "prototype": 59,
   "species": "mallar3",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC633629.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC633629.ogg",
   "row": 15,
   "col": 36,
   "activation": 0.8862746357917786
@@ -543,7 +543,7 @@
   "prototype": 60,
   "species": "herthr",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC685502.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC685502.ogg",
   "row": 9,
   "col": 22,
   "activation": 0.35790759325027466
@@ -552,7 +552,7 @@
   "prototype": 61,
   "species": "herthr",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC812917.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC812917.ogg",
   "row": 8,
   "col": 9,
   "activation": 0.5141236186027527
@@ -561,7 +561,7 @@
   "prototype": 62,
   "species": "herthr",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC256534.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC256534.ogg",
   "row": 8,
   "col": 21,
   "activation": 0.49793869256973267
@@ -570,7 +570,7 @@
   "prototype": 63,
   "species": "herthr",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC601482.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC601482.ogg",
   "row": 9,
   "col": 27,
   "activation": 0.3910616934299469
@@ -579,7 +579,7 @@
   "prototype": 64,
   "species": "herthr",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC122005.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC122005.ogg",
   "row": 9,
   "col": 5,
   "activation": 0.5352585911750793
@@ -588,7 +588,7 @@
   "prototype": 65,
   "species": "amerob",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC468353.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC468353.ogg",
   "row": 8,
   "col": 23,
   "activation": 0.5279031991958618
@@ -597,7 +597,7 @@
   "prototype": 66,
   "species": "amerob",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC305406.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC305406.ogg",
   "row": 13,
   "col": 11,
   "activation": 0.47499150037765503
@@ -606,7 +606,7 @@
   "prototype": 67,
   "species": "amerob",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC163130.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC163130.ogg",
   "row": 8,
   "col": 30,
   "activation": 0.451162725687027
@@ -615,7 +615,7 @@
   "prototype": 68,
   "species": "amerob",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC517735.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC517735.ogg",
   "row": 6,
   "col": 31,
   "activation": 0.56831955909729
@@ -624,7 +624,7 @@
   "prototype": 69,
   "species": "amerob",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC319833.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC319833.ogg",
   "row": 9,
   "col": 10,
   "activation": 0.5116470456123352
@@ -633,7 +633,7 @@
   "prototype": 70,
   "species": "yerwar",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC841437.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC841437.ogg",
   "row": 5,
   "col": 4,
   "activation": 0.5435693860054016
@@ -642,7 +642,7 @@
   "prototype": 71,
   "species": "yerwar",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC142770.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC142770.ogg",
   "row": 11,
   "col": 20,
   "activation": 0.49693432450294495
@@ -651,7 +651,7 @@
   "prototype": 72,
   "species": "yerwar",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC135646.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC135646.ogg",
   "row": 11,
   "col": 19,
   "activation": 0.5686194896697998
@@ -660,7 +660,7 @@
   "prototype": 73,
   "species": "yerwar",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC475039.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC475039.ogg",
   "row": 15,
   "col": 17,
   "activation": 0.5964701771736145
@@ -669,7 +669,7 @@
   "prototype": 74,
   "species": "yerwar",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC618130.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC618130.ogg",
   "row": 11,
   "col": 25,
   "activation": 0.5464906096458435
@@ -678,7 +678,7 @@
   "prototype": 75,
   "species": "yelwar",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC809641.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC809641.ogg",
   "row": 11,
   "col": 14,
   "activation": 0.5864275693893433
@@ -687,7 +687,7 @@
   "prototype": 76,
   "species": "yelwar",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC715443.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC715443.ogg",
   "row": 8,
   "col": 31,
   "activation": 0.49200502038002014
@@ -696,7 +696,7 @@
   "prototype": 77,
   "species": "yelwar",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC715437.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC715437.ogg",
   "row": 8,
   "col": 8,
   "activation": 0.4013184905052185
@@ -705,7 +705,7 @@
   "prototype": 78,
   "species": "yelwar",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC815784.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC815784.ogg",
   "row": 12,
   "col": 2,
   "activation": 0.39096876978874207
@@ -714,7 +714,7 @@
   "prototype": 79,
   "species": "yelwar",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC179475.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC179475.ogg",
   "row": 10,
   "col": 12,
   "activation": 0.4791293144226074
@@ -723,7 +723,7 @@
   "prototype": 80,
   "species": "dusfly",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC277914.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC277914.ogg",
   "row": 8,
   "col": 9,
   "activation": 0.5473005175590515
@@ -732,7 +732,7 @@
   "prototype": 81,
   "species": "dusfly",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC181519.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC181519.ogg",
   "row": 11,
   "col": 16,
   "activation": 0.5322744846343994
@@ -741,7 +741,7 @@
   "prototype": 82,
   "species": "dusfly",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC482173.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC482173.ogg",
   "row": 9,
   "col": 9,
   "activation": 0.40081098675727844
@@ -750,7 +750,7 @@
   "prototype": 83,
   "species": "dusfly",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC205918.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC205918.ogg",
   "row": 9,
   "col": 0,
   "activation": 0.381145715713501
@@ -759,7 +759,7 @@
   "prototype": 84,
   "species": "dusfly",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC277912.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC277912.ogg",
   "row": 9,
   "col": 0,
   "activation": 0.400595098733902
@@ -768,7 +768,7 @@
   "prototype": 85,
   "species": "mouchi",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC333523.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC333523.ogg",
   "row": 9,
   "col": 1,
   "activation": 0.5346553921699524
@@ -777,7 +777,7 @@
   "prototype": 86,
   "species": "mouchi",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC513817.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC513817.ogg",
   "row": 8,
   "col": 8,
   "activation": 0.3707820773124695
@@ -786,7 +786,7 @@
   "prototype": 87,
   "species": "mouchi",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC294674.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC294674.ogg",
   "row": 13,
   "col": 7,
   "activation": 0.4878530204296112
@@ -795,7 +795,7 @@
   "prototype": 88,
   "species": "mouchi",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC294674.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC294674.ogg",
   "row": 11,
   "col": 7,
   "activation": 0.5330451130867004
@@ -804,7 +804,7 @@
   "prototype": 89,
   "species": "mouchi",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC513819.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC513819.ogg",
   "row": 15,
   "col": 11,
   "activation": 0.5377689003944397
@@ -813,7 +813,7 @@
   "prototype": 90,
   "species": "orcwar",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC599386.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC599386.ogg",
   "row": 12,
   "col": 31,
   "activation": 0.4194002151489258
@@ -822,7 +822,7 @@
   "prototype": 91,
   "species": "orcwar",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC537272.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC537272.ogg",
   "row": 11,
   "col": 10,
   "activation": 0.5020091533660889
@@ -831,7 +831,7 @@
   "prototype": 92,
   "species": "orcwar",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC322737.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC322737.ogg",
   "row": 10,
   "col": 7,
   "activation": 0.45881518721580505
@@ -840,7 +840,7 @@
   "prototype": 93,
   "species": "orcwar",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC272305.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC272305.ogg",
   "row": 13,
   "col": 27,
   "activation": 0.32921740412712097
@@ -849,7 +849,7 @@
   "prototype": 94,
   "species": "orcwar",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC713869.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC713869.ogg",
   "row": 13,
   "col": 36,
   "activation": 0.5198023915290833
@@ -858,7 +858,7 @@
   "prototype": 95,
   "species": "warvir",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC841324.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC841324.ogg",
   "row": 9,
   "col": 31,
   "activation": 0.4773697853088379
@@ -867,7 +867,7 @@
   "prototype": 96,
   "species": "warvir",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC333892.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC333892.ogg",
   "row": 11,
   "col": 34,
   "activation": 0.3738042712211609
@@ -876,7 +876,7 @@
   "prototype": 97,
   "species": "warvir",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC378264.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC378264.ogg",
   "row": 8,
   "col": 32,
   "activation": 0.49901580810546875
@@ -885,7 +885,7 @@
   "prototype": 98,
   "species": "warvir",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC370391.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC370391.ogg",
   "row": 15,
   "col": 16,
   "activation": 0.6493145823478699
@@ -894,7 +894,7 @@
   "prototype": 99,
   "species": "warvir",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC558026.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC558026.ogg",
   "row": 9,
   "col": 31,
   "activation": 0.5948424935340881
@@ -903,7 +903,7 @@
   "prototype": 100,
   "species": "norfli",
   "k": 1,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC737161.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC737161.ogg",
   "row": 6,
   "col": 2,
   "activation": 0.3782297968864441
@@ -912,7 +912,7 @@
   "prototype": 101,
   "species": "norfli",
   "k": 2,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC173967.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC173967.ogg",
   "row": 6,
   "col": 2,
   "activation": 0.5365571975708008
@@ -921,7 +921,7 @@
   "prototype": 102,
   "species": "norfli",
   "k": 3,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC190360.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC190360.ogg",
   "row": 9,
   "col": 23,
   "activation": 0.4727574586868286
@@ -930,7 +930,7 @@
   "prototype": 103,
   "species": "norfli",
   "k": 4,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC297479.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC297479.ogg",
   "row": 6,
   "col": 8,
   "activation": 0.3721787929534912
@@ -939,7 +939,7 @@
   "prototype": 104,
   "species": "norfli",
   "k": 5,
-  "audio_path": "/network/scratch/s/sahas/prototype-transfer/data/HSN/raw/audio_focal/XC330758.ogg",
+  "audio_path": "data/HSN/raw/audio_focal/XC330758.ogg",
   "row": 2,
   "col": 19,
   "activation": 0.4641191363334656

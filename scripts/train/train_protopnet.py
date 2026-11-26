@@ -27,8 +27,8 @@ Outputs (results store, see docs/RESULTS.md):
          outputs/results/<dataset>/runs/<name>/{config.json, metrics.json, train_log.csv, push.json}
          outputs/results/<dataset>/registry.jsonl (the run's index entry: rung, seed, commit, headline val metrics)
          outputs/checkpoints/<dataset>/<name>/best.pt
-Launch on filo through the GPU reservation wrapper:
-  ~/.local/bin/local-training-3090 python scripts/train/train_protopnet.py --train-domain focal
+Example (needs a GPU):
+  python scripts/train/train_protopnet.py --train-domain focal
 
 The training logic is in prototype_transfer.training.trainer.
 """

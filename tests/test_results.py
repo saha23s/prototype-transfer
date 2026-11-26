@@ -42,6 +42,22 @@ def test_dirty_flags_code_changes_but_not_rewritten_results():
             os.chdir(cwd)
 
 
+def test_saved_audio_paths_hold_no_machine_or_user_directories():
+    with tempfile.TemporaryDirectory() as tmp:
+        scratch, repo = Path(tmp) / "scratch" / "someuser" / "data", Path(tmp) / "repo"
+        (scratch / "HSN").mkdir(parents=True)
+        repo.mkdir()
+        (repo / "data").symlink_to(scratch)                # the data directory may live elsewhere
+        cwd = os.getcwd()
+        try:
+            os.chdir(repo)
+            for path in (scratch / "HSN" / "a.ogg", repo / "data" / "HSN" / "a.ogg", "data/HSN/a.ogg"):
+                assert R.portable_path(path) == "data/HSN/a.ogg", path
+            assert R.portable_path("/elsewhere/someuser/a.ogg") == "a.ogg"
+        finally:
+            os.chdir(cwd)
+
+
 def test_roundtrip_and_merge():
     with tempfile.TemporaryDirectory() as tmp:
         s = _store(tmp)
