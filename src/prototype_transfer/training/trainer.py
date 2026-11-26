@@ -216,6 +216,8 @@ def train(args: argparse.Namespace) -> None:
     else:
         push_ds = HSNInferenceDataset(manifest(args.train_domain, "train"), is_soundscape=is_sc,
                                       max_samples=args.max_train_batches * args.batch_size if args.max_train_batches else None)
+        if args.train_labels:   # push reads labels too: it must stay within the label budget, on the same clips as training
+            push_ds.df = train_ds.df
         push_info = push_prototypes(model, push_ds, device, num_workers=args.num_workers)
         log_eval("push", 0, None)
 
