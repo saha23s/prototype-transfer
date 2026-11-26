@@ -38,6 +38,22 @@ def test_species_activation_cdfs_has_every_view_for_both_domains():
     assert out["n"]["soundscape_pos"] == 50 and out["medians"]["max"]["soundscape_pos"] > out["medians"]["max"]["soundscape_neg"]
 
 
+def test_silent_clips_do_not_count_towards_the_peak_frequency():
+    """An all-zero activation map has argmax 0, the lowest frequency row: it must not be reported as a peak there."""
+    from prototype_transfer.analysis.prototype_responses import grid_row_centers_khz, prototype_transfer_stats
+    n = 10
+    targets = np.zeros((n, 1), dtype=bool)
+    targets[:6, 0] = True
+    act = np.zeros((n, 1, 5), dtype=np.float32)
+    act[:2, 0, 0] = 0.5                       # prototype 1 fires on 2 of the 6 positives, at row 10; prototype 2 never fires
+    rows = np.zeros((n, 1, 5), dtype=np.uint8)
+    rows[:2, 0, 0] = 10
+    d = {"targets": targets, "proto_max": act, "peak_freq": rows, "probs": np.random.default_rng(0).random((n, 1))}
+    p1, p2 = prototype_transfer_stats(d, d, np.ones((1, 5)), ["s"], min_soundscape_pos=1)["species"]["s"]["domains"]["soundscape"]["prototypes"][:2]
+    assert np.isclose(p1["peak_khz"], grid_row_centers_khz()[10]) and np.isclose(p1["silent_pos"], 4 / 6)
+    assert p2["peak_khz"] is None and p2["silent_pos"] == 1.0
+
+
 def test_model_blocks_read_the_results_store_and_label_models():
     from prototype_transfer.evaluation import results
     store = results.Store("hsn")

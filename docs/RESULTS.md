@@ -30,7 +30,7 @@ outputs/results/<dataset>/            committed (small)
         metrics.json                  {"sections": {<section>: {...}}}: every metric of the run
         train_log.csv                 per-epoch log of a training run (phase, epoch, loss, val metrics for both domains)
         push.json, prototype_transfer*.json, canonical_*_prototypes.json   other small per-run files
-    summaries/<name>.json             results spanning several runs: canonical_eval*, cv_<name>, model_comparison, diagnostics_stage2*
+    summaries/<name>.json             results spanning several runs: canonical_eval*, cv_<name>, cv_contrasts, model_comparison, diagnostics_stage2*
     dataset/                          description of the data: splits.json, splits_cv.json
 outputs/features/<dataset>/<run_id>/  NOT committed: responses.pt (per-clip probabilities, prototype activations), diag_*.pt
 outputs/checkpoints/<dataset>/<run_id>/  NOT committed: best.pt
@@ -46,6 +46,16 @@ Cross-validation folds are separate runs (`<name>-cv0`, `<name>-cv1`, `<name>-cv
 | `train` | `scripts/train/train_protopnet.py` | `selected_val` and `last_epoch_val` (cmAP, macro AUC on the focal and soundscape validation sets), `select`, `train_domain` |
 | `canonical_test` / `canonical_val` / `canonical_cv<f>` | `scripts/eval/canonical_eval.py` | protocol v1: `point`, `ci95` (cluster bootstrap), `vs_baseline`, `gap_fraction`, `criteria`, plus the split, seed, sample sizes. The per-prototype table is in `canonical_<tag>_prototypes.json` |
 | `prototype_transfer[_tag]` | `scripts/analysis/extract_prototype_activations.py` | small header; the per-prototype statistics are in `prototype_transfer[_tag].json` |
+| `prototype_transfer_nontest` | `scripts/report/build_dashboard_data.py` | the same statistics on every clip outside the test split (pretrained model only) |
+
+In `prototype_transfer*` files, `peak_khz` counts only clips on which the prototype is active, and `silent_pos` is the share of
+positives with zero activation. **A file without `silent_pos` was made by the older code, whatever its date**: its `peak_khz`
+also counts silent clips, which pulls it toward the lowest frequency, so do not read a low `peak_khz` there as the prototype
+firing on low-frequency sound. This includes the `prototype_transfer.json` (test split) of `pretrained-xcl`, `focal-only` and
+`soundscape-only` saved on 2026-11-26.
+
+The summary `cv_contrasts` (`scripts/eval/paired_contrasts.py`) holds exploratory paired intervals of soundscape AP between two
+cross-validated runs, on three species sets. They are not part of protocol v1 and do not include training-seed variation.
 
 `get` takes `SECTION.KEY.KEY...`, for example `canonical_test.point.sc_ap_primary` (headline soundscape AP on the primary
 species), `canonical_test.ci95.sc_ap_primary` (its 95% interval), `canonical_test.gap_fraction.value`.

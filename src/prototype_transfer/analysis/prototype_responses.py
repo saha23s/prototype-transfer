@@ -156,7 +156,10 @@ def prototype_transfer_stats(
                             soundscape negatives = all other soundscape clips)
       logit_share:         mean fraction of the class evidence sum_k w_k*a_k on positives
                            contributed by this prototype ("which prototype carries the decision")
-      peak_khz:            median frequency (kHz) of the activation peak on positives
+      peak_khz:            median frequency (kHz) of the activation peak over the positives on which the prototype is
+                           active (None if it never is). An all-zero map has no peak: its argmax is the first cell, so
+                           counting silent clips would report the lowest frequency row.
+      silent_pos:          fraction of positives on which the prototype's max activation is zero
     """
     row_khz = grid_row_centers_khz()
     domains = {"focal": focal, "soundscape": soundscape}
@@ -172,6 +175,7 @@ def prototype_transfer_stats(
             contrib = pos * w[None, :]
             share = contrib / np.clip(contrib.sum(axis=1, keepdims=True), 1e-8, None)
             peak_rows = d["peak_freq"][y, c, :].astype(int)
+            active = pos > 0                                      # [n_pos, 5]
             sp_entry["domains"][name] = {
                 "n_pos": int(y.sum()),
                 "class_auc": _safe_auc(y, d["probs"][:, c]),
@@ -181,7 +185,8 @@ def prototype_transfer_stats(
                         "act_neg": _median_or_none(neg[:, k]),
                         "auc": _safe_auc(y, act[:, k]),
                         "logit_share": float(share[:, k].mean()) if len(pos) else None,
-                        "peak_khz": _median_or_none(row_khz[peak_rows[:, k]]),
+                        "peak_khz": _median_or_none(row_khz[peak_rows[active[:, k], k]]),
+                        "silent_pos": float((~active[:, k]).mean()) if len(pos) else None,
                     }
                     for k in range(act.shape[1])
                 ],

@@ -362,6 +362,15 @@
      0.007828703513870624
     ]
    }
+  },
+  "prototype_transfer_nontest": {
+   "stats_file": "prototype_transfer_nontest.json",
+   "n_clips": {
+    "focal": 4303,
+    "soundscape": 8400
+   },
+   "min_soundscape_pos": 10,
+   "scope": "train and val splits of both domains"
   }
  }
 }

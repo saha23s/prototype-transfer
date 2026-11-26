@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Problem formulation · Prototype transfer: focal → soundscape bird recognition</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <p class="site-title">Prototype transfer: focal → soundscape bird recognition</p>
+  <nav class="pages" aria-label="Pages"><a href="index.html">Motivation</a><a href="data.html">Data exploration</a><a href="splits.html">Splits</a><a href="evaluation.html">Evaluation</a><a href="formulation.html" aria-current="page">Problem formulation</a><a href="label-curve.html">Label curve</a><a href="results.html">Initial results</a><a href="explorer.html" class="appendix">Species explorer</a></nav>
+  <header><h1>Problem formulation</h1><p class="lede">Adapt an interpretable bird-sound classifier from focal recordings to soundscapes, ideally without soundscape labels.</p></header>
+  <main>
+<section id="model" aria-labelledby="model-title"><h2 id="model-title">Model</h2>
+    <div class="prose">
+    <p>A backbone maps the spectrogram <i>x</i> of a 5 s clip to patch embeddings z<sub>t,f</sub>(x). Species <i>s</i> has K = 5
+    prototypes p<sub>sk</sub>. Each prototype's activation is its best match anywhere in the clip, and the species score is a
+    non-negative weighted sum:</p>
+    <div class="math">a<sub>sk</sub>(x) = max<sub>t,f</sub> ReLU( cos( z<sub>t,f</sub>(x), p<sub>sk</sub> ) )<br>
+    ŷ<sub>s</sub>(x) = σ( Σ<sub>k</sub> w<sub>sk</sub> a<sub>sk</sub>(x) + b<sub>s</sub> ),&nbsp;&nbsp; w<sub>sk</sub> ≥ 0</div>
+    <p>An error can therefore come from the <b>activations</b> a<sub>sk</sub> (a prototype no longer matches, or matches the wrong sound),
+    from how the <b>weights</b> w<sub>sk</sub> combine them, or from both.</p></div></section><section id="setting" aria-labelledby="setting-title"><h2 id="setting-title">Setting</h2><figure class="chart" id="setting-diagram"><figcaption><h3>What a method may use</h3></figcaption><svg viewBox="0 0 900 300" role="img" aria-label="Pretrained model and training-site data feed an adaptation step that is scored on held-out sites" xmlns="http://www.w3.org/2000/svg"><defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path class="arrow-head" d="M0,0L10,5L0,10z"/></marker></defs><rect class="box-node" x="0.0" y="6.0" width="250.0" height="82.0" rx="8"></rect><text x="125.0" y="30.0" text-anchor="middle" class="node-title">Pretrained AudioProtoPNet</text><text x="125.0" y="50.0" text-anchor="middle">trained on Xeno-Canto</text><text x="125.0" y="66.0" text-anchor="middle">(focal recordings)</text><rect class="box-node soundscape-edge" x="0.0" y="108.0" width="250.0" height="82.0" rx="8"></rect><text x="125.0" y="132.0" text-anchor="middle" class="node-title">Unlabeled soundscapes</text><text x="125.0" y="152.0" text-anchor="middle">audio from training sites</text><text x="125.0" y="168.0" text-anchor="middle">no annotations</text><rect class="box-node dashed-edge" x="0.0" y="210.0" width="250.0" height="82.0" rx="8"></rect><text x="125.0" y="234.0" text-anchor="middle" class="node-title">Soundscape labels</text><text x="125.0" y="254.0" text-anchor="middle">N clips from training sites</text><text x="125.0" y="270.0" text-anchor="middle">N = 0 is the target setting</text><rect class="box-node" x="345.0" y="108.0" width="210.0" height="82.0" rx="8"></rect><text x="450.0" y="132.0" text-anchor="middle" class="node-title">Adaptation</text><text x="450.0" y="152.0" text-anchor="middle">changes weights, prototypes</text><text x="450.0" y="168.0" text-anchor="middle">or the whole network</text><rect class="box-node soundscape-edge" x="650.0" y="108.0" width="250.0" height="82.0" rx="8"></rect><text x="775.0" y="132.0" text-anchor="middle" class="node-title">Held-out sites</text><text x="775.0" y="152.0" text-anchor="middle">never seen in adaptation</text><text x="775.0" y="168.0" text-anchor="middle">scored with the protocol</text><line class="arrow" x1="250" y1="47" x2="343" y2="125" marker-end="url(#head)"/><line class="arrow" x1="250" y1="149" x2="343" y2="149" marker-end="url(#head)"/><line class="arrow" x1="250" y1="251" x2="343" y2="173" marker-end="url(#head)"/><line class="arrow" x1="555" y1="149" x2="648" y2="149" marker-end="url(#head)"/></svg></figure>
+    <div class="prose">
+    <p>The source domain F (focal) has one labeled species per clip. The target domain S (soundscapes) is multi-label, includes many
+    clips with no target species, and is grouped by recording site. Sites are divided into training sites and held-out sites.
+    The task is multi-label recognition over 21 species on held-out soundscape sites.</p></div><div class="table-wrap"><table class="mini crit"><thead><tr><th>Setting</th><th>Focal labels</th><th>Unlabeled soundscape audio</th><th>Soundscape labels</th><th>Role</th></tr></thead><tbody><tr><td>Zero-shot</td><td>pretraining only</td><td>—</td><td>—</td><td>baseline</td></tr><tr><td>Focal fine-tuning</td><td>yes</td><td>—</td><td>—</td><td>control</td></tr><tr><td>Unsupervised adaptation</td><td>optional</td><td>training sites</td><td>—</td><td><b>target setting</b></td></tr><tr><td>Few labels</td><td>pretraining only</td><td>—</td><td>N clips</td><td>label curve</td></tr><tr><td>All labels</td><td>pretraining only</td><td>—</td><td>all training-site clips</td><td>upper reference</td></tr></tbody></table></div></section><section id="objective" aria-labelledby="objective-title"><h2 id="objective-title">Objective</h2>
+    <div class="prose">
+    <p>Let M(h) be the soundscape macro average precision of model h over the primary species P, on held-out sites:</p>
+    <div class="math">M(h) = (1 / |P|) Σ<sub>s∈P</sub> AP<sub>s</sub>(h)</div>
+    <p>With h<sub>0</sub> the pretrained model and h<sub>★</sub> the model trained on all labeled training-site soundscapes, the share of
+    the gap closed by an adapted model h is</p>
+    <div class="math">γ(h) = ( M(h) − M(h<sub>0</sub>) ) / ( M(h<sub>★</sub>) − M(h<sub>0</sub>) )</div>
+    <p>We look for an adaptation that uses <b>no soundscape labels</b> and reaches γ ≥ 0.5 while keeping focal AUC within
+    0.01 of h<sub>0</sub> (full list under <a href="evaluation.html#criteria">success criteria</a>).
+    h<sub>★</sub> is an empirical reference, not a proven upper bound: a method or a single species can exceed it.</p>
+    <p>Prototype transfer is measured by Δ<sub>sk</sub> = AUC<sub>S</sub>(a<sub>sk</sub>) − AUC<sub>F</sub>(a<sub>sk</sub>), a diagnostic of
+    <i>where</i> the model breaks.</p></div></section><section id="questions" aria-labelledby="questions-title"><h2 id="questions-title">Research questions</h2><ol class="prose">
+    <li><b>How much supervision does the gap cost?</b> How many labeled soundscape clips are needed to close half of it?
+    → <a href="label-curve.html">Label curve</a></li>
+    <li><b>Can it be closed without labels?</b> By adapting activations or weights with unlabeled audio, or by making focal training
+    look more like soundscapes? → <a href="results.html">Initial results</a></li>
+    <li><b>Is prototype transfer the lever?</b> When prototypes detect better on soundscapes, does average precision follow?
+    (Observational comparisons across methods cannot show cause; that needs an intervention on prototypes alone.)
+    → <a href="results.html#prototypes">Initial results</a></li></ol></section>
+  </main>
+  <footer class="pager"><a rel="prev" href="evaluation.html">← Evaluation</a><a rel="next" href="label-curve.html">Label curve →</a></footer>
+</body>
+</html>

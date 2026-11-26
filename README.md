@@ -80,7 +80,9 @@ recipe in `results.py list --rung`).
 
 Background and pseudo-label manifests are built without any annotation by `scripts/method/make_background_manifest.py` from the pretrained
 responses of `scripts/analysis/diagnose_shift.py --task extract`. Cross-validation folds are combined with
-`scripts/eval/cv_aggregate.py NAME` (mean ± sd over folds next to the pretrained baseline on the same sites).
+`scripts/eval/cv_aggregate.py NAME` (mean ± sd over folds next to the pretrained baseline on the same sites). Exploratory paired
+intervals between two cross-validated runs: `scripts/eval/paired_contrasts.py` (CPU). The next planned reruns (more seeds, a
+frozen-backbone label curve) are listed by `scripts/slurm/submit_replications.sh`, which only prints unless given `--submit`.
 
 ## Layout
 
@@ -90,7 +92,7 @@ scripts/                  thin command-line entry points: data/ train/ eval/ ana
 configs/splits/hsn.json   checksums of the canonical splits
 docs/                     PROTOCOL.md (how models are scored), RESULTS.md (where numbers live)
 tests/                    plain-assert tests, no pytest needed: for t in tests/test_*.py; do python $t; done
-dashboard/                static summary page (see below)
+dashboard/                static multi-page report (see below)
 outputs/results/<dataset>/ committed results; outputs/features and outputs/checkpoints are not committed
 ```
 
@@ -100,17 +102,21 @@ outputs/results/<dataset>/ committed results; outputs/features and outputs/check
 | `models/` | the 21-class ProtoPNet and its checkpointing / prototype push |
 | `training/` | the four-phase trainer and losses |
 | `method/` | background mixing, species overlap, pseudo-label dataset, label-free background / pseudo-label manifests (the recipe components) |
-| `evaluation/` | the canonical evaluation, CV aggregation, the results store |
+| `evaluation/` | the canonical evaluation, CV aggregation, intervals between runs, the results store |
 | `analysis/` | per-prototype responses and the domain-shift diagnostics |
-| `reporting/` | the dashboard's data bundle (statistics, findings, patches, model comparison) |
+| `reporting/` | the dashboard: page builders (`pages/`), SVG charts, and the interactive data bundle |
 
 ### Dashboard
 
-`dashboard/index.html` is a static, offline page (open it in a browser): the data splits and the evaluation protocol, then the prototype-level
-findings. Re-render the splits and protocol sections after the splits or the baseline evaluation change with
-`python scripts/report/build_dashboard_protocol.py` (reads the results store only). Rebuild the findings data with
-`python scripts/report/build_dashboard_data.py` (needs the pretrained model's full-manifest responses:
-`scripts/analysis/extract_prototype_activations.py pretrained-xcl --tag full`, and the audio for the patch crops). Acceptance test:
+`dashboard/index.html` is a static, offline site (open it in a browser). Pages: motivation, data exploration, splits, evaluation,
+problem formulation, label curve, initial results, and an interactive species explorer. Rebuild the pages after results or splits
+change with `python scripts/report/build_dashboard.py` (CPU; reads the results store, `data/HSN/splits` and the cached responses in
+`outputs/features/`; `--gallery` also redraws the example spectrograms from the audio). A new cross-validated method appears once it
+is added to the registry in `src/prototype_transfer/reporting/runs.py`; the build stops if new results contradict a stated
+conclusion. The findings and the explorer read `dashboard/data.js`, rebuilt with `python scripts/report/build_dashboard_data.py`.
+By default it leaves out the test split and works from cached responses (the pretrained model's `responses_cv{0,1,2}.pt` and
+`diag_responses.pt`) plus the audio; `--scope all` includes every clip and needs `extract_prototype_activations.py pretrained-xcl
+--tag full`. The two findings from visual inspection describe the non-test crops: look again if the crops change. Checks: `python tests/test_dashboard_pages.py`, and for the interactive parts
 `npm i jsdom@24 && node dashboard/tests/check.mjs dashboard`.
 
 ## Environment (uv)

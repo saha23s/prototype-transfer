@@ -14,26 +14,33 @@ from pathlib import Path
 
 import numpy as np
 import torch
+import pandas as pd
 from matplotlib.image import imsave
 
-from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
+from prototype_transfer.analysis.prototype_responses import (extract_prototype_responses, grid_cell_to_spec_slice,
+                                                             grid_row_centers_khz)
+from prototype_transfer.data.datasets import HSNInferenceDataset
 from prototype_transfer.data.preprocessing import AudioPreprocessor
 from prototype_transfer.evaluation import results
-from prototype_transfer.evaluation.canonical import IMPROVE
+from prototype_transfer.evaluation.canonical import FAIL, IMPROVE
 from prototype_transfer.models.classifier import MODEL_REVISION
 
 logger = logging.getLogger(__name__)
 
 DOMAINS = ("focal", "soundscape")
 QUANTILES = (10, 25, 50, 75, 90)
+SILENT_SHARE = 0.25              # a prototype silent on more than this share of soundscape positives is reported as going silent
+HIGH_KHZ, LOW_KHZ = 1.0, 0.5     # a peak that moves from above HIGH_KHZ on focal clips to below LOW_KHZ on soundscapes
 
-# Observations from visually inspecting the patch galleries (not computable from the JSON).
+# Observations from visually inspecting the patch galleries (not computable from the JSON). They describe the top-3 crops of
+# the NON-TEST bundle; another set of clips needs another inspection. {auc3}-style fields are filled from the statistics.
 CURATED_FINDINGS = [
     {
         "title": "Some prototypes match the same acoustic part in both domains",
-        "text": "whcspa P3 (a pure-tone note) and P4 (a trill) fire on the same structures in focal and soundscape "
-                "clips and keep soundscape AUC above 0.9. P5's best soundscape matches also resemble its focal "
-                "ones, but they are rare: its median soundscape activation is ~0 and its AUC drops to 0.67.",
+        "text": "whcspa P3 (a pure-tone note) and P4 (a series of falling sweeps) mostly fire on the same kind of structure in "
+                "focal and soundscape clips, with soundscape AUC {auc3:.2f} and {auc4:.2f}. P5's best soundscape matches also "
+                "resemble its focal ones, but it is usually silent: median soundscape activation {act5:.2f} on clips with the "
+                "species, and AUC {auc5:.2f}.",
         "species": "whcspa", "prototype": 3,
         "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [3, 4, 5],
                      "method": "Visual inspection of the top-3 activating patches per domain (crop = peak cell "
@@ -41,16 +48,28 @@ CURATED_FINDINGS = [
                                "on all positive clips (table)."},
     },
     {
-        "title": "Others latch onto noise in soundscapes",
-        "text": "whcspa P2's top soundscape matches are broadband noise bursts around 6 kHz rather "
-                "than song: high activation there is likely spurious.",
+        "title": "Top matches can look different across domains",
+        "text": "Two of whcspa P2's three top focal matches are sharp rising sweeps; all three top soundscape matches are a "
+                "buzz-like band near 6 kHz, which resembles the buzz in the third focal match. The images cannot show whether "
+                "these are song or noise. Its soundscape AUC is {auc2:.2f}.",
         "species": "whcspa", "prototype": 2,
         "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [2],
-                     "method": "Visual inspection of the top-3 activating patches per domain. Note P2 still has "
-                               "soundscape AUC 0.91: the spurious matches are among its strongest activations, "
-                               "not the majority of its detections."},
+                     "method": "Visual inspection of the top-3 activating patches per domain, without listening to the audio. "
+                               "Three examples per domain say nothing about how common each kind of match is."},
     },
 ]
+
+
+def fill_curated(curated: list[dict], species: list[dict]) -> list[dict]:
+    """The visual findings with their {auc<k>} / {act<k>} fields taken from the inspected species' statistics."""
+    out = []
+    for f in curated:
+        s = next(x for x in species if x["code"] == f["species"])
+        values = {f"auc{p['k']}": p["soundscape"]["auc"] for p in s["prototypes"]}
+        values |= {f"act{p['k']}": p["soundscape"]["act_q"][QUANTILES.index(50)] for p in s["prototypes"]}
+        out.append({**f, "text": f["text"].format(**values)})
+    return out
+
 
 CAVEATS = [
     "Focal clips are Xeno-Canto recordings, which are part of the model's XCL training data: "
@@ -139,7 +158,7 @@ def activation_cdfs(data: dict, species: list[dict], sp_list: list[str], step: f
     return out
 
 
-def computed_findings(species: list[dict], dists: dict) -> list[dict]:
+def computed_findings(species: list[dict], dists: dict, n_soundscape: int) -> list[dict]:
     """Findings whose text AND evidence are computed from the same numbers."""
     protos = [(s["code"], p) for s in species for p in s["prototypes"] if has_auc(p)]
     dauc = {(sp, p["k"]): p["soundscape"]["auc"] - p["focal"]["auc"] for sp, p in protos}
@@ -164,8 +183,8 @@ def computed_findings(species: list[dict], dists: dict) -> list[dict]:
                       ["Species with soundscape AUC ≥ 0.90", f"{n_above_09} / {len(species)}"],
                       ["Largest drop", f"{worst_sp}: {worst_drop:.2f}"],
                       ["Median drop", f"{np.median([d for _, d in drops]):.3f}"]],
-            "method": "Class ROC-AUC of the model's sigmoid output for the species, on all focal clips "
-                      "(negatives = other species) and all 12,000 soundscape clips.",
+            "method": "Class ROC-AUC of the model's sigmoid output for the species, on the focal clips "
+                      f"(negatives = other species) and the {n_soundscape:,} soundscape clips.",
         },
     })
 
@@ -253,27 +272,40 @@ def computed_findings(species: list[dict], dists: dict) -> list[dict]:
         },
     })
 
-    # 5. Noise-floor drift
-    low = [(sp, p) for sp, p in protos
-           if p["soundscape"]["peak_khz"] is not None and p["soundscape"]["peak_khz"] < 0.5
-           and p["focal"]["peak_khz"] is not None and p["focal"]["peak_khz"] > 1.0]
-    if low:
-        low_keys = {(sp, p["k"]) for sp, p in low}
-        low_d = float(np.mean([dauc[k] for k in low_keys]))
-        rest_d = float(np.mean([v for k, v in dauc.items() if k not in low_keys]))
+    # 5. Silent prototypes
+    silent = [(sp, p, p["soundscape"]["silent"]) for sp, p in protos if p["soundscape"]["silent"] > SILENT_SHARE]
+    failing = {k for k, v in dauc.items() if v < FAIL}
+    if silent and failing:
+        n_fail_silent = sum((sp, p["k"]) in failing for sp, p, _ in silent)
+        n_ok = len(protos) - len(failing)
+        half = sum(p["soundscape"]["silent"] > 0.5 for sp, p in protos if (sp, p["k"]) in failing)
+        med = {name: float(np.median([p["soundscape"]["silent"] for sp, p in protos if ((sp, p["k"]) in failing) == f]))
+               for name, f in (("failing", True), ("other", False))}
+        worst = sorted(silent, key=lambda t: -t[2])[:3]
+        moved = [f"{sp} P{p['k']}" for sp, p in protos
+                 if p["soundscape"]["peak_khz"] is not None and p["soundscape"]["peak_khz"] < LOW_KHZ
+                 and p["focal"]["peak_khz"] is not None and p["focal"]["peak_khz"] > HIGH_KHZ]
         out.append({
-            "title": "Failing prototypes drift to the noise floor",
-            "text": f"{len(low)} prototypes that fire at bird-song frequencies (> 1 kHz) on focal clips peak in the "
-                    f"lowest band (~0.1 kHz, wind/ambient) on soundscapes: "
-                    + ", ".join(f"{sp} P{p['k']}" for sp, p in low)
-                    + f". Their AUC changes by {low_d:+.2f} on average vs {rest_d:+.2f} for the rest.",
-            "species": low[0][0], "prototype": low[0][1]["k"],
+            "title": "Some failing prototypes simply go silent",
+            "text": f"{n_fail_silent} of {len(failing)} failing prototypes (ΔAUC < −0.10) have zero activation on more than "
+                    f"{SILENT_SHARE:.0%} of the soundscape clips that contain their species, against "
+                    f"{len(silent) - n_fail_silent} of the other {n_ok}. Only {half} failing prototypes are silent on more than "
+                    "half, so silence accounts for part of the failures, not most. Counting only clips where a prototype fires, "
+                    f"the number whose typical peak moves from above {HIGH_KHZ:g} kHz on focal clips to below {LOW_KHZ:g} kHz on "
+                    f"soundscapes is {len(moved)} of {len(protos)}" + (f" ({', '.join(moved)})." if moved else "."),
+            "species": worst[0][0], "prototype": worst[0][1]["k"],
             "evidence": {
-                "kind": "peak_scatter", "highlight": [[sp, p["k"]] for sp, p in low],
-                "stats": [["Prototypes drifting to < 0.5 kHz", f"{len(low)} / {len(protos)}"],
-                          ["Mean ΔAUC, drifting", f"{low_d:+.3f}"], ["Mean ΔAUC, others", f"{rest_d:+.3f}"]],
-                "method": "Peak = median (over positive clips) of the frequency row where the prototype's activation "
-                          "map is maximal; rows are 16 mel bins wide (lowest row centred at ~0.1 kHz).",
+                "kind": "silent_scatter", "highlight": [[sp, p["k"]] for sp, p, _ in worst],
+                "stats": [[f"Failing prototypes silent on > {SILENT_SHARE:.0%} of soundscape positives", f"{n_fail_silent} / {len(failing)}"],
+                          [f"Other prototypes silent on > {SILENT_SHARE:.0%}", f"{len(silent) - n_fail_silent} / {n_ok}"],
+                          ["Median silent share, failing", f"{med['failing']:.0%}"],
+                          ["Median silent share, others", f"{med['other']:.0%}"]]
+                         + [[f"{sp} P{p['k']} silent on positives, focal → soundscape",
+                             f"{p['focal']['silent']:.0%} → {v:.0%}"] for sp, p, v in worst],
+                "method": "Silent = the prototype's max activation on a clip is exactly zero (activations pass through a ReLU). "
+                          "Shares are over clips labelled with the species. The link with failing is partly built in: a silent "
+                          "positive ties with every silent negative, which lowers AUC. Peak frequency is taken only over clips "
+                          "where the prototype is active.",
             },
         })
     # 6. Cross-species confusion: top false matches are enriched for other (co-occurring) species
@@ -320,6 +352,12 @@ def computed_findings(species: list[dict], dists: dict) -> list[dict]:
 PATCH_GROUPS = (("focal", "focal", True), ("soundscape", "soundscape", True), ("soundscape_neg", "soundscape", False))
 
 
+def top_clips(d: dict, c: int, k: int, positive: bool, top: int) -> np.ndarray:
+    """Indices of the `top` clips with (positive) or without species c on which its prototype k is most active."""
+    idx = np.nonzero(d["targets"][:, c] if positive else ~d["targets"][:, c])[0]
+    return idx[np.argsort(-d["proto_max"][idx, c, k])][:top]
+
+
 def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreprocessor,
                    cache: dict, top: int) -> dict:
     """Top-activating spectrogram crops per prototype for: focal and soundscape clips containing the
@@ -330,9 +368,7 @@ def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreproc
         patches[str(k + 1)] = {}
         for key, dom, positive in PATCH_GROUPS:
             d = data[dom]
-            mask = d["targets"][:, c] if positive else ~d["targets"][:, c]
-            idx = np.nonzero(mask)[0]
-            order = idx[np.argsort(-d["proto_max"][idx, c, k])][:top]
+            order = top_clips(d, c, k, positive, top)
             items = []
             for rank, i in enumerate(order):
                 path = d["audio_path"][i]
@@ -340,6 +376,7 @@ def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreproc
                     cache[path] = pre.process_file(path, is_soundscape=dom == "soundscape").squeeze().numpy()
                 spec = cache[path]
                 row, col = int(d["peak_freq"][i, c, k]), int(d["peak_time"][i, c, k])
+                assert col >= 0, f"no peak position for {path}: run fill_peak_time first"
                 fs, ts = grid_cell_to_spec_slice(row, col, n_frames=spec.shape[1])
                 name = f"{sp}_P{k + 1}_{key}_{rank + 1}.png"
                 imsave(out_dir / name, spec[fs, ts], cmap="magma", origin="lower")
@@ -350,6 +387,62 @@ def export_patches(data: dict, sp: str, c: int, out_dir: Path, pre: AudioPreproc
                 items.append(item)
             patches[str(k + 1)][key] = items
     return patches
+
+
+# ------------------------------------------------------------------------------------------- clips outside the test split
+MATCH_TOL = 1e-3   # largest difference in a max activation between two extractions of the same clip
+
+
+def _stack(parts: list[dict], keys: tuple[str, ...]) -> dict:
+    out = {k: np.concatenate([p[k] for p in parts]) for k in keys}
+    out["audio_path"] = [q for p in parts for q in p["audio_path"]]
+    return out
+
+
+def _check_clips(got: list[str], splits_dir: Path, manifests: tuple[str, ...]) -> None:
+    want = sorted(Path(q).name for m in manifests for q in pd.read_parquet(splits_dir / f"{m}.parquet")["audio_path"])
+    assert sorted(Path(q).name for q in got) == want, f"cached responses are not exactly the clips of {manifests}"
+
+
+def non_test_payload(store: results.Store, splits_dir: Path, n_folds: int = 3) -> dict:
+    """The pretrained model's responses on every clip outside the test split, assembled from the cached extractions:
+    soundscape = the held-out clips of the cross-validation folds (together the training and validation sites), focal =
+    focal_train (diagnostics extraction) + focal_val. Stops unless the clips are exactly those manifests. The diagnostics
+    extraction stores no peak time, so focal-train `peak_time` is -1 until `fill_peak_time`."""
+    feat = store.features("pretrained-xcl")
+    load = lambda name: torch.load(feat / name, map_location="cpu", weights_only=False)
+    folds = [load(f"responses_cv{f}.pt") for f in range(n_folds)]
+    diag = load("diag_responses.pt")
+    assert np.allclose(diag["last_layer_weights"], folds[0]["last_layer_weights"]), "the two extractions use different weights"
+    keys = ("targets", "probs", "proto_max", "peak_freq", "peak_time")
+    soundscape = _stack([f["soundscape"] for f in folds], keys)
+    soundscape["species"] = [x for f in folds for x in f["soundscape"]["species"]]
+    train = dict(diag["focal_train"])
+    train["peak_time"] = np.full(train["peak_freq"].shape, -1, dtype=np.int16)
+    focal = _stack([train, folds[0]["focal"]], keys)
+    _check_clips(soundscape["audio_path"], splits_dir, ("soundscape_train", "soundscape_val"))
+    _check_clips(focal["audio_path"], splits_dir, ("focal_train", "focal_val"))
+    return {"focal": focal, "soundscape": soundscape, "species_list": folds[0]["species_list"],
+            "last_layer_weights": folds[0]["last_layer_weights"]}
+
+
+def fill_peak_time(focal: dict, cols: list[int], splits_dir: Path, top: int, model) -> int:
+    """Run `model` on the focal clips that will be cropped and have no peak time yet; their max activations and peak rows
+    must agree with the cache. Returns the number of clips run."""
+    need = sorted({int(i) for c in cols for k in range(5) for i in top_clips(focal, c, k, True, top)
+                   if focal["peak_time"][i, 0, 0] < 0})
+    if not need:
+        return 0
+    ds = HSNInferenceDataset(splits_dir / "focal_train.parquet", is_soundscape=False)
+    row_of = {Path(q).name: j for j, q in enumerate(ds.df["audio_path"])}
+    ds.df = ds.df.iloc[[row_of[Path(focal["audio_path"][i]).name] for i in need]].reset_index(drop=True)
+    got = extract_prototype_responses(model, ds, batch_size=8, num_workers=1, desc="peak positions")
+    assert np.abs(got["proto_max"] - focal["proto_max"][need]).max() < MATCH_TOL, "re-run activations differ from the cache"
+    for j, i in enumerate(need):
+        for c in cols:   # peak positions are only needed (and only compared) for the cropped species
+            assert (got["peak_freq"][j, c] == focal["peak_freq"][i, c]).all(), f"peak rows differ: {focal['audio_path'][i]}"
+        focal["peak_time"][i] = got["peak_time"][j]
+    return len(need)
 
 
 MODEL_LABELS = {"pretrained-xcl": "Pretrained (XCL)", "focal-only": "Focal-only", "soundscape-only": "Soundscape-only"}
@@ -456,6 +549,7 @@ def species_entries(data: dict, stats: dict, sp_list: list[str], patch_dir: Path
                     "auc": r(ps["auc"]),
                     "act_q": [r(v) for v in np.percentile(act, QUANTILES)],
                     "neg_median": r(ps["act_neg"]),
+                    "silent": r((act <= 0).mean()) if len(act) else None,
                     "logit_share": r(ps["logit_share"]),
                     "peak_khz": r(ps["peak_khz"], 2),
                 }
@@ -473,8 +567,8 @@ def species_entries(data: dict, stats: dict, sp_list: list[str], patch_dir: Path
     return species
 
 
-def build_bundle(payload: dict, stats: dict, store: results.Store, comparison_path: Path, models: list[str],
-                 patch_dir: Path | None, top: int = 3) -> dict:
+def build_bundle(payload: dict, stats: dict, store: results.Store, comparison_path: Path | None, models: list[str],
+                 patch_dir: Path | None, top: int = 3, curated: list[dict] = CURATED_FINDINGS) -> dict:
     """The whole data bundle from the pretrained model's responses `payload` and statistics `stats` (see extract_prototype_activations.py)."""
     sp_list = payload["species_list"]
     data = {d: payload[d] for d in DOMAINS}
@@ -492,10 +586,11 @@ def build_bundle(payload: dict, stats: dict, store: results.Store, comparison_pa
             "cdf_x": CDF_GRID.tolist(),
             "generated": date.today().isoformat(),
         },
-        "findings": computed_findings(species, activation_cdfs(data, species, sp_list)) + CURATED_FINDINGS,
+        "findings": computed_findings(species, activation_cdfs(data, species, sp_list), stats["n_clips"]["soundscape"])
+                    + fill_curated(curated, species),
         "caveats": CAVEATS,
         "species": species,
-        "model_comparison": model_comparison_block(comparison_path),
+        "model_comparison": None if comparison_path is None else model_comparison_block(comparison_path),
         "model_prototypes": model_prototypes_block(models, store),
     }
 
