@@ -3,7 +3,7 @@
 Layout, per dataset (everything under `outputs/`; only the small JSON/CSV under `results/` is committed)::
 
     outputs/results/<dataset>/
-        registry.jsonl              index, one line per save; the LAST line of a run_id is its current entry
+        registry.jsonl              index, one line per save; a run_id's current entry combines its lines (read_registry)
         runs/<run_id>/
             config.json             how the run was made: arguments, effective settings, git commit, environment
             metrics.json            {"sections": {<section>: {...}}}: every metric of the run, grouped by section
@@ -175,11 +175,45 @@ def _read_json(path: Path) -> dict:
 
 
 # ----------------------------------------------------------------------------------------------------------- registry
+def _combine(run_id: str, lines: list[dict]) -> dict:
+    """The current entry of one run, from all the lines written for it (in file order).
+
+    Each line is a full snapshot, but after a `merge=union` of two branches neither branch's last line has seen the other's
+    saves. So each section, with its headline numbers, comes from the line holding its most recently saved version
+    (`section_saved`; lines written before that field use their `updated`). Every other field comes from the most recently
+    updated line that has it.
+    """
+    lines = sorted(lines, key=lambda e: e.get("updated", ""))   # stable: at equal times the later line in the file wins
+    kinds = sorted({str(e.get("kind")) for e in lines})
+    if len(kinds) > 1:
+        raise ValueError(f"run {run_id!r} is registered with different kinds {kinds}: two different runs share this id")
+    out: dict = {}
+    paths: dict = {}
+    newest: dict[str, tuple[str, dict]] = {}     # section -> (when it was saved, the line with that version)
+    for e in lines:
+        out.update(e)
+        files = sorted(set(paths.get("files", [])) | set(e.get("paths", {}).get("files", [])))
+        paths.update(e.get("paths", {}))
+        if files:
+            paths["files"] = files
+        for section in e.get("sections", []):
+            saved = e.get("section_saved", {}).get(section, e.get("updated", ""))
+            if section not in newest or saved >= newest[section][0]:
+                newest[section] = (saved, e)
+    out["paths"] = paths
+    if out.get("kind") != "summary":             # a summary is saved as a whole, so its newest line is complete
+        out["sections"] = sorted(newest)
+        out["section_saved"] = {name: newest[name][0] for name in sorted(newest)}
+        out["headline"] = {k: v for name in sorted(newest) for k, v in newest[name][1].get("headline", {}).items()
+                           if k.startswith(f"{name}.")}
+    return out
+
+
 def read_registry(store: Store) -> dict[str, dict]:
-    """run_id -> current index entry (the last line written for it). Empty if nothing was saved yet."""
+    """run_id -> current index entry, combined from all its lines (see _combine). Empty if nothing was saved yet."""
     if not store.registry.exists():
         return {}
-    out: dict[str, dict] = {}
+    lines: dict[str, list[dict]] = {}
     for i, line in enumerate(store.registry.read_text().splitlines(), 1):
         if not line.strip():
             continue
@@ -187,8 +221,8 @@ def read_registry(store: Store) -> dict[str, dict]:
             e = json.loads(line)
         except json.JSONDecodeError as err:
             raise ValueError(f"{store.registry}:{i} is not valid JSON ({err}); fix or delete that line") from err
-        out[e["run_id"]] = e
-    return out
+        lines.setdefault(e["run_id"], []).append(e)
+    return {run_id: _combine(run_id, entries) for run_id, entries in lines.items()}
 
 
 def _append_registry(store: Store, entry: dict) -> None:
@@ -225,6 +259,13 @@ def log_csv(rows: list[dict]) -> str:
 
 
 # -------------------------------------------------------------------------------------------------------------- write
+def _check_entry(entry: dict | None) -> None:
+    bad = set(entry or {}) - set(ENTRY_FIELDS)
+    if bad:
+        raise ValueError(f"unknown index fields {sorted(bad)}; allowed: {ENTRY_FIELDS}")
+    json.dumps(entry or {}, default=_json_default)      # raises now rather than when the registry line is written
+
+
 def write_train_log(store: Store, run_id: str, rows: list[dict]) -> None:
     """Refresh train_log.csv during training (so a running job can be watched); save_results writes the final one."""
     atomic_write(store.run_dir(run_id) / "train_log.csv", log_csv(rows))
@@ -252,28 +293,29 @@ def save_results(store: Store, run_id: str, section: str, metrics: dict, *, kind
         raise ValueError(f"kind must be one of {[k for k in KINDS if k != 'summary']} (summaries use save_summary), got {kind!r}")
     if not re.match(r"^[A-Za-z0-9_]+$", section):
         raise ValueError(f"invalid section name {section!r}: letters, digits and '_' only")
-    bad = set(entry or {}) - set(ENTRY_FIELDS)
-    if bad:
-        raise ValueError(f"unknown index fields {sorted(bad)}; allowed: {ENTRY_FIELDS}")
+    _check_entry(entry)
+    for fname in files or {}:
+        if not fname.endswith(".json") or "/" in fname or fname in ("config.json", "metrics.json"):
+            raise ValueError(f"extra run file must be a plain <name>.json (not config/metrics), got {fname!r}")
     rdir = store.run_dir(run_id)
-    with _Lock(store):
-        mpath = rdir / "metrics.json"
-        doc = _read_json(mpath) if mpath.exists() else {"schema": SCHEMA, "run_id": run_id, "dataset": store.dataset, "sections": {}}
-        doc["sections"][section] = metrics
-        atomic_write(mpath, _dump(doc))
-        if config is not None:
-            atomic_write(rdir / "config.json", _dump({"schema": SCHEMA, "run_id": run_id, "dataset": store.dataset, **config}))
-        if log is not None:
-            atomic_write(rdir / "train_log.csv", log_csv(log))
-        for fname, obj in (files or {}).items():
-            if not fname.endswith(".json") or "/" in fname or fname in ("config.json", "metrics.json"):
-                raise ValueError(f"extra run file must be a plain <name>.json (not config/metrics), got {fname!r}")
-            atomic_write(rdir / fname, _dump(obj))
+    with _Lock(store):                      # everything that can fail comes before the first write
         old = read_registry(store).get(run_id, {})
         if old and old.get("kind") != kind:
             raise ValueError(f"run {run_id!r} is already registered as kind {old.get('kind')!r}, cannot save as {kind!r}")
         head = {k: v for k, v in old.get("headline", {}).items() if not k.startswith(f"{section}.")}
         head.update({f"{section}.{k}": _num(v) for k, v in (headline or {}).items()})
+        mpath = rdir / "metrics.json"
+        doc = _read_json(mpath) if mpath.exists() else {"schema": SCHEMA, "run_id": run_id, "dataset": store.dataset, "sections": {}}
+        doc["sections"][section] = metrics
+        writes = {mpath: _dump(doc)}
+        if config is not None:
+            writes[rdir / "config.json"] = _dump({"schema": SCHEMA, "run_id": run_id, "dataset": store.dataset, **config})
+        if log is not None:
+            writes[rdir / "train_log.csv"] = log_csv(log)
+        for fname, obj in (files or {}).items():
+            writes[rdir / fname] = _dump(obj)
+        for path, text in writes.items():
+            atomic_write(path, text)
         paths = {"metrics": str(mpath)}
         for key, fname in (("config", "config.json"), ("train_log", "train_log.csv")):
             if (rdir / fname).exists():
@@ -284,9 +326,10 @@ def save_results(store: Store, run_id: str, section: str, metrics: dict, *, kind
         for key, d in (("features", store.features(run_id)), ("checkpoints", store.checkpoints(run_id))):
             if d.exists():
                 paths[key] = str(d)
+        saved = now()
         new = {**old, **{k: v for k, v in (entry or {}).items()}, "schema": SCHEMA, "run_id": run_id, "dataset": store.dataset,
                "kind": kind, "sections": sorted(set(old.get("sections", [])) | {section}), "headline": head, "paths": paths,
-               "updated": now()}
+               "section_saved": {**old.get("section_saved", {}), section: saved}, "updated": saved}
         _append_registry(store, new)
     return new
 
@@ -295,17 +338,16 @@ def save_summary(store: Store, name: str, obj: dict, *, headline: dict[str, Any]
     """Write a result that spans several runs to summaries/<name>.json and index it as `summary:<name>`."""
     if not re.match(r"^[A-Za-z0-9][A-Za-z0-9._-]*$", name):
         raise ValueError(f"invalid summary name {name!r}")
-    bad = set(entry or {}) - set(ENTRY_FIELDS)
-    if bad:
-        raise ValueError(f"unknown index fields {sorted(bad)}; allowed: {ENTRY_FIELDS}")
+    _check_entry(entry)
     path = store.summary(name)
     rid = SUMMARY_PREFIX + name
+    head = {k: _num(v) for k, v in (headline or {}).items()}
+    text = _dump(obj)
     with _Lock(store):
-        atomic_write(path, _dump(obj))
         old = read_registry(store).get(rid, {})
+        atomic_write(path, text)
         new = {**old, **(entry or {}), "schema": SCHEMA, "run_id": rid, "dataset": store.dataset, "kind": "summary",
-               "sections": [], "headline": {k: _num(v) for k, v in (headline or {}).items()}, "paths": {"summary": str(path)},
-               "updated": now()}
+               "sections": [], "headline": head, "paths": {"summary": str(path)}, "updated": now()}
         _append_registry(store, new)
     return new
 

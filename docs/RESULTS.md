@@ -24,7 +24,7 @@ a wrong metric path lists what is available at that level.
 
 ```
 outputs/results/<dataset>/            committed (small)
-    registry.jsonl                    the index: one JSON line per save; the LAST line of a run_id is current
+    registry.jsonl                    the index: one JSON line per save; a run_id's current entry combines its lines
     runs/<run_id>/
         config.json                   how the run was made: all arguments, effective settings, git commit + dirty flag (uncommitted changes to tracked files outside outputs/results/), versions
         metrics.json                  {"sections": {<section>: {...}}}: every metric of the run
@@ -59,6 +59,7 @@ Metric definitions and the evaluation protocol: the docstring of `prototype_tran
  "status": "done", "started": "...", "finished": "...", "commit": "<git sha or null>", "dirty": false, "legacy": false,
  "protocol": "v1", "note": "...", "sections": ["canonical_test", "train"],
  "headline": {"train.val_soundscape_cmAP": 0.487, "canonical_test.sc_ap_primary": 0.7},
+ "section_saved": {"canonical_test": "...", "train": "..."},
  "paths": {"metrics": "...", "config": "...", "train_log": "...", "files": ["..."], "features": "...", "checkpoints": "..."},
  "updated": "..."}
 ```
@@ -70,8 +71,11 @@ for them, so they cannot be reproduced from a known state, and `--no-legacy` hid
 ## Sharing results through git
 
 Commit `outputs/results/<dataset>/` (runs, summaries, `registry.jsonl`); features and checkpoints are git-ignored. `registry.jsonl` is append-only, so
-`.gitattributes` merges it with `merge=union`: when two branches each add runs, both sets of lines are kept. Use unique run ids (for example
-`<initials>-<idea>-<variant>`) so two people never write the same id.
+`.gitattributes` merges it with `merge=union`: both branches' lines are kept. When both saved to the same run (for example, two evaluations
+of `pretrained-xcl`), `read_registry` keeps the sections of both; a section saved on both keeps the most recently saved version, and other
+index fields come from the most recently updated line that has them. Always read the index with `read_registry` or the CLI, not by taking a
+run's last line. The union merge covers the index only: if git reports a conflict in a run's `metrics.json`, keep both branches' sections.
+Use unique run ids (for example `<initials>-<idea>-<variant>`) so two people never write the same id.
 
 ## Writing results
 

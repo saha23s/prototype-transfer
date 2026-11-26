@@ -3,6 +3,7 @@
 import json
 import multiprocessing as mp
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -110,6 +111,112 @@ def test_bad_inputs_fail_loudly():
             assert "available" in str(e)
         else:
             raise AssertionError("expected KeyError")
+
+
+def _files(s: R.Store) -> dict:
+    return {str(p.relative_to(s.root)): p.read_text() for p in s.root.rglob("*") if p.is_file() and p.name != ".lock"}
+
+
+def test_a_rejected_save_changes_nothing():
+    with tempfile.TemporaryDirectory() as tmp:
+        s = _store(tmp)
+        R.save_results(s, "r", "train", {"x": 1}, headline={"x": 1}, config={"seed": 0}, files={"push.json": {"n": 1}})
+        R.save_summary(s, "sum", {"x": 1}, headline={"x": 1})
+        before = _files(s)
+        new = {"metrics": {"x": 2}, "config": {"seed": 1}, "log": [{"epoch": 1}]}
+        bad = {"kind change": lambda: R.save_results(s, "r", "train", kind="reference", **new),
+               "reserved file name": lambda: R.save_results(s, "r", "train", files={"metrics.json": {}}, **new),
+               "second file name": lambda: R.save_results(s, "r", "train", files={"push.json": {}, "a/b.json": {}}, **new),
+               "unserialisable file": lambda: R.save_results(s, "r", "train", files={"push.json": object()}, **new),
+               "unserialisable config": lambda: R.save_results(s, "r", "train", {"x": 2}, config={"a": object()}),
+               "unserialisable index field": lambda: R.save_results(s, "r", "train", entry={"note": object()}, **new),
+               "text headline": lambda: R.save_results(s, "r", "train", headline={"x": "high"}, **new),
+               "new run": lambda: R.save_results(s, "other", "train", headline={"x": "high"}, **new),
+               "summary headline": lambda: R.save_summary(s, "sum", {"x": 2}, headline={"x": "high"}),
+               "summary index field": lambda: R.save_summary(s, "sum", {"x": 2}, entry={"note": object()})}
+        for what, call in bad.items():
+            try:
+                call()
+            except (ValueError, TypeError):
+                pass
+            else:
+                raise AssertionError(f"{what}: expected an error")
+            assert _files(s) == before, f"{what}: the rejected save changed files"
+
+
+def _union_merge(tmp: str, base, ours, theirs) -> list[R.Store]:
+    """Two branches save on top of `base`; returns the registry as `merge=union` would leave it, in both line orders."""
+    clock = iter(f"2026-01-01T00:00:{i:02d}" for i in range(60))
+    real, R.now = R.now, lambda: next(clock)
+    try:
+        root = Path(tmp)
+        stores = {n: R.Store("toy", root / n) for n in ("base", "ours", "theirs")}
+        base(stores["base"])
+        shared = stores["base"].registry.read_text()
+        added = {}
+        for name, branch in (("ours", ours), ("theirs", theirs)):    # `theirs` saves later
+            stores[name].results.mkdir(parents=True)
+            shutil.copytree(stores["base"].results, stores[name].results, dirs_exist_ok=True)
+            branch(stores[name])
+            added[name] = stores[name].registry.read_text()[len(shared):]
+    finally:
+        R.now = real
+    merged = []
+    for order in (("ours", "theirs"), ("theirs", "ours")):
+        s = R.Store("toy", root / "-".join(order))
+        s.results.mkdir(parents=True)
+        s.registry.write_text(shared + "".join(added[n] for n in order))
+        merged.append(s)
+    return merged
+
+
+def test_union_merge_keeps_both_branches():
+    with tempfile.TemporaryDirectory() as tmp:
+        merged = _union_merge(
+            tmp,
+            base=lambda s: R.save_results(s, "r", "train", {}, headline={"v": 1}, entry={"rung": "R0"}),
+            ours=lambda s: R.save_results(s, "r", "canonical_test", {}, headline={"a": 2}, entry={"note": "ours"}),
+            theirs=lambda s: R.save_results(s, "r", "canonical_cv0", {}, headline={"b": 3}, entry={"seed": 1}))
+        for s in merged:
+            e = R.read_registry(s)["r"]
+            assert e["sections"] == ["canonical_cv0", "canonical_test", "train"], e
+            assert e["headline"] == {"train.v": 1, "canonical_test.a": 2, "canonical_cv0.b": 3}, e
+            assert (e["rung"], e["note"], e["seed"]) == ("R0", "ours", 1), e
+            after = R.save_results(s, "r", "adaptation", {})       # the next save writes the combined entry
+            assert after["headline"] == e["headline"] and len(after["sections"]) == 4
+
+
+def test_union_merge_keeps_the_newest_version_of_a_section():
+    with tempfile.TemporaryDirectory() as tmp:
+        merged = _union_merge(                         # ours re-saves `train`; theirs saves later but only carries the old copy
+            tmp,
+            base=lambda s: R.save_results(s, "r", "train", {}, headline={"v": 1, "dropped": 1}),
+            ours=lambda s: R.save_results(s, "r", "train", {}, headline={"v": 2}),
+            theirs=lambda s: R.save_results(s, "r", "canonical_test", {}, headline={"b": 3}))
+        for s in merged:
+            assert R.read_registry(s)["r"]["headline"] == {"train.v": 2, "canonical_test.b": 3}
+
+
+def test_union_merge_of_summaries_and_clashing_ids():
+    with tempfile.TemporaryDirectory() as tmp:
+        merged = _union_merge(
+            tmp,
+            base=lambda s: R.save_summary(s, "x", {}, headline={"n": 1, "dropped": 1}),
+            ours=lambda s: R.save_summary(s, "x", {}, headline={"n": 2}),
+            theirs=lambda s: R.save_summary(s, "x", {}, headline={"n": 3}))
+        for s in merged:
+            assert R.read_registry(s)["summary:x"]["headline"] == {"n": 3}
+    with tempfile.TemporaryDirectory() as tmp:
+        merged = _union_merge(tmp, base=lambda s: R.save_results(s, "r", "train", {}),
+                              ours=lambda s: R.save_results(s, "new", "train", {}),
+                              theirs=lambda s: R.save_results(s, "new", "train", {}, kind="reference"))
+        for s in merged:
+            try:
+                R.read_registry(s)
+            except ValueError as e:
+                assert "'new'" in str(e)
+            else:
+                raise AssertionError("two kinds under one run id must fail")
 
 
 def test_numpy_values_and_nan():
