@@ -20,6 +20,8 @@ Optional recipe components, all off by default so earlier runs stay reproducible
                            train = the other folds' sites, soundscape "val" = the held-out fold, which is only logged
                            (never used to select); scored by scripts/eval/canonical_eval.py --split cv --fold F
   --anchored (= --joint-epochs 0): backbone stays frozen; only prototypes and last layer train, then push and last layer
+  --ortho-form paper       orthogonality term as in the AudioProtoPNet paper (set its weight with --ortho-weight; the paper uses 1)
+  --no-push                no prototype projection; the last-layer phase still runs
 
 Outputs (results store, see docs/RESULTS.md):
          outputs/results/<dataset>/runs/<name>/{config.json, metrics.json, train_log.csv, push.json}
@@ -39,6 +41,7 @@ from pathlib import Path
 
 from prototype_transfer.evaluation import results
 from prototype_transfer.training import trainer
+from prototype_transfer.training.losses import ORTHO_FORMS
 
 
 def main() -> None:
@@ -58,6 +61,9 @@ def main() -> None:
     p.add_argument("--lr-last", type=float, default=1e-3)
     p.add_argument("--weight-decay", type=float, default=1e-4)
     p.add_argument("--ortho-weight", type=float, default=0.01)
+    p.add_argument("--ortho-form", choices=ORTHO_FORMS, default="frobenius",
+                   help="frobenius: sum of unsquared norms (default); paper: squared norm / (classes * prototypes^2), see training/losses.py")
+    p.add_argument("--no-push", action="store_true", help="skip the projection of prototypes onto training patches")
     p.add_argument("--rung", default="custom", help="recipe rung label recorded in the registry (e.g. R0, R1b, label-budget-500)")
     p.add_argument("--select", choices=["best", "last"], default="best",
                    help="best: epoch with the best in-domain val cmAP (default). last: last epoch of each phase, no validation labels used")

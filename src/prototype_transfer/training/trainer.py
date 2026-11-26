@@ -4,7 +4,7 @@ Initialised from the pretrained XCL model (backbone + the 105 HSN prototypes + l
 Phases (ProtoPNet-style):
   1. warm:  prototypes + last layer, backbone frozen
   2. joint: everything (backbone at a low LR); keep the best epoch by IN-DOMAIN val cmAP
-  3. push:  project each prototype onto its most similar training patch of its own class
+  3. push:  project each prototype onto its most similar training patch of its own class (skipped with --no-push)
   4. last:  last layer only, prototypes and backbone frozen
 Model selection only ever looks at the training domain's val split; the other domain's val cmAP is logged for
 monitoring transfer during training. select="last" instead keeps the last epoch of each phase (a fixed schedule that
@@ -77,7 +77,7 @@ def evaluate(model: nn.Module, loader: DataLoader, device: str) -> dict:
 
 
 def run_epoch(model: nn.Module, loader: DataLoader, opt: torch.optim.Optimizer, sched, device: str, ortho_w: float,
-              pseudo_iter=None, pseudo_w: float = 0.0) -> float:
+              pseudo_iter=None, pseudo_w: float = 0.0, ortho_form: str = "frobenius") -> float:
     # The model's own asymmetric multi-label loss (remote code), as used to train AudioProtoPNet.
     # reduction="sum" because the class defaults to "mean"; with / n_lab below, the term is per clip, like the pseudo-label term.
     asl = sys.modules[type(model).__module__].AsymmetricLossMultiLabel(reduction="sum")
@@ -97,7 +97,7 @@ def run_epoch(model: nn.Module, loader: DataLoader, opt: torch.optim.Optimizer, 
             soft = pb["target"].to(device, non_blocking=True)
             loss = loss + pseudo_w * F.binary_cross_entropy_with_logits(logits[n_lab:], soft, reduction="none").sum(1).mean()
         if ortho_w > 0:
-            loss = loss + ortho_w * orthogonality_loss(model.head)
+            loss = loss + ortho_w * orthogonality_loss(model.head, ortho_form)
         if not torch.isfinite(loss):
             raise FloatingPointError(f"non-finite loss ({float(loss)}) at {b['audio_path'][:3]}...; stopping instead of training on NaNs")
         opt.zero_grad(set_to_none=True)
@@ -154,7 +154,7 @@ def train(args: argparse.Namespace) -> None:
                                num_workers=max(1, args.num_workers // 2), drop_last=True, pin_memory=True, persistent_workers=True)
         pseudo_iter = cycle(pseudo_dl)
     effective = {"cv_fold": args.cv_fold, "mixing": train_ds.mixing_config(), "select": args.select, "joint_epochs": args.joint_epochs,
-                 "train_labels": args.train_labels, "n_train_clips": len(train_ds.df), "steps_per_epoch": len(train_dl),
+                 "train_labels": args.train_labels, "ortho_form": args.ortho_form, "ortho_weight": args.ortho_weight, "push": not args.no_push, "n_train_clips": len(train_ds.df), "steps_per_epoch": len(train_dl),
                  "pseudo_weight": args.pseudo_weight if pseudo_iter is not None else 0.0, "pseudo_manifest": str(args.pseudo_manifest)}
     prov = results.provenance()
     config = {"args": vars(args), "effective": effective, **prov}
@@ -182,7 +182,8 @@ def train(args: argparse.Namespace) -> None:
 
     in_dom = args.train_domain
     ev = log_eval("init", 0, None)
-    train_epoch = lambda opt, sched, ortho: run_epoch(model, train_dl, opt, sched, device, ortho, pseudo_iter, args.pseudo_weight)
+    train_epoch = lambda opt, sched, ortho: run_epoch(model, train_dl, opt, sched, device, ortho, pseudo_iter, args.pseudo_weight,
+                                                      args.ortho_form)
 
     # 1. warm
     set_trainable(model, {"prototypes", "last_layer"})
@@ -208,11 +209,15 @@ def train(args: argparse.Namespace) -> None:
     logger.info(f"Selected joint epoch {best_ep} (--select {args.select}; {in_dom} val cmAP {best:.3f})")
     model = load_checkpoint(joint_ckpt, device)
 
-    # 3. push onto training patches of the training domain (deterministic windows)
-    push_ds = HSNInferenceDataset(manifest(args.train_domain, "train"), is_soundscape=is_sc,
-                                  max_samples=args.max_train_batches * args.batch_size if args.max_train_batches else None)
-    push_info = push_prototypes(model, push_ds, device, num_workers=args.num_workers)
-    log_eval("push", 0, None)
+    # 3. push onto training patches of the training domain (deterministic windows); skipped with --no-push
+    push_info = []
+    if args.no_push:
+        logger.info("--no-push: prototypes stay as trained; no projection onto training patches")
+    else:
+        push_ds = HSNInferenceDataset(manifest(args.train_domain, "train"), is_soundscape=is_sc,
+                                      max_samples=args.max_train_batches * args.batch_size if args.max_train_batches else None)
+        push_info = push_prototypes(model, push_ds, device, num_workers=args.num_workers)
+        log_eval("push", 0, None)
 
     # 4. last layer
     set_trainable(model, {"last_layer"})
@@ -226,13 +231,13 @@ def train(args: argparse.Namespace) -> None:
             save_checkpoint(model, ckpt_dir / "best.pt", {"phase": "last", "epoch": e, "val": ev})
     if args.last_epochs == 0:
         best_ev = history[-1]
-        save_checkpoint(model, ckpt_dir / "best.pt", {"phase": "push", "val": best_ev})
+        save_checkpoint(model, ckpt_dir / "best.pt", {"phase": history[-1]["phase"], "val": best_ev})
 
     final_val = {d: {k: history[-1][f"val_{d}_{k}"] for k in ("cmAP", "macro_auc")} for d in DOMAINS}   # last epoch, whatever --select chose
     headline = {f"{which}_{d}_{k}": v[d][k] for which, v in (("val", best_ev), ("last_val", final_val))
                 for d in DOMAINS for k in ("cmAP", "macro_auc")}
     entry = results.save_results(store, name, "train", {"train_domain": in_dom, "select": args.select, "selected_val": best_ev,
                                                         "last_epoch_val": final_val},
-                                 headline=headline, config=config, log=history, files={"push.json": push_info},
+                                 headline=headline, config=config, log=history, files={} if args.no_push else {"push.json": push_info},
                                  entry={**index, "status": "done", "finished": results.now()})
     logger.info(f"Done. checkpoint {ckpt_dir / 'best.pt'}; results {entry['paths']['metrics']}")
