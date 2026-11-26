@@ -17,6 +17,7 @@ from prototype_transfer.evaluation.metrics import ap_cols, auc_cols
 FOLDS = (0, 1, 2)
 BASELINE, ORACLE = "pretrained-xcl", "soundscape-only"
 LABEL_BUDGETS = (100, 250, 500, 1000, 2000)
+TEST_RUNS = ("focal-only", ORACLE)   # trained models that, besides the baseline, have been scored on the test split
 CHECK_TOL = 1e-6
 
 
@@ -94,6 +95,9 @@ class Results:
         self.splits = _json(store.dataset_dir / "splits.json")
         self.splits_cv = _json(store.dataset_dir / "splits_cv.json")
         self.test = _json(store.summary("canonical_eval"))
+        # the final baselines: one evaluation holding the pretrained model and both trained ones, on the same resamples
+        self.final = _json(store.summary("canonical_eval_focal-only"))
+        assert self.final["split"] == "test" and set(self.final["models"]) == {BASELINE, *TEST_RUNS}, "unexpected final evaluation"
         self.cv = {k: _json(store.summary(f"cv_{k}")) for k in METHODS}
         self.folds = {(k, f): _json(store.summary(f"canonical_eval_{k}-cv{f}")) for k in METHODS for f in FOLDS}
         self.species = [self.folds[("r0", f)]["species"] for f in FOLDS]
@@ -248,6 +252,20 @@ class Results:
         for auc, key in ((auc_f, "f_auc_primary"), (auc_s, "sc_auc_primary")):
             assert abs(float(np.mean(auc[pri])) - point[key]) < CHECK_TOL, f"{key}: test responses disagree with the saved evaluation"
         return {s: {"focal": float(auc_f[i]), "soundscape": float(auc_s[i])} for i, s in enumerate(codes)}
+
+    def test_scores(self, key: str) -> dict[str, dict]:
+        """One of the three final models on the test split: soundscape AP and AUC of each of the 12 species. The mean AP over the
+        primary and over all 12 species must equal the two saved values."""
+        m = canonical.Model(key, self.store.features(key) / "responses.pt")
+        codes = self.final["species"]["secondary"]
+        cols = [m.species.index(s) for s in codes]
+        ap, auc = ap_cols(m.p_s[:, cols], m.y_s[:, cols]), auc_cols(m.p_s[:, cols], m.y_s[:, cols])
+        out = {s: {"ap": float(a), "auc": float(u)} for s, a, u in zip(codes, ap, auc)}
+        point = self.final["models"][key]["point"]
+        for names, metric in ((self.final["species"]["primary"], "sc_ap_primary"), (codes, "sc_cmap_12")):
+            assert abs(float(np.mean([out[s]["ap"] for s in names])) - point[metric]) < CHECK_TOL, \
+                f"{key}: test responses disagree with the saved {metric}"
+        return out
 
     # --------------------------------------------------------------------------------------------------- manifests
     def manifest(self, domain: str) -> pd.DataFrame:

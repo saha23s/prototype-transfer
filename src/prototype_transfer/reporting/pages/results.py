@@ -8,7 +8,8 @@ import numpy as np
 
 from prototype_transfer.evaluation import results
 from prototype_transfer.reporting import charts as c
-from prototype_transfer.reporting.runs import BASELINE, CONTRASTS, FOLDS, GROUPS, LABEL_FREE, METHODS, ORACLE, Results
+from prototype_transfer.reporting.runs import (BASELINE, CONTRASTS, FOLDS, GROUPS, LABEL_FREE, METHODS, ORACLE,
+                                                TEST_RUNS, Results)
 from prototype_transfer.reporting.site import Page
 
 SPECIES_TABLE_KEYS = ((BASELINE, "Pretrained"), ("r0x-nopush", "Frozen, no projection"), ("focal-only", "Full fine-tuning"),
@@ -229,6 +230,63 @@ def per_species_table(res: Results) -> str:
     return c.table(head, rows, "mini results wrap-head", classes)
 
 
+TEST_ROWS = ((BASELINE, "Pretrained (no adaptation)"), ("focal-only", "Full fine-tuning on focal labels"),
+             (ORACLE, "All labeled soundscape clips (upper reference)"))
+
+
+def test_section(res: Results) -> str:
+    """The three models scored on the test split: group means with the protocol's intervals, then species by species."""
+    main, five = res.final["species"]["primary"], res.other_test_species()
+    assert main == [s for s in res.final["species"]["secondary"] if s in main] and sorted(main) == sorted(res.fixed_species()), \
+        "the test split's primary species are no longer the 7 fixed species"
+    scores = {k: res.test_scores(k) for k, _ in TEST_ROWS}
+    mean = lambda k, codes, m: float(np.mean([scores[k][s][m] for s in codes]))
+    ci = lambda v: f"{v[0]:.3f} to {v[1]:.3f}"
+    rows = []
+    for key, label in TEST_ROWS:
+        e = res.final["models"][key]
+        cells = [label]
+        for metric in ("sc_ap_primary", "sc_cmap_12"):
+            cells.append(f"{e['point'][metric]:.3f}<br><small>{ci(e['ci95'][metric])}</small>")
+            if key == BASELINE:
+                cells.append("—")
+            else:
+                d = e["vs_baseline"][metric]
+                cells.append(f"{c.signed(d['diff'])}<br><small>{c.signed(d['ci95'][0])} to {c.signed(d['ci95'][1])}</small>")
+        cells += [f"{mean(key, five, 'ap'):.3f}", f"{mean(key, five, 'auc'):.3f}"]
+        rows.append(cells)
+    groups = c.table(["Model", f"Main {len(main)}: AP", "change", f"All {len(main) + len(five)}: AP", "change",
+                      f"Other {len(five)}: AP", f"Other {len(five)}: AUC"], rows, "mini results")
+
+    # claims in the text
+    d = {k: res.final["models"][k]["vs_baseline"] for k in TEST_RUNS}
+    assert all(d["focal-only"][m]["ci95"][1] < 0 and d[ORACLE][m]["ci95"][0] > 0 for m in ("sc_ap_primary", "sc_cmap_12")), \
+        "the direction of a final baseline changed"
+    gain = {s: scores[ORACLE][s]["ap"] - scores[BASELINE][s]["ap"] for s in five}
+    top = sorted(gain, key=gain.get, reverse=True)[:2]
+    cv_five = float(np.mean(res.set_deltas(ORACLE, five)))
+    test_five = mean(ORACLE, five, "ap") - mean(BASELINE, five, "ap")
+    assert sum(gain[s] for s in top) > 0.6 * sum(gain.values()) and test_five > 0.1 and cv_five < 0.02, "the other-species result changed"
+
+    positives = res.test["species"]["n_pos_soundscape"]
+    srows, classes = [], []
+    for title, codes in ((f"Main {len(main)}", main), (f"Other {len(five)}", five)):
+        srows.append([title] + [""] * 4)
+        classes.append("group")
+        for s in codes:
+            srows.append([c.name_of(s), str(positives[s]), *(f"{scores[k][s]['ap']:.3f}" for k, _ in TEST_ROWS)])
+            classes.append("")
+    species = c.table(["Species", "Positive test clips", "Pretrained", "Focal fine-tuning", "All labels"], srows, "mini results", classes)
+    return (c.section("res-test", f"On the test split: the main {len(main)}, the other {len(five)} and all {len(main) + len(five)}", groups,
+                      "The only models scored on the test split so far. Soundscape AP; the small figures are the protocol's 95% intervals "
+                      "(sites resampled), for changes paired with the pretrained model. They agree in direction with cross-validation: "
+                      "fine-tuning on focal labels lowers AP, training on soundscape labels raises it. The test split's primary species "
+                      f"are the main {len(main)}. On the other {len(five)}, the model trained on all labels gains {c.signed(test_five)} here "
+                      f"but {c.signed(cv_five)} in cross-validation; most of the test gain comes from {' and '.join(c.name_of(s) for s in top)}. "
+                      "These species are too rare for either number to be relied on.")
+            + c.section("res-test-species", "Test split, species by species", species, "Soundscape AP of each model."))
+
+
 def build(res: Results) -> Page:
     avg = lambda v: float(np.mean(v))
     mean_d = {k: avg(res.deltas(k)) for k in METHODS}
@@ -270,7 +328,7 @@ def build(res: Results) -> Page:
     assert abs(proto(ORACLE, "focal") - proto(BASELINE, "focal")) < 0.01 and res.folds_better_worse(ORACLE) == (3, 0)
     on_test = sorted(r for r, e in results.read_registry(res.store).items()
                      if "canonical_test" in e.get("sections", []) and r != BASELINE and not e.get("legacy"))
-    assert not on_test, f"{on_test} now have test-split results: add them to the page and revise its test-split statement"
+    assert on_test == sorted(TEST_RUNS), f"the models with test-split results are now {on_test}: revise the page's test section"
 
     tiles = c.tiles([
         (c.signed(mean_d[best]), f"largest mean AP change without soundscape labels, among {len(LABEL_FREE)} methods "
@@ -360,11 +418,9 @@ def build(res: Results) -> Page:
                     "Change in soundscape AP vs the pretrained model, averaged over the folds on which the species is primary. Blue: better; "
                     "red: worse. A selection of methods. Species scored on a single fold are especially noisy.", species_heatmap(res),
                     c.legend([("up-key", "better than pretrained"), ("down-key", "worse than pretrained")]))
-    t = res.test["models"][BASELINE]
-    lo, hi = t["ci95"]["sc_ap_primary"]
     limits = c.section("res-status", "Status and limitations", f"""<ul class="prose">
-    <li><b>These are cross-validation results.</b> On the test split only the pretrained model has been scored so far (soundscape AP
-    {t['point']['sc_ap_primary']:.3f}, 95% interval {lo:.3f} to {hi:.3f}); the test sites are kept for final comparisons.</li>
+    <li><b>Comparisons between methods are cross-validation results.</b> On the test split only the pretrained model and two
+    baselines have been scored (<a href="#res-test">above</a>); the test sites are kept for final comparisons.</li>
     <li><b>One training seed per method.</b> Differences of a few hundredths between trained methods are within what seeds or folds
     could produce.</li>
     <li>The frozen-backbone ablations were added after the other runs had been launched. Treat them as exploratory.</li>
@@ -376,4 +432,4 @@ def build(res: Results) -> Page:
     <li>With 3 folds of about 23 sites, a missing “reliably better” does not show that a method has no effect.</li></ul>""")
     return Page("results.html", "Initial results", "Initial results",
                 "Methods grouped by how much soundscape information they use, all scored on the same held-out sites.",
-                tiles + take + delta + contrasts + tab + methods + twelve + by_species + protos + heat + limits)
+                tiles + take + delta + contrasts + tab + methods + twelve + by_species + test_section(res) + protos + heat + limits)
