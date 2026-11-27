@@ -1,0 +1,74 @@
+{
+ "schema": 1,
+ "run_id": "lb500-cv1",
+ "dataset": "hsn",
+ "args": {
+  "train_domain": "soundscape",
+  "name": "lb500-cv1",
+  "dataset": "hsn",
+  "splits_dir": "data/HSN/splits",
+  "batch_size": 32,
+  "num_workers": 8,
+  "warm_epochs": 2,
+  "joint_epochs": 12,
+  "last_epochs": 4,
+  "lr_backbone": 2e-05,
+  "lr_prototypes": 0.001,
+  "lr_last": 0.001,
+  "weight_decay": 0.0001,
+  "ortho_weight": 0.01,
+  "ortho_form": "frobenius",
+  "no_push": false,
+  "rung": "label-budget-500",
+  "select": "last",
+  "cv_fold": 1,
+  "anchored": false,
+  "train_labels": 500,
+  "bg_kind": "none",
+  "bg_manifest": null,
+  "bg_prob": 0.5,
+  "snr_min": -5.0,
+  "snr_max": 20.0,
+  "overlap_prob": 0.0,
+  "overlap_gain_min": -10.0,
+  "overlap_gain_max": 0.0,
+  "pseudo_manifest": null,
+  "pseudo_weight": 0.2,
+  "pseudo_batch_size": 16,
+  "max_train_batches": null,
+  "max_eval_samples": null,
+  "seed": 0
+ },
+ "effective": {
+  "cv_fold": 1,
+  "mixing": {
+   "bg_kind": "none",
+   "bg_prob": 0.0,
+   "snr_db": [
+    -5.0,
+    20.0
+   ],
+   "overlap_prob": 0.0,
+   "overlap_gain_db": [
+    -10.0,
+    0.0
+   ]
+  },
+  "select": "last",
+  "joint_epochs": 12,
+  "train_labels": 500,
+  "ortho_form": "frobenius",
+  "ortho_weight": 0.01,
+  "push": true,
+  "n_train_clips": 500,
+  "steps_per_epoch": 176,
+  "pseudo_weight": 0.0,
+  "pseudo_manifest": "None"
+ },
+ "commit": "0397c9296a4a65f89f56b289aa3bbe4dd02e4676",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

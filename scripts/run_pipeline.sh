@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# End-to-end pipeline: download -> preprocess -> inference -> figures.
+# From raw data to the baseline numbers: download -> manifests -> canonical splits -> pretrained-model responses -> canonical evaluation.
 #
-#   scripts/run_pipeline.sh --smoke   # tiny run (16 clips/type), writes to outputs/smoke/
-#   scripts/run_pipeline.sh           # full run (all focal shards), writes to outputs/
+#   scripts/run_pipeline.sh --smoke   # tiny check of the plumbing (16 clips per domain); writes only under the dataset name "smoke"
+#   scripts/run_pipeline.sh           # full run (all focal shards); results in outputs/results/hsn/
 #
-# Run on a compute node (see scripts/slurm/pipeline.sbatch), not a login node.
+# Run on a compute node (see scripts/slurm/pipeline.sbatch), not a login node. Training a model is a separate step
+# (scripts/train/train_protopnet.py or scripts/slurm/run_recipe.sbatch); this script produces what every run is compared against.
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -19,27 +20,32 @@ export HF_HOME="${HF_HOME:-$REPO_DIR/models/hf}"
 
 if (( SMOKE )); then
     DOWNLOAD_ARGS=()                                   # first focal shard + soundscapes
-    INFER_ARGS=(--max-focal-samples 16 --max-soundscape-samples 16
-                --output-dir outputs/smoke/results)
-    FIG_DIR=outputs/smoke/figures
-    RES_DIR=outputs/smoke/results
-else
-    DOWNLOAD_ARGS=(--all-focal)
-    INFER_ARGS=(--max-focal-samples 1050 --max-soundscape-samples 1000)
-    FIG_DIR=outputs/figures
-    RES_DIR=outputs/results
+    echo "[1/3] Download HSN (first shard)"
+    python scripts/data/download_hsn.py "${DOWNLOAD_ARGS[@]}"
+    echo "[2/3] Build manifests"
+    python scripts/data/preprocess_hsn.py
+    echo "[3/3] Pretrained-model responses on 16 clips per domain (dataset 'smoke'; the canonical splits are not built)"
+    python scripts/analysis/extract_prototype_activations.py pretrained-xcl --dataset smoke \
+        --focal-manifest data/HSN/preprocessed/focal_manifest.parquet \
+        --soundscape-manifest data/HSN/preprocessed/soundscape_manifest.parquet \
+        --max-focal-samples 16 --max-soundscape-samples 16 --batch-size 4 --num-workers 2 --min-soundscape-pos 1
+    python scripts/report/results.py --dataset smoke show pretrained-xcl
+    echo "Smoke run done: outputs/results/smoke/ (safe to delete)"
+    exit 0
 fi
 
-echo "[1/4] Download HSN"
-python scripts/download_hsn.py "${DOWNLOAD_ARGS[@]}"
-echo "[2/4] Preprocess (manifests)"
-python scripts/preprocess_hsn.py
-echo "[3/4] Inference"
-python scripts/run_inference.py "${INFER_ARGS[@]}"
-echo "[4/4] Figures"
-python scripts/visualize_analysis.py \
-    --cache-path "$RES_DIR/eval_cache.pt" \
-    --summary-path "$RES_DIR/comparison_summary.json" \
-    --figures-dir "$FIG_DIR"
+echo "[1/5] Download HSN"
+python scripts/data/download_hsn.py --all-focal
+echo "[2/5] Build manifests (full)"
+python scripts/data/preprocess_hsn.py --full
+echo "[3/5] Canonical splits"
+python scripts/data/make_splits.py
+python scripts/data/check_splits.py
+echo "[4/5] Pretrained-model responses on the test splits"
+SPL=data/HSN/splits
+python scripts/analysis/extract_prototype_activations.py pretrained-xcl \
+    --focal-manifest $SPL/focal_test.parquet --soundscape-manifest $SPL/soundscape_test.parquet --min-soundscape-pos 5
+echo "[5/5] Canonical evaluation (protocol v1) of the pretrained model"
+python scripts/eval/canonical_eval.py --model pretrained-xcl --baseline pretrained-xcl
 
-echo "Done. Results: $RES_DIR  Figures: $FIG_DIR"
+echo "Done. python scripts/report/results.py show pretrained-xcl"

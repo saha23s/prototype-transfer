@@ -1,0 +1,179 @@
+{
+ "schema": 1,
+ "run_id": "lb250-cv1",
+ "dataset": "hsn",
+ "sections": {
+  "train": {
+   "train_domain": "soundscape",
+   "select": "last",
+   "selected_val": {
+    "focal": {
+     "cmAP": 0.8738283550868848,
+     "macro_auc": 0.9775169608144261
+    },
+    "soundscape": {
+     "cmAP": 0.636160749896123,
+     "macro_auc": 0.911923602377165
+    }
+   },
+   "last_epoch_val": {
+    "focal": {
+     "cmAP": 0.8738283550868848,
+     "macro_auc": 0.9775169608144261
+    },
+    "soundscape": {
+     "cmAP": 0.636160749896123,
+     "macro_auc": 0.911923602377165
+    }
+   }
+  },
+  "prototype_transfer": {
+   "stats_file": "prototype_transfer.json",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "min_soundscape_pos": 5,
+   "focal_manifest": "data/HSN/splits/focal_val.parquet",
+   "soundscape_manifest": "data/HSN/splits/soundscape_cv1_heldout.parquet"
+  },
+  "canonical_cv1": {
+   "protocol": "v1",
+   "split": "cv",
+   "fold": 1,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only-cv1",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "n_clusters": {
+    "recordists": 69,
+    "sites": 23
+   },
+   "point": {
+    "sc_ap_primary": 0.82071522690922,
+    "sc_auc_primary": 0.9778986281581291,
+    "sc_cmap_12": 0.8420437923595838,
+    "sc_auc_12": 0.9832627273221626,
+    "f_auc_primary": 0.9846706788437054,
+    "f_ap_primary": 0.8973200846368405,
+    "f_auc_12": 0.9760528050230477,
+    "n_fail": 5,
+    "n_improve": 20,
+    "median_delta": -0.0005166785092320381,
+    "n_fail_birds": 7,
+    "median_delta_birds": -0.014821476253439436
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.6168719103477877,
+     0.862906372660877
+    ],
+    "sc_auc_primary": [
+     0.9350757017341453,
+     0.9827384397014131
+    ],
+    "sc_cmap_12": [
+     0.6661868113664082,
+     0.8620004568458685
+    ],
+    "sc_auc_12": [
+     0.9516774601882907,
+     0.9861097221732495
+    ],
+    "f_auc_primary": [
+     0.937630828613191,
+     0.9883801051619835
+    ],
+    "f_ap_primary": [
+     0.7381324307634383,
+     0.9101870150628585
+    ],
+    "f_auc_12": [
+     0.8060459126557824,
+     0.9845326441951716
+    ],
+    "n_fail": [
+     0.0,
+     10.0
+    ],
+    "n_improve": [
+     3.0,
+     20.0
+    ],
+    "median_delta": [
+     -0.04733855394886369,
+     0.05264511002919731
+    ],
+    "n_fail_birds": [
+     0.0,
+     15.0
+    ],
+    "median_delta_birds": [
+     -0.058760342381046465,
+     0.024202907618733983
+    ]
+   },
+   "vs_baseline": {
+    "sc_ap_primary": {
+     "diff": 0.12694723546603026,
+     "ci95": [
+      0.01913393048279196,
+      0.16772417129393963
+     ]
+    },
+    "sc_auc_primary": {
+     "diff": 0.016067234940338238,
+     "ci95": [
+      -0.006875091000273853,
+      0.02394736308412506
+     ]
+    },
+    "sc_cmap_12": {
+     "diff": 0.08693889309742309,
+     "ci95": [
+      0.020532232883384148,
+      0.13888497414564505
+     ]
+    },
+    "f_auc_primary": {
+     "diff": -0.012513594587596932,
+     "ci95": [
+      -0.05085402140456158,
+      -0.00940355178965571
+     ]
+    },
+    "n_fail": {
+     "diff": -12.0,
+     "ci95": [
+      -15.0,
+      -2.0
+     ]
+    },
+    "n_fail_birds": {
+     "diff": -18.0,
+     "ci95": [
+      -19.025,
+      -1.0
+     ]
+    }
+   },
+   "gap_fraction": {
+    "value": 0.790246263491516,
+    "ci95": [
+     0.3337052786001331,
+     1.3790761542136047
+    ]
+   },
+   "criteria": {
+    "1_ap_gap_closed": true,
+    "2_auc_not_below_baseline": true,
+    "3_failing_prototypes_halved": true,
+    "4_focal_retained": false
+   }
+  }
+ }
+}

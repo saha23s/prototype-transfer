@@ -1,5 +1,6 @@
-// Prototype-transfer dashboard. Data: window.DASHBOARD_DATA (data.js, built by
-// scripts/build_dashboard_data.py). Plain DOM + inline SVG, no dependencies.
+// Interactive parts of the dashboard: the findings and their evidence (index.html) and the species explorer
+// (explorer.html). Data: window.DASHBOARD_DATA (data.js, built by scripts/report/build_dashboard_data.py).
+// Plain DOM + inline SVG, no dependencies. Each page renders only the blocks whose elements it contains.
 (() => {
   "use strict";
   const DATA = window.DASHBOARD_DATA;
@@ -7,13 +8,20 @@
   const SVGNS = "http://www.w3.org/2000/svg";
   const DOMAINS = ["focal", "soundscape"];
   const LABEL = { focal: "Focal", soundscape: "Soundscape" };
+  const NAMES = window.SPECIES_NAMES || {};
   let selected = S[0].code;
   const listeners = []; // re-render hooks run on selection change
 
   // ---------- helpers ----------
   const fmt = (v, d = 2) => (v == null ? "—" : v.toFixed(d));
+  // AP, AUC and activations are 0-1 in data.js and shown out of 100; their changes in points
+  const score = (v, d = 1) => (v == null ? "—" : (100 * v).toFixed(d));
   const pct = (v) => (v == null ? "—" : Math.round(v * 100) + "%");
-  const signed = (v, d = 2) => (v == null ? "—" : (v > 0 ? "+" : v < 0 ? "−" : "±") + Math.abs(v).toFixed(d));
+  const signed = (v, d = 1) => {   // as charts.signed(): no "−0.0"
+    if (v == null) return "—";
+    const shown = Math.abs(100 * v).toFixed(d);
+    return (Number(shown) === 0 ? "±" : v > 0 ? "+" : "−") + shown;
+  };
   const bySp = Object.fromEntries(S.map((s) => [s.code, s]));
   const hasBoth = (p) => p.focal.auc != null && p.soundscape.auc != null;
 
@@ -45,7 +53,7 @@
     if (!bySp[code]) return;
     selected = code;
     const sel = document.getElementById("species-select");
-    if (sel.value !== code) sel.value = code;
+    if (sel && sel.value !== code) sel.value = code;
     listeners.forEach((f) => f(code));
   }
 
@@ -63,15 +71,14 @@
   function hideTip() { tip().setAttribute("hidden", ""); }
 
   function tipFor(target) {
-    if (target.dataset.model) return cmpTip(target);
     const sp = bySp[target.dataset.species];
     if (!sp) return null;
     if (target.dataset.proto) {
       const p = sp.prototypes[Number(target.dataset.proto) - 1];
-      return `<b>${sp.code} · P${p.k}</b><br>AUC focal ${fmt(p.focal.auc)} → soundscape ${fmt(p.soundscape.auc)}` +
-        ` (${signed(p.soundscape.auc - p.focal.auc)})<br>Last-layer weight ${fmt(p.weight)}`;
+      return `<b>${sp.code} · P${p.k}</b><br>AUC focal ${score(p.focal.auc)} → soundscape ${score(p.soundscape.auc)}` +
+        ` (${signed(p.soundscape.auc - p.focal.auc)} points)<br>Last-layer weight ${fmt(p.weight)}`;
     }
-    return `<b>${sp.code}</b><br>Class AUC focal ${fmt(sp.class_auc.focal, 3)} → soundscape ${fmt(sp.class_auc.soundscape, 3)}` +
+    return `<b>${sp.code}</b><br>Class AUC focal ${score(sp.class_auc.focal)} → soundscape ${score(sp.class_auc.soundscape)}` +
       `<br>Positives: ${sp.n.focal} focal / ${sp.n.soundscape} soundscape`;
   }
   function wireChart(svg) {
@@ -90,33 +97,27 @@
     });
   }
 
-  // ---------- header, tiles, findings, caveats ----------
-  function renderHeader() {
-    const m = DATA.meta;
-    document.getElementById("subtitle").textContent =
-      `${m.model} @ ${m.revision.slice(0, 7)} · ${m.dataset} · ${m.n_clips.focal.toLocaleString()} focal and ` +
-      `${m.n_clips.soundscape.toLocaleString()} soundscape clips · species with ≥ ${m.min_soundscape_pos} soundscape positives · generated ${m.generated}`;
-  }
-
+  // ---------- tiles, findings, caveats ----------
   function renderSummary() {
     const mean = (k) => S.reduce((a, s) => a + s.class_auc[k], 0) / S.length;
     const protos = S.flatMap((s) => s.prototypes.filter(hasBoth));
     const drops = protos.filter((p) => p.focal.auc - p.soundscape.auc > 0.1).length;
     const tiles = [
       [S.length, "species analysed"],
-      [mean("focal").toFixed(3), "mean class AUC · focal"],
-      [mean("soundscape").toFixed(3), "mean class AUC · soundscape"],
-      [`${drops} / ${protos.length}`, "prototypes losing > 0.1 AUC on soundscapes"],
+      [score(mean("focal")), "mean class AUC · focal"],
+      [score(mean("soundscape")), "mean class AUC · soundscape"],
+      [`${drops} / ${protos.length}`, "prototypes losing more than 10 AUC points on soundscapes"],
     ];
     const box = document.getElementById("summary");
     for (const [v, l] of tiles) box.append(el("div", { class: "stat-tile" }, el("span", { class: "value", text: String(v) }), el("span", { class: "label", text: l })));
   }
 
   function renderFindings() {
-    const box = document.getElementById("findings");
+    const box = document.getElementById("findings-list");
     const arts = [];
     DATA.findings.forEach((f, i) => {
       const h = el("h3", { text: f.title });
+      if (f.evidence.kind === "patches") h.append(el("span", { class: "tag anecdote", text: "visual example, not a statistic" }));
       if (f.species) h.append(el("span", { class: "tag", text: f.species + (f.prototype ? ` P${f.prototype}` : "") }));
       const art = el("article", { class: "finding clickable", tabindex: "0", "aria-controls": "evidence" },
         h, el("p", { text: f.text }), el("span", { class: "ev-link", text: "Show evidence ↓" }));
@@ -160,12 +161,12 @@
     const H = box.bottom + 44, max = Math.max(0.05, ...rows.map((r) => r[1]));
     const x = scale(Math.min(0, ...rows.map((r) => r[1])), max, box.left, box.right);
     const svg = evSvg(W, H, "Class AUC drop per species");
-    axes(svg, x, null, "Class AUC drop (focal − soundscape)", null, { xTicks: [0, 0.1, 0.2, 0.3].filter((t) => t <= max + 1e-9), xFmt: (t) => t.toFixed(1), box });
+    axes(svg, x, null, "Class AUC drop (focal − soundscape), points", null, { xTicks: [0, 0.1, 0.2, 0.3].filter((t) => t <= max + 1e-9), xFmt: (t) => score(t, 0), box });
     rows.forEach(([code, d], i) => {
       const cy = box.top + i * rowH + rowH / 2, hl = ev.highlight.includes(code);
       svg.append(sv("text", { class: "row-label" + (hl ? " sel" : ""), x: box.left - 8, y: cy + 4, "text-anchor": "end" }, code));
       svg.append(sv("rect", { class: "ev-bar" + (hl ? " hl" : ""), x: Math.min(x(0), x(d)), y: cy - 6, width: Math.max(2, Math.abs(x(d) - x(0))), height: 12, rx: 3, "data-species": code }));
-      svg.append(sv("text", { x: Math.max(x(0), x(d)) + 5, y: cy + 4 }, d.toFixed(3)));
+      svg.append(sv("text", { x: Math.max(x(0), x(d)) + 5, y: cy + 4 }, score(d)));
     });
     return svg;
   }
@@ -177,15 +178,15 @@
     const H = box.bottom + 44;
     const x = scale(-0.5, 0.3, box.left, box.right);
     const svg = evSvg(W, H, "Per-prototype AUC change by species");
-    axes(svg, x, null, "Prototype ΔAUC (soundscape − focal)", null,
-      { xTicks: [-0.5, -0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3], xFmt: (t) => (t > 0 ? "+" : "") + t.toFixed(1), box });
+    axes(svg, x, null, "Prototype ΔAUC (soundscape − focal), points", null,
+      { xTicks: [-0.5, -0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3], xFmt: (t) => (t > 0 ? "+" : "") + score(t, 0), box });
     svg.append(sv("line", { class: "diag", x1: x(ev.threshold), x2: x(ev.threshold), y1: box.top, y2: box.bottom }));
     rows.forEach(([code, ds], i) => {
       const cy = box.top + i * rowH + rowH / 2, vals = ds.map((d) => d[1]);
       svg.append(sv("text", { class: "row-label", x: box.left - 8, y: cy + 4, "text-anchor": "end" }, code));
       svg.append(sv("line", { class: "connector", x1: x(Math.min(...vals)), x2: x(Math.max(...vals)), y1: cy, y2: cy }));
       for (const [k, d] of ds) svg.append(sv("circle", { class: "pt" + (d < ev.threshold ? " sel" : ""), cx: x(d), cy, r: 4.5, "data-species": code, "data-proto": k }));
-      svg.append(sv("text", { x: box.right + 12, y: cy + 4 }, (ev.spread[code] ?? 0).toFixed(2)));
+      svg.append(sv("text", { x: box.right + 12, y: cy + 4 }, score(ev.spread[code] ?? 0, 0)));
     });
     svg.append(sv("text", { x: box.right + 12, y: 12 }, "spread"));
     return svg;
@@ -198,7 +199,7 @@
     const svg = evSvg(W, H, label);
     const xt = []; for (let t = 0; t <= xMax + 1e-9; t += 0.1) xt.push(+t.toFixed(1));
     axes(svg, x, y, "Prototype max activation", "Fraction of entries ≤ x",
-      { xTicks: xt, yTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => t.toFixed(1), yFmt: (t) => Math.round(t * 100) + "%", box });
+      { xTicks: xt, yTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => score(t, 0), yFmt: (t) => Math.round(t * 100) + "%", box });
     for (const [key, cls] of [["focal_neg", "focal dashed"], ["soundscape_neg", "soundscape dashed"], ["focal_pos", "focal"], ["soundscape_pos", "soundscape"]]) {
       if (!series[key]) continue;
       const pts = xs.map((v, i) => [v, series[key][i]]).filter(([v]) => v <= xMax + 1e-9);
@@ -272,7 +273,7 @@
     for (const k of ev.prototypes) {
       const p = sp.prototypes[k - 1], pt = sp.patches && sp.patches[String(k)];
       wrap.append(el("div", { class: "ev-patch-label" }, el("b", { text: `${sp.code} P${k}` }),
-        ` · AUC ${fmt(p.focal.auc)} → ${fmt(p.soundscape.auc)} · peak ${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz`));
+        ` · AUC ${score(p.focal.auc)} → ${score(p.soundscape.auc)} · peak ${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz`));
       if (pt) {
         const row = el("div", { class: "col-patches" });
         row.append(...patchGroups(pt));
@@ -287,9 +288,9 @@
     const sp = bySp[f.evidence.species];
     return f.evidence.prototypes.flatMap((k) => {
       const p = sp.prototypes[k - 1];
-      return [[`${sp.code} P${k} AUC (focal → soundscape)`, `${fmt(p.focal.auc, 3)} → ${fmt(p.soundscape.auc, 3)}`],
+      return [[`${sp.code} P${k} AUC (focal → soundscape)`, `${score(p.focal.auc)} → ${score(p.soundscape.auc)}`],
               [`${sp.code} P${k} share of evidence`, `${pct(p.focal.logit_share)} → ${pct(p.soundscape.logit_share)}`],
-              [`${sp.code} P${k} median activation on positives`, `${fmt(p.focal.act_q[2], 3)} → ${fmt(p.soundscape.act_q[2], 3)}`],
+              [`${sp.code} P${k} median activation on positives`, `${score(p.focal.act_q[2])} → ${score(p.soundscape.act_q[2])}`],
               ...(sp.confusion ? [[`${sp.code} P${k} top-${sp.confusion[k - 1].n} false matches with other species`,
                 `${pct(sp.confusion[k - 1].frac_other)} (base ${pct(sp.confusion[k - 1].base_other)})`]] : [])];
     });
@@ -299,7 +300,7 @@
     const ev = f.evidence, panel = document.getElementById("evidence");
     let chart, legendItems = [];
     if (ev.kind === "class_auc_drop") chart = evClassAucDrop(ev);
-    else if (ev.kind === "delta_auc") { chart = evDeltaAuc(ev); legendItems = [["sel", "ΔAUC < −0.10 (dashed line)"], ["other", "other prototypes"]]; }
+    else if (ev.kind === "delta_auc") { chart = evDeltaAuc(ev); legendItems = [["sel", "ΔAUC below −10 points (dashed line)"], ["other", "other prototypes"]]; }
     else if (ev.kind === "activation_cdf") {
       chart = evActivationCdf(ev);
       legendItems = CDF_LEGEND;
@@ -307,11 +308,11 @@
       chart = evScatter(ev, { get: (p) => (p.focal.logit_share != null && p.soundscape.logit_share != null ? [p.focal.logit_share, p.soundscape.logit_share] : null),
         lo: 0, hi: 0.45, ticks: [0, 0.1, 0.2, 0.3, 0.4], fmt: (t) => Math.round(t * 100) + "%", xt: "Share of class evidence · focal", yt: "Share · soundscape" });
       legendItems = [["sel", "Largest shifts"], ["other", "Other prototypes"]];
-    } else if (ev.kind === "peak_scatter") {
-      chart = evScatter(ev, { get: (p) => (p.focal.peak_khz != null && p.soundscape.peak_khz != null ? [p.focal.peak_khz, p.soundscape.peak_khz] : null),
-        lo: 0.05, hi: 16, ticks: [0.1, 0.25, 0.5, 1, 2, 4, 8, 16], fmt: (t) => String(t), log: true,
-        xt: "Peak frequency · focal (kHz, log)", yt: "Peak frequency · soundscape (kHz, log)", band: [0.05, 0.5, "wind / ambient band (< 0.5 kHz)"] });
-      legendItems = [["sel", "Drifting to the noise band"], ["other", "Other prototypes"]];
+    } else if (ev.kind === "silent_scatter") {
+      chart = evScatter(ev, { get: (p) => (p.focal.silent != null && p.soundscape.silent != null ? [p.focal.silent, p.soundscape.silent] : null),
+        lo: 0, hi: 0.8, ticks: [0, 0.2, 0.4, 0.6, 0.8], fmt: (t) => Math.round(t * 100) + "%",
+        xt: "Clips with the species where silent · focal", yt: "Silent · soundscape" });
+      legendItems = [["sel", "Most often silent on soundscapes"], ["other", "Other prototypes"]];
     } else if (ev.kind === "confusion") {
       chart = evConfusion(ev);
       legendItems = [["sel", `Share of top-${ev.top_n} false matches with the other species`], ["other", "Base rate among all clips without the species"]];
@@ -322,11 +323,13 @@
     const lg = el("div", { class: "legend" });
     for (const [cls, text] of legendItems) lg.append(el("span", {}, el("i", { class: "swatch " + cls }), text));
     const stats = el("table", { class: "ev-stats" }, el("tbody", {}, ...evidenceStats(f).map(([k, v]) => el("tr", {}, el("td", { text: k }), el("td", { text: v })))));
+    const more = f.species ? el("p", { class: "more" },
+      el("a", { href: "explorer.html#species=" + f.species, text: `Open ${NAMES[f.species] || f.species} in the species explorer →` })) : null;
     panel.replaceChildren(
       el("h3", { text: "Evidence · " + f.title }),
       el("div", { class: "ev-body" },
         el("div", { class: "ev-chart-wrap" }, lg, chart),
-        el("div", { class: "ev-side" }, stats, el("p", { class: "ev-method", text: ev.method }))));
+        el("div", { class: "ev-side" }, stats, el("p", { class: "ev-method", text: ev.method }), more)));
     panel.querySelectorAll("svg").forEach(wireChart);
   }
 
@@ -347,9 +350,9 @@
     const yAxis = top + rows.length * rowH;
     for (let t = 0.5; t <= 1.0001; t += 0.1) {
       svg.append(sv("line", { class: "gridline", x1: x(t), x2: x(t), y1: top, y2: yAxis }));
-      svg.append(sv("text", { x: x(t), y: yAxis + 16, "text-anchor": "middle" }, t.toFixed(1)));
+      svg.append(sv("text", { x: x(t), y: yAxis + 16, "text-anchor": "middle" }, score(t, 0)));
     }
-    svg.append(sv("text", { class: "axis-title", x: (left + W - right) / 2, y: yAxis + 36, "text-anchor": "middle" }, "Class ROC-AUC (0.5 = chance)"));
+    svg.append(sv("text", { class: "axis-title", x: (left + W - right) / 2, y: yAxis + 36, "text-anchor": "middle" }, "Class ROC-AUC out of 100 (50 = chance)"));
     const labels = {}, hits = {};
     rows.forEach((s, i) => {
       const cy = top + i * rowH + rowH / 2;
@@ -388,8 +391,8 @@
     for (let t = LO; t <= 1.0001; t += 0.1) {
       svg.append(sv("line", { class: "gridline", x1: x(t), x2: x(t), y1: top, y2: H - bottom }));
       svg.append(sv("line", { class: "gridline", x1: left, x2: W - right, y1: y(t), y2: y(t) }));
-      svg.append(sv("text", { x: x(t), y: H - bottom + 16, "text-anchor": "middle" }, t.toFixed(1)));
-      svg.append(sv("text", { x: left - 8, y: y(t) + 4, "text-anchor": "end" }, t.toFixed(1)));
+      svg.append(sv("text", { x: x(t), y: H - bottom + 16, "text-anchor": "middle" }, score(t, 0)));
+      svg.append(sv("text", { x: left - 8, y: y(t) + 4, "text-anchor": "end" }, score(t, 0)));
     }
     svg.append(sv("line", { class: "diag", x1: x(LO), y1: y(LO), x2: x(1), y2: y(1) }));
     const dl = LO + 0.04, ang = Math.atan2(y(LO) - y(1), x(1) - x(LO)) * 180 / Math.PI;
@@ -431,7 +434,7 @@
     const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Activation distribution on positive clips" });
     for (const t of [0, 0.2, 0.4, 0.6]) {
       svg.append(sv("line", { class: "gridline", x1: x(t), x2: x(t), y1: 2, y2: 46 }));
-      svg.append(sv("text", { x: x(t), y: 60, "text-anchor": "middle" }, t.toFixed(1)));
+      svg.append(sv("text", { x: x(t), y: 60, "text-anchor": "middle" }, score(t, 0)));
     }
     DOMAINS.forEach((d, i) => {
       const q = p[d].act_q, cy = 13 + i * 22, c = (v) => x(Math.min(0.6, Math.max(0, v)));
@@ -448,8 +451,8 @@
     const d = hasBoth(p) ? p.soundscape.auc - p.focal.auc : null;
     const metrics = el("div", { class: "col col-metrics" },
       el("h3", {}, `P${p.k}`, el("small", { text: `weight ${fmt(p.weight)}` })),
-      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch focal" }), " AUC focal"), el("b", { text: fmt(p.focal.auc) })),
-      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch soundscape" }), " AUC soundscape"), el("b", { text: fmt(p.soundscape.auc) })),
+      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch focal" }), " AUC focal"), el("b", { text: score(p.focal.auc) })),
+      el("div", { class: "row" }, el("span", {}, el("i", { class: "swatch soundscape" }), " AUC soundscape"), el("b", { text: score(p.soundscape.auc) })),
       el("div", { class: "row" }, "Change", el("b", { class: "delta" + (d != null && d < -0.1 ? " neg" : ""), text: signed(d) })));
     const act = el("div", { class: "col col-act" }, boxPlot(p));
     const share = el("div", { class: "col col-share" });
@@ -459,10 +462,10 @@
         el("div", {}, el("div", { class: "bar " + dm, style: `width:${Math.max(2, (v || 0) * 100)}%` })),
         el("span", { class: "pct", text: pct(v) })));
     }
-    const low = p.soundscape.peak_khz != null && p.soundscape.peak_khz < 0.5 && p.focal.peak_khz > 1.0;
-    share.append(el("div", { class: "row peak" }, "Peak freq.",
-      el("b", { text: `${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz` })));
-    if (low) share.append(el("div", { class: "flag", text: "soundscape peak in noise band" }));
+    share.append(el("div", { class: "row peak", title: "Median peak frequency over the clips with the species on which the prototype is active" },
+      "Peak freq. when active", el("b", { text: `${fmt(p.focal.peak_khz, 1)} → ${fmt(p.soundscape.peak_khz, 1)} kHz` })));
+    share.append(el("div", { class: "row", title: "Share of the clips with the species on which the prototype's activation is zero" },
+      "Silent", el("b", { text: `${pct(p.focal.silent)} → ${pct(p.soundscape.silent)}` })));
     const cf = sp.confusion && sp.confusion[p.k - 1];
     if (cf) {
       share.append(el("div", { class: "conf", title: `Top ${cf.n} soundscape clips without ${sp.code}, ranked by P${p.k} activation; base = all soundscape clips without ${sp.code}` },
@@ -486,9 +489,9 @@
     const row = el("div", { class: "patches" + (key === "soundscape_neg" ? " neg" : "") }, el("span", { text: label }));
     for (const it of patches[key] || []) {
       const what = it.labels != null ? ` · clip contains: ${it.labels === "background" ? "no target species" : it.labels}` : "";
-      const cap = `${label} · activation ${fmt(it.act)} · ${fmt(it.khz, 1)} kHz${what} · ${it.clip}`;
+      const cap = `${label} · activation ${score(it.act, 0)} · ${fmt(it.khz, 1)} kHz${what} · ${it.clip}`;
       row.append(el("figure", {}, el("img", { class: "zoomable " + cls, src: it.src, alt: cap, "data-caption": cap, loading: "lazy" }),
-        el("figcaption", { text: `${fmt(it.act)} · ${fmt(it.khz, 1)}` })));
+        el("figcaption", { text: `${score(it.act, 0)} · ${fmt(it.khz, 1)}` })));
     }
     return row;
   }
@@ -514,7 +517,7 @@
   function detailHeader() {
     return el("div", { class: "proto-head", "aria-hidden": "true" },
       el("span", { text: "Prototype · detection AUC" }),
-      el("span", { text: "Activation on positives (0–0.6)" }),
+      el("span", { text: "Activation on positives (0–60 of 100)" }),
       el("span", { text: "Evidence share · peak · false matches" }),
       el("span", { text: "Top-activating patches (activation · kHz) · hover to zoom" }));
   }
@@ -531,18 +534,18 @@
       const med = ac.medians[distView], ser = ac.series[distView];
       const at = (key, t) => ser[key][Math.round(t / 0.01)];
       const rows = [
-        ["Median activation, focal with / without", `${fmt(med.focal_pos, 3)} / ${fmt(med.focal_neg, 3)}`],
-        ["Median activation, soundscape with / without", `${fmt(med.soundscape_pos, 3)} / ${fmt(med.soundscape_neg, 3)}`],
-        ["Soundscape clips with species ≤ 0.05", pct(at("soundscape_pos", 0.05))],
-        ["Soundscape clips without species ≤ 0.05", pct(at("soundscape_neg", 0.05))],
+        ["Median activation, focal with / without", `${score(med.focal_pos)} / ${score(med.focal_neg)}`],
+        ["Median activation, soundscape with / without", `${score(med.soundscape_pos)} / ${score(med.soundscape_neg)}`],
+        ["Soundscape clips with species at 5 or less", pct(at("soundscape_pos", 0.05))],
+        ["Soundscape clips without species at 5 or less", pct(at("soundscape_neg", 0.05))],
         ["Clips: focal with / without", `${ac.n.focal_pos.toLocaleString()} / ${ac.n.focal_neg.toLocaleString()}`],
         ["Clips: soundscape with / without", `${ac.n.soundscape_pos.toLocaleString()} / ${ac.n.soundscape_neg.toLocaleString()}`],
       ];
       if (/^[1-5]$/.test(distView)) {
         const p = sp.prototypes[+distView - 1];
-        rows.unshift([`P${distView} AUC (focal → soundscape)`, `${fmt(p.focal.auc, 3)} → ${fmt(p.soundscape.auc, 3)}`]);
+        rows.unshift([`P${distView} AUC (focal → soundscape)`, `${score(p.focal.auc)} → ${score(p.soundscape.auc)}`]);
       } else if (distView === "max") {
-        rows.unshift(["Class AUC (focal → soundscape)", `${fmt(sp.class_auc.focal, 3)} → ${fmt(sp.class_auc.soundscape, 3)}`]);
+        rows.unshift(["Class AUC (focal → soundscape)", `${score(sp.class_auc.focal)} → ${score(sp.class_auc.soundscape)}`]);
       }
       const lg = el("div", { class: "legend" });
       for (const [cls, text] of CDF_LEGEND) lg.append(el("span", {}, el("i", { class: "swatch " + cls }), text));
@@ -569,8 +572,8 @@
     const box = document.getElementById("species-detail");
     box.replaceChildren(
       el("p", { class: "detail-head", html:
-        `<strong>${sp.code}</strong> · ${sp.n.focal} focal / ${sp.n.soundscape} soundscape positives · ` +
-        `class AUC <strong>${fmt(sp.class_auc.focal, 3)}</strong> focal → <strong>${fmt(sp.class_auc.soundscape, 3)}</strong> soundscape` +
+        `<strong>${NAMES[sp.code] || sp.code}</strong> (${sp.code}) · ${sp.n.focal} focal / ${sp.n.soundscape} soundscape positives · ` +
+        `class AUC <strong>${score(sp.class_auc.focal)}</strong> focal → <strong>${score(sp.class_auc.soundscape)}</strong> soundscape` +
         (sp.n.soundscape < 30 ? " · <em>few soundscape positives: noisy</em>" : "") }),
       speciesDist(sp),
       el("div", { class: "detail-key" },
@@ -584,7 +587,7 @@
 
   function renderSelect() {
     const sel = document.getElementById("species-select");
-    for (const s of S) sel.append(el("option", { value: s.code, text: `${s.code} (${s.n.soundscape} soundscape)` }));
+    for (const s of S) sel.append(el("option", { value: s.code, text: `${NAMES[s.code] || s.code} · ${s.code} (${s.n.soundscape} soundscape)` }));
     sel.value = selected;
     sel.addEventListener("change", () => select(sel.value));
     listeners.push(renderDetail);
@@ -595,93 +598,26 @@
   function renderTable() {
     const tb = document.querySelector("#proto-table tbody");
     for (const s of S) for (const p of s.prototypes) {
-      const cells = [s.code, "P" + p.k, fmt(p.weight), fmt(p.focal.auc, 3), fmt(p.soundscape.auc, 3),
-        hasBoth(p) ? signed(p.soundscape.auc - p.focal.auc, 3) : "—",
-        fmt(p.focal.act_q[2], 3), fmt(p.soundscape.act_q[2], 3), pct(p.focal.logit_share), pct(p.soundscape.logit_share)];
+      const cells = [s.code, "P" + p.k, fmt(p.weight), score(p.focal.auc), score(p.soundscape.auc),
+        hasBoth(p) ? signed(p.soundscape.auc - p.focal.auc) : "—",
+        score(p.focal.act_q[2]), score(p.soundscape.act_q[2]), pct(p.focal.logit_share), pct(p.soundscape.logit_share)];
       tb.append(el("tr", {}, ...cells.map((c) => el("td", { text: c }))));
     }
   }
 
-  // ---------- model comparison (test split) ----------
-  const MC = DATA.model_comparison;
-  const mcByName = MC ? Object.fromEntries(MC.models.map((m) => [m.name, m])) : {};
-  let cmpDomain = "soundscape";
-
-  function cmpTip(target) {
-    const m = mcByName[target.dataset.model];
-    if (!m) return null;
-    const sp = target.dataset.species, i = MC.species.indexOf(sp);
-    return `<b>${m.label} · ${sp}</b><br>${LABEL[cmpDomain]} AP ${fmt(m[cmpDomain].per_species_ap[i], 3)}` +
-      ` · AUC ${fmt(m[cmpDomain].per_species_auc[i], 3)}<br>Test positives: ${MC.n_pos[cmpDomain][sp]}`;
-  }
-
-  function renderComparison() {
-    const sec = document.getElementById("model-comparison");
-    if (!MC) { sec.hidden = true; return; }
-    document.getElementById("cmp-hint").textContent =
-      `Pretrained XCL model vs. ProtoPNets fine-tuned on focal recordings only and on soundscapes only, scored on held-out ` +
-      `TEST clips for the ${MC.species.length} species with ≥ ${MC.min_pos} positives in both test sets. ` +
-      `The rest of this page analyses the pretrained model on all clips.`;
-
-    // table
-    const cols = [["focal", "cmAP"], ["soundscape", "cmAP"], ["focal", "macro_auc"], ["soundscape", "macro_auc"],
-      ["focal", "proto_auc_median"], ["soundscape", "proto_auc_median"]];
-    const best = cols.map(([d, k]) => Math.max(...MC.models.map((m) => m[d][k])));
-    const tb = document.querySelector("#cmp-table tbody");
-    for (const m of MC.models) {
-      tb.append(el("tr", { "data-model": m.name },
-        el("td", {}, el("i", { class: "swatch cmp-" + m.name }), m.label),
-        el("td", { text: m.train_domain === "xcl" ? "XCL (pretraining)" : LABEL[m.train_domain] || m.train_domain }),
-        ...cols.map(([d, k], j) => el("td", { class: "num" + (m[d][k] === best[j] ? " best" : ""), text: m[d][k].toFixed(3) }))));
-    }
-
-    // chart
-    const fig = document.getElementById("cmp-species");
-    legend(fig, MC.models.map((m) => ["cmp-" + m.name, m.label]));
-    const seg = fig.querySelector(".seg");
-    for (const d of DOMAINS) {
-      const b = el("button", { type: "button", role: "tab", "data-domain": d, "aria-selected": String(d === cmpDomain), text: LABEL[d] });
-      b.addEventListener("click", () => {
-        cmpDomain = d;
-        seg.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.domain === d)));
-        drawCmpChart(fig);
-      });
-      seg.append(b);
-    }
-    drawCmpChart(fig);
-    listeners.push(() => drawCmpChart(fig)); // keep the selected-species label in bold
-  }
-
-  function drawCmpChart(fig) {
-    const W = 720, rowH = 24, box = { left: 70, right: 700, top: 8, bottom: 8 + MC.species.length * rowH };
-    const H = box.bottom + 44, x = scale(0, 1, box.left, box.right);
-    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Per-species ${LABEL[cmpDomain].toLowerCase()} average precision by model` });
-    axes(svg, x, null, `Average precision · ${LABEL[cmpDomain]} test clips`, null, { xTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (t) => t.toFixed(2), box });
-    MC.species.forEach((sp, i) => {
-      const cy = box.top + i * rowH + rowH / 2;
-      const vals = MC.models.map((m) => m[cmpDomain].per_species_ap[i]);
-      const g = sv("g", { class: "cmp-row" });
-      g.append(sv("text", { class: "row-label" + (sp === selected ? " sel" : ""), x: box.left - 8, y: cy + 4, "text-anchor": "end", "data-species": sp }, sp));
-      g.append(sv("line", { class: "cmp-range", x1: x(Math.min(...vals)), x2: x(Math.max(...vals)), y1: cy, y2: cy }));
-      MC.models.forEach((m, j) => g.append(sv("circle", { class: "dot cmp-" + m.name, cx: x(vals[j]), cy, r: 5.5,
-        "data-model": m.name, "data-species": sp, "data-value": vals[j].toFixed(4) })));
-      svg.append(g);
-    });
-    const old = fig.querySelector("svg");
-    if (old) old.replaceWith(svg); else fig.append(svg);
-    wireChart(svg);
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
-    renderHeader();
-    renderSummary();
+    const has = (id) => document.getElementById(id) !== null;
     wireZoom();
-    renderClassAuc();
-    renderScatter();
-    renderComparison();
-    renderSelect();
-    renderFindings();
-    renderTable();
-    renderCaveats();
+    if (has("findings-list")) renderFindings();
+    if (has("species-select")) {
+      const m = /species=(\w+)/.exec(window.location.hash || ""); // explorer.html#species=<code>
+      if (m && bySp[m[1]]) selected = m[1];
+      renderSummary();
+      renderClassAuc();
+      renderScatter();
+      renderSelect();
+      renderTable();
+      renderCaveats();
+    }
   });
 })();

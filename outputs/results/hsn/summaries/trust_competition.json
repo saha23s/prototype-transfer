@@ -1,0 +1,178 @@
+{
+ "point": {
+  "c0": 0.4932767946490447,
+  "c1": 0.5535599743425272,
+  "contested_correct": 0.08137292711145391,
+  "c2": 0.4721870472310733,
+  "c3": 0.6745243658210948,
+  "own_auc": 0.7248050069936701
+ },
+ "ci95": {
+  "c0": [
+   0.4482436893524161,
+   0.5313400246756236
+  ],
+  "c1": [
+   0.47550582287714466,
+   0.6283425669380988
+  ],
+  "contested_correct": [
+   0.05426963327100549,
+   0.10378229171469151
+  ],
+  "c2": [
+   0.38846484539679077,
+   0.5555401023138415
+  ],
+  "c3": [
+   0.544459758178889,
+   0.7510322514808896
+  ],
+  "own_auc": [
+   0.6488847702927262,
+   0.7622806988950994
+  ]
+ },
+ "species_up": 7,
+ "species_counted": 8,
+ "c4": {
+  "rival_present": 0.7045191193511008,
+  "base_rate": 0.43407092906769085,
+  "lift": 1.623050686357379,
+  "n_contested_false": 863
+ },
+ "localisation": {
+  "observed": 0.8816729003740225,
+  "chance": 0.38839610572497774
+ },
+ "counts": {
+  "correct": 2593,
+  "false": 1559,
+  "ambiguous": 348
+ },
+ "per_species": [
+  {
+   "species": "gcrfin",
+   "n_false": 73,
+   "n_correct": 334,
+   "n_ambiguous": 93,
+   "contested_false": 0.0410958904109589,
+   "contested_correct": 0.005988023952095809,
+   "difference": 0.035107866458863095,
+   "margin_auc": 0.603607060629317,
+   "counted": true
+  },
+  {
+   "species": "whcspa",
+   "n_false": 6,
+   "n_correct": 491,
+   "n_ambiguous": 3,
+   "contested_false": 0.16666666666666666,
+   "contested_correct": 0.07128309572301425,
+   "difference": 0.09538357094365241,
+   "margin_auc": 0.453125,
+   "counted": false
+  },
+  {
+   "species": "amepip",
+   "n_false": 68,
+   "n_correct": 405,
+   "n_ambiguous": 27,
+   "contested_false": 0.029411764705882353,
+   "contested_correct": 0.0024691358024691358,
+   "difference": 0.026942628903413215,
+   "margin_auc": 0.5423006695069994,
+   "counted": true
+  },
+  {
+   "species": "rocwre",
+   "n_false": 106,
+   "n_correct": 282,
+   "n_ambiguous": 112,
+   "contested_false": 0.5094339622641509,
+   "contested_correct": 0.09929078014184398,
+   "difference": 0.41014318212230694,
+   "margin_auc": 0.7514792899408284,
+   "counted": true
+  },
+  {
+   "species": "daejun",
+   "n_false": 249,
+   "n_correct": 241,
+   "n_ambiguous": 10,
+   "contested_false": 0.10441767068273092,
+   "contested_correct": 0.1908713692946058,
+   "difference": -0.08645369861187488,
+   "margin_auc": 0.43207644628099173,
+   "counted": true
+  },
+  {
+   "species": "clanut",
+   "n_false": 127,
+   "n_correct": 293,
+   "n_ambiguous": 80,
+   "contested_false": 0.7007874015748031,
+   "contested_correct": 0.06825938566552901,
+   "difference": 0.6325280159092741,
+   "margin_auc": 0.7377260981912145,
+   "counted": true
+  },
+  {
+   "species": "herthr",
+   "n_false": 192,
+   "n_correct": 305,
+   "n_ambiguous": 3,
+   "contested_false": 0.8125,
+   "contested_correct": 0.12131147540983607,
+   "difference": 0.6911885245901639,
+   "margin_auc": 0.8843329253365974,
+   "counted": true
+  },
+  {
+   "species": "amerob",
+   "n_false": 308,
+   "n_correct": 185,
+   "n_ambiguous": 7,
+   "contested_false": 0.7402597402597403,
+   "contested_correct": 0.21081081081081082,
+   "difference": 0.5294489294489295,
+   "margin_auc": 0.7058053251855085,
+   "counted": true
+  },
+  {
+   "species": "mouchi",
+   "n_false": 430,
+   "n_correct": 57,
+   "n_ambiguous": 13,
+   "contested_false": 0.7069767441860465,
+   "contested_correct": 0.05263157894736842,
+   "difference": 0.654345165238678,
+   "margin_auc": 0.9085213032581454,
+   "counted": true
+  }
+ ],
+ "passed": {
+  "c0": true,
+  "c1": true,
+  "c2": true,
+  "c3": true,
+  "c4": true
+ },
+ "decision": "pursue: build and test a competition step",
+ "criteria": {
+  "c0_localisation": 0.15,
+  "c1_contested_false": 0.2,
+  "c2_difference": 0.1,
+  "c2_species": 6,
+  "c3_auc": 0.6,
+  "c4_lift": 1.5
+ },
+ "n_boot": 1000,
+ "n_sites": 70,
+ "commit": "3f907c2e96e4ee270b61bf1cc92c71c1e910bebb",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

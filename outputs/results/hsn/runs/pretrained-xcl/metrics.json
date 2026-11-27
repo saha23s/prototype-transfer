@@ -1,0 +1,378 @@
+{
+ "schema": 1,
+ "run_id": "pretrained-xcl",
+ "dataset": "hsn",
+ "sections": {
+  "canonical_test": {
+   "protocol": "v1",
+   "split": "test",
+   "fold": null,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only",
+   "n_clips": {
+    "focal": 1157,
+    "soundscape": 3600
+   },
+   "n_clusters": {
+    "recordists": 110,
+    "sites": 30
+   },
+   "point": {
+    "sc_ap_primary": 0.6438337399626372,
+    "sc_auc_primary": 0.9406084093860614,
+    "sc_cmap_12": 0.5394886980320577,
+    "sc_auc_12": 0.9240716472888497,
+    "f_auc_primary": 0.9877725115698924,
+    "f_ap_primary": 0.947052425904419,
+    "f_auc_12": 0.9776049448314668,
+    "n_fail": 26,
+    "n_improve": 11,
+    "median_delta": -0.08415883925057238,
+    "n_fail_birds": 42,
+    "median_delta_birds": -0.15894869601677564
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.4980248998532758,
+     0.7220630803993366
+    ],
+    "sc_auc_primary": [
+     0.911809422532122,
+     0.9538545545351086
+    ],
+    "sc_cmap_12": [
+     0.3979944495152051,
+     0.5934535349920923
+    ],
+    "sc_auc_12": [
+     0.8907705718984964,
+     0.9460121754718714
+    ],
+    "f_auc_primary": [
+     0.9727708979365796,
+     0.9957461171892944
+    ],
+    "f_ap_primary": [
+     0.9195934605245121,
+     0.9625538688923616
+    ],
+    "f_auc_12": [
+     0.9692919408171422,
+     0.9906251217263928
+    ],
+    "n_fail": [
+     19.0,
+     33.0
+    ],
+    "n_improve": [
+     5.0,
+     15.0
+    ],
+    "median_delta": [
+     -0.1224066814775837,
+     -0.06251332973491314
+    ],
+    "n_fail_birds": [
+     31.0,
+     45.0
+    ],
+    "median_delta_birds": [
+     -0.21119652017166438,
+     -0.13291206352134094
+    ]
+   }
+  },
+  "prototype_transfer": {
+   "stats_file": "prototype_transfer.json",
+   "n_clips": {
+    "focal": 1157,
+    "soundscape": 3600
+   },
+   "min_soundscape_pos": 5,
+   "focal_manifest": "data/HSN/splits/focal_test.parquet",
+   "soundscape_manifest": "data/HSN/splits/soundscape_test.parquet"
+  },
+  "prototype_transfer_full": {
+   "stats_file": "prototype_transfer_full.json",
+   "n_clips": {
+    "focal": 5460,
+    "soundscape": 12000
+   },
+   "min_soundscape_pos": 10
+  },
+  "prototype_transfer_cv1": {
+   "stats_file": "prototype_transfer_cv1.json",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "min_soundscape_pos": 5,
+   "focal_manifest": "data/HSN/splits/focal_val.parquet",
+   "soundscape_manifest": "data/HSN/splits/soundscape_cv1_heldout.parquet"
+  },
+  "prototype_transfer_cv2": {
+   "stats_file": "prototype_transfer_cv2.json",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "min_soundscape_pos": 5,
+   "focal_manifest": "data/HSN/splits/focal_val.parquet",
+   "soundscape_manifest": "data/HSN/splits/soundscape_cv2_heldout.parquet"
+  },
+  "canonical_cv0": {
+   "protocol": "v1",
+   "split": "cv",
+   "fold": 0,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only-cv0",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2880
+   },
+   "n_clusters": {
+    "recordists": 69,
+    "sites": 24
+   },
+   "point": {
+    "sc_ap_primary": 0.724221973638094,
+    "sc_auc_primary": 0.9410597669598862,
+    "sc_cmap_12": 0.6259667981344225,
+    "sc_auc_12": 0.9101112575708202,
+    "f_auc_primary": 0.996761210701813,
+    "f_ap_primary": 0.9574953754837976,
+    "f_auc_12": 0.9911265155223834,
+    "n_fail": 30,
+    "n_improve": 13,
+    "median_delta": -0.08398212771877417,
+    "n_fail_birds": 42,
+    "median_delta_birds": -0.13342022473826004
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.5310842517034243,
+     0.7834948729084033
+    ],
+    "sc_auc_primary": [
+     0.910026583743328,
+     0.9563324855303261
+    ],
+    "sc_cmap_12": [
+     0.45404173309230195,
+     0.7278317834330682
+    ],
+    "sc_auc_12": [
+     0.8783417962220107,
+     0.9495916668636254
+    ],
+    "f_auc_primary": [
+     0.9923370412781665,
+     0.9982356902356904
+    ],
+    "f_ap_primary": [
+     0.9300012146185418,
+     0.9815931067530217
+    ],
+    "f_auc_12": [
+     0.9772906119403084,
+     0.9957592684189623
+    ],
+    "n_fail": [
+     5.0,
+     35.0
+    ],
+    "n_improve": [
+     4.0,
+     15.0
+    ],
+    "median_delta": [
+     -0.12943025973156028,
+     -0.005147002295149428
+    ],
+    "n_fail_birds": [
+     9.0,
+     43.0
+    ],
+    "median_delta_birds": [
+     -0.21988477766214815,
+     -0.02446339947544957
+    ]
+   }
+  },
+  "canonical_cv2": {
+   "protocol": "v1",
+   "split": "cv",
+   "fold": 2,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only-cv2",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "n_clusters": {
+    "recordists": 69,
+    "sites": 23
+   },
+   "point": {
+    "sc_ap_primary": 0.7132049693982113,
+    "sc_auc_primary": 0.9353449295131039,
+    "sc_cmap_12": 0.6225590183225213,
+    "sc_auc_12": 0.9318745232369505,
+    "f_auc_primary": 0.996761210701813,
+    "f_ap_primary": 0.9574953754837976,
+    "f_auc_12": 0.9897954506356449,
+    "n_fail": 25,
+    "n_improve": 9,
+    "median_delta": -0.09930898381064612,
+    "n_fail_birds": 31,
+    "median_delta_birds": -0.1737559635146551
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.4625607743019548,
+     0.8011961313514456
+    ],
+    "sc_auc_primary": [
+     0.8753902959911182,
+     0.9683853584592264
+    ],
+    "sc_cmap_12": [
+     0.43617194655550595,
+     0.7063518150932588
+    ],
+    "sc_auc_12": [
+     0.8721539306225027,
+     0.9646203142034349
+    ],
+    "f_auc_primary": [
+     0.9923370412781665,
+     0.9982356902356904
+    ],
+    "f_ap_primary": [
+     0.9300012146185418,
+     0.9815931067530217
+    ],
+    "f_auc_12": [
+     0.8307050912539152,
+     0.997883304529333
+    ],
+    "n_fail": [
+     5.0,
+     26.0
+    ],
+    "n_improve": [
+     2.0,
+     11.0
+    ],
+    "median_delta": [
+     -0.15512024180801592,
+     -0.02243144096156055
+    ],
+    "n_fail_birds": [
+     7.0,
+     33.0
+    ],
+    "median_delta_birds": [
+     -0.2457717091054044,
+     -0.06503768077836035
+    ]
+   }
+  },
+  "canonical_cv1": {
+   "protocol": "v1",
+   "split": "cv",
+   "fold": 1,
+   "seed": 0,
+   "n_boot": 1000,
+   "baseline": "pretrained-xcl",
+   "oracle": "soundscape-only-cv1",
+   "n_clips": {
+    "focal": 608,
+    "soundscape": 2760
+   },
+   "n_clusters": {
+    "recordists": 69,
+    "sites": 23
+   },
+   "point": {
+    "sc_ap_primary": 0.6937679914431898,
+    "sc_auc_primary": 0.9618313932177909,
+    "sc_cmap_12": 0.7551048992621607,
+    "sc_auc_12": 0.9716139458430602,
+    "f_auc_primary": 0.9971842734313023,
+    "f_ap_primary": 0.9693555526294502,
+    "f_auc_12": 0.9899011357365091,
+    "n_fail": 17,
+    "n_improve": 10,
+    "median_delta": -0.04923974604731779,
+    "n_fail_birds": 25,
+    "median_delta_birds": -0.10294363040938154
+   },
+   "ci95": {
+    "sc_ap_primary": [
+     0.5279140407141264,
+     0.816352288423088
+    ],
+    "sc_auc_primary": [
+     0.9371331545631976,
+     0.9708475665287193
+    ],
+    "sc_cmap_12": [
+     0.583493534796629,
+     0.8004883349023919
+    ],
+    "sc_auc_12": [
+     0.9518550780437256,
+     0.9768881961358482
+    ],
+    "f_auc_primary": [
+     0.9854483687988649,
+     0.998635920212199
+    ],
+    "f_ap_primary": [
+     0.932069578549123,
+     0.9825202268970255
+    ],
+    "f_auc_12": [
+     0.7973598682868996,
+     0.9978523123312093
+    ],
+    "n_fail": [
+     3.0,
+     21.0
+    ],
+    "n_improve": [
+     3.0,
+     13.0
+    ],
+    "median_delta": [
+     -0.09633134574871187,
+     0.02552788357443584
+    ],
+    "n_fail_birds": [
+     5.0,
+     28.0
+    ],
+    "median_delta_birds": [
+     -0.1623558577695184,
+     0.007828703513870624
+    ]
+   }
+  },
+  "prototype_transfer_nontest": {
+   "stats_file": "prototype_transfer_nontest.json",
+   "n_clips": {
+    "focal": 4303,
+    "soundscape": 8400
+   },
+   "min_soundscape_pos": 10,
+   "scope": "train and val splits of both domains"
+  }
+ }
+}

@@ -1,0 +1,65 @@
+{
+ "auc": {
+  "margin_same_place": 0.6745243658210948,
+  "margin_anywhere": 0.5833611481975968,
+  "rival_same_place": 0.6571678905206942,
+  "rival_anywhere": 0.5594125500667557,
+  "own_low": 0.585989652870494,
+  "margin_same_place - margin_anywhere": 0.091163217623498,
+  "rival_same_place - rival_anywhere": 0.09775534045393852,
+  "margin_same_place - own_low": 0.08853471295060078
+ },
+ "ci95": {
+  "margin_same_place": [
+   0.544459758178889,
+   0.7510322514808896
+  ],
+  "margin_anywhere": [
+   0.5319989458196183,
+   0.6239684430944756
+  ],
+  "rival_same_place": [
+   0.5352702130177723,
+   0.7322901582708321
+  ],
+  "rival_anywhere": [
+   0.5136659594126588,
+   0.5994310369937068
+  ],
+  "own_low": [
+   0.520796444344223,
+   0.6228050914803498
+  ],
+  "margin_same_place - margin_anywhere": [
+   -0.03692883869704472,
+   0.16747487337772657
+  ],
+  "rival_same_place - rival_anywhere": [
+   -0.036759037706534284,
+   0.18058712902371504
+  ],
+  "margin_same_place - own_low": [
+   -0.014023368366779414,
+   0.1547977386332604
+  ]
+ },
+ "contested": {
+  "margin_same_place": {
+   "false": 0.5535599743425272,
+   "correct": 0.08137292711145391
+  },
+  "margin_anywhere": {
+   "false": 0.9955099422706863,
+   "correct": 0.9213266486694948
+  }
+ },
+ "n_matches": 4152,
+ "n_boot": 1000,
+ "added_after_result": true,
+ "commit": "3f907c2e96e4ee270b61bf1cc92c71c1e910bebb",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}
