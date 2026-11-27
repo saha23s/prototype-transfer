@@ -1,0 +1,48 @@
+{
+ "schema": 1,
+ "run_id": "sfda-notela",
+ "dataset": "hsn",
+ "args": {
+  "method": "notela",
+  "name": "sfda-notela",
+  "rung": "sfda-notela",
+  "dataset": "hsn",
+  "splits_dir": "data/HSN/splits",
+  "cv_fold": null,
+  "epochs": 10,
+  "batch_size": 64,
+  "drop_path": 0.2,
+  "num_workers": 8,
+  "seed": 0,
+  "max_batches": null,
+  "lr": null,
+  "threshold": null,
+  "alpha": null,
+  "lam": null,
+  "knn": null,
+  "beta": null
+ },
+ "effective": {
+  "method": "notela",
+  "lr": 0.0001,
+  "cosine": false,
+  "dropout": true,
+  "alpha": 1.0,
+  "lam": 1.0,
+  "knn": 5,
+  "epochs": 10,
+  "batch_size": 64,
+  "drop_path": 0.2,
+  "n_adapt_clips": 7200,
+  "adapt_manifest": "data/HSN/splits/soundscape_train.parquet",
+  "trainable": "backbone LayerNorm scale and shift",
+  "uses_labels": false,
+  "peak_gpu_gb": 15.15
+ },
+ "commit": "62451cfcb22e3dedc1716c5ad773c8ac354b3cb4",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

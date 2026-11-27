@@ -1,0 +1,402 @@
+[
+ {
+  "species": "whcspa",
+  "k": 1,
+  "auc_focal": 0.9009057726105177,
+  "auc_soundscape": 0.7541954240792634,
+  "delta": -0.1467103485312543,
+  "delta_birds": -0.1574501795807257
+ },
+ {
+  "species": "whcspa",
+  "k": 2,
+  "auc_focal": 0.9352440178450723,
+  "auc_soundscape": 0.9362785800498198,
+  "delta": 0.0010345622047475134,
+  "delta_birds": -0.07238285989116555
+ },
+ {
+  "species": "whcspa",
+  "k": 3,
+  "auc_focal": 0.8992384299941417,
+  "auc_soundscape": 0.9119647697215086,
+  "delta": 0.01272633972736692,
+  "delta_birds": -0.06873533836963353
+ },
+ {
+  "species": "whcspa",
+  "k": 4,
+  "auc_focal": 0.9728718849984228,
+  "auc_soundscape": 0.9301534359871474,
+  "delta": -0.04271844901127542,
+  "delta_birds": -0.13312202552680952
+ },
+ {
+  "species": "whcspa",
+  "k": 5,
+  "auc_focal": 0.7750664683880852,
+  "auc_soundscape": 0.674000471583954,
+  "delta": -0.1010659968041312,
+  "delta_birds": -0.14590401757302063
+ },
+ {
+  "species": "amepip",
+  "k": 1,
+  "auc_focal": 0.7895040131714345,
+  "auc_soundscape": 0.640007171314741,
+  "delta": -0.14949684185669343,
+  "delta_birds": -0.18032479790102096
+ },
+ {
+  "species": "amepip",
+  "k": 2,
+  "auc_focal": 0.9287919324963985,
+  "auc_soundscape": 0.8832605577689243,
+  "delta": -0.04553137472747415,
+  "delta_birds": -0.05685131743807392
+ },
+ {
+  "species": "amepip",
+  "k": 3,
+  "auc_focal": 0.9744803457501543,
+  "auc_soundscape": 0.8954565737051793,
+  "delta": -0.07902377204497502,
+  "delta_birds": -0.15715266812555195
+ },
+ {
+  "species": "amepip",
+  "k": 4,
+  "auc_focal": 0.9388557316320231,
+  "auc_soundscape": 0.7729354581673307,
+  "delta": -0.1659202734646924,
+  "delta_birds": -0.335837704060443
+ },
+ {
+  "species": "amepip",
+  "k": 5,
+  "auc_focal": 0.998929820950813,
+  "auc_soundscape": 0.8324239043824702,
+  "delta": -0.1665059165683428,
+  "delta_birds": -0.21518008606215977
+ },
+ {
+  "species": "sposan",
+  "k": 1,
+  "auc_focal": 0.8186166774402068,
+  "auc_soundscape": 0.5159883720930233,
+  "delta": -0.30262830534718355,
+  "delta_birds": -0.3489436816596161
+ },
+ {
+  "species": "sposan",
+  "k": 2,
+  "auc_focal": 0.8214608920491273,
+  "auc_soundscape": 0.9972747093023255,
+  "delta": 0.17581381725319822,
+  "delta_birds": 0.17273742018715965
+ },
+ {
+  "species": "sposan",
+  "k": 3,
+  "auc_focal": 0.8968972204266322,
+  "auc_soundscape": 0.9701126453488372,
+  "delta": 0.07321542492220501,
+  "delta_birds": 0.04645720995311464
+ },
+ {
+  "species": "sposan",
+  "k": 4,
+  "auc_focal": 0.39599224305106656,
+  "auc_soundscape": 0.8470203488372093,
+  "delta": 0.4510281057861428,
+  "delta_birds": 0.3640815966113807
+ },
+ {
+  "species": "sposan",
+  "k": 5,
+  "auc_focal": 0.9297996121525534,
+  "auc_soundscape": 0.9977289244186046,
+  "delta": 0.06792931226605126,
+  "delta_birds": 0.06503161147613867
+ },
+ {
+  "species": "rocwre",
+  "k": 1,
+  "auc_focal": 0.9372888513513513,
+  "auc_soundscape": 0.6962965398208268,
+  "delta": -0.24099231153052447,
+  "delta_birds": -0.41864724451098667
+ },
+ {
+  "species": "rocwre",
+  "k": 2,
+  "auc_focal": 1.0,
+  "auc_soundscape": 0.7608350456151887,
+  "delta": -0.23916495438481133,
+  "delta_birds": -0.3788900540453336
+ },
+ {
+  "species": "rocwre",
+  "k": 3,
+  "auc_focal": 0.9938766891891891,
+  "auc_soundscape": 0.8023424015780389,
+  "delta": -0.1915342876111502,
+  "delta_birds": -0.27085902362493974
+ },
+ {
+  "species": "rocwre",
+  "k": 4,
+  "auc_focal": 0.9305320945945946,
+  "auc_soundscape": 0.549167420070683,
+  "delta": -0.38136467452391165,
+  "delta_birds": -0.3848637877461636
+ },
+ {
+  "species": "rocwre",
+  "k": 5,
+  "auc_focal": 0.9997888513513513,
+  "auc_soundscape": 0.870012328429358,
+  "delta": -0.12977652292199326,
+  "delta_birds": -0.20066002986228137
+ },
+ {
+  "species": "daejun",
+  "k": 1,
+  "auc_focal": 0.9259751773049646,
+  "auc_soundscape": 0.8821105696521593,
+  "delta": -0.04386460765280531,
+  "delta_birds": -0.11458358120335088
+ },
+ {
+  "species": "daejun",
+  "k": 2,
+  "auc_focal": 0.6123468729851709,
+  "auc_soundscape": 0.49962695345320113,
+  "delta": -0.11271991953196975,
+  "delta_birds": -0.14554706470908846
+ },
+ {
+  "species": "daejun",
+  "k": 3,
+  "auc_focal": 0.8589216634429401,
+  "auc_soundscape": 0.9355671315745253,
+  "delta": 0.07664546813158524,
+  "delta_birds": 0.06657761759236913
+ },
+ {
+  "species": "daejun",
+  "k": 4,
+  "auc_focal": 0.9718326885880078,
+  "auc_soundscape": 0.9516652663417913,
+  "delta": -0.020167422246216482,
+  "delta_birds": -0.0509347815741078
+ },
+ {
+  "species": "daejun",
+  "k": 5,
+  "auc_focal": 0.6761565119277885,
+  "auc_soundscape": 0.6097126533355739,
+  "delta": -0.06644385859221458,
+  "delta_birds": -0.127714268757953
+ },
+ {
+  "species": "foxspa",
+  "k": 1,
+  "auc_focal": 0.8356723400019906,
+  "auc_soundscape": 0.697350272232305,
+  "delta": -0.1383220677696857,
+  "delta_birds": -0.23786089219054285
+ },
+ {
+  "species": "foxspa",
+  "k": 2,
+  "auc_focal": 0.9590922663481636,
+  "auc_soundscape": 0.7717967332123412,
+  "delta": -0.18729553313582237,
+  "delta_birds": -0.31515287240876966
+ },
+ {
+  "species": "foxspa",
+  "k": 3,
+  "auc_focal": 0.8930028864337614,
+  "auc_soundscape": 0.6906715063520871,
+  "delta": -0.20233138008167428,
+  "delta_birds": -0.2921611355920105
+ },
+ {
+  "species": "foxspa",
+  "k": 4,
+  "auc_focal": 0.9112172787896885,
+  "auc_soundscape": 0.7046098003629764,
+  "delta": -0.20660747842671212,
+  "delta_birds": -0.29690751447992414
+ },
+ {
+  "species": "foxspa",
+  "k": 5,
+  "auc_focal": 0.7616203841942869,
+  "auc_soundscape": 0.811470054446461,
+  "delta": 0.04984967025217413,
+  "delta_birds": -0.03426348183738459
+ },
+ {
+  "species": "clanut",
+  "k": 1,
+  "auc_focal": 0.9995023390066686,
+  "auc_soundscape": 0.8217021674140508,
+  "delta": -0.17780017159261785,
+  "delta_birds": -0.24531581317902462
+ },
+ {
+  "species": "clanut",
+  "k": 2,
+  "auc_focal": 0.5426495471284961,
+  "auc_soundscape": 0.6155331340308918,
+  "delta": 0.07288358690239571,
+  "delta_birds": -0.013805457644190167
+ },
+ {
+  "species": "clanut",
+  "k": 3,
+  "auc_focal": 0.9901463123320394,
+  "auc_soundscape": 0.8343209481101858,
+  "delta": -0.15582536422185367,
+  "delta_birds": -0.22203690445707702
+ },
+ {
+  "species": "clanut",
+  "k": 4,
+  "auc_focal": 0.9904449089280383,
+  "auc_soundscape": 0.7879297458893871,
+  "delta": -0.20251516303865114,
+  "delta_birds": -0.22821810657499608
+ },
+ {
+  "species": "clanut",
+  "k": 5,
+  "auc_focal": 0.9693440828107893,
+  "auc_soundscape": 0.8703444195316392,
+  "delta": -0.09899966327915011,
+  "delta_birds": -0.16011010969043205
+ },
+ {
+  "species": "casfin",
+  "k": 1,
+  "auc_focal": 0.9847595078299777,
+  "auc_soundscape": 0.997034616315662,
+  "delta": 0.01227510848568436,
+  "delta_birds": 0.009764502279542175
+ },
+ {
+  "species": "casfin",
+  "k": 2,
+  "auc_focal": 0.8755592841163311,
+  "auc_soundscape": 0.9665940450254176,
+  "delta": 0.09103476090908647,
+  "delta_birds": 0.061677447138934305
+ },
+ {
+  "species": "casfin",
+  "k": 3,
+  "auc_focal": 0.902265100671141,
+  "auc_soundscape": 0.984083756959574,
+  "delta": 0.08181865628843299,
+  "delta_birds": 0.063334450016868
+ },
+ {
+  "species": "casfin",
+  "k": 4,
+  "auc_focal": 0.9918903803131991,
+  "auc_soundscape": 0.993040426046962,
+  "delta": 0.0011500457337628722,
+  "delta_birds": -0.004667690057652885
+ },
+ {
+  "species": "casfin",
+  "k": 5,
+  "auc_focal": 0.9678411633109619,
+  "auc_soundscape": 0.9692568385378842,
+  "delta": 0.0014156752269223194,
+  "delta_birds": -0.03214894202480634
+ },
+ {
+  "species": "herthr",
+  "k": 1,
+  "auc_focal": 0.8407905138339921,
+  "auc_soundscape": 0.9191782321863623,
+  "delta": 0.07838771835237024,
+  "delta_birds": 0.007159279682087627
+ },
+ {
+  "species": "herthr",
+  "k": 2,
+  "auc_focal": 0.8272463768115942,
+  "auc_soundscape": 0.996208699460732,
+  "delta": 0.1689623226491378,
+  "delta_birds": 0.16610386544119415
+ },
+ {
+  "species": "herthr",
+  "k": 3,
+  "auc_focal": 0.8585770750988142,
+  "auc_soundscape": 0.9861966548958419,
+  "delta": 0.12761957979702765,
+  "delta_birds": 0.123766110931817
+ },
+ {
+  "species": "herthr",
+  "k": 4,
+  "auc_focal": 0.8831093544137022,
+  "auc_soundscape": 0.7514645095945909,
+  "delta": -0.13164484481911132,
+  "delta_birds": -0.14061268742186395
+ },
+ {
+  "species": "herthr",
+  "k": 5,
+  "auc_focal": 0.9865612648221344,
+  "auc_soundscape": 0.9917398921463962,
+  "delta": 0.005178627324261886,
+  "delta_birds": -0.0016492237204531746
+ },
+ {
+  "species": "amerob",
+  "k": 1,
+  "auc_focal": 0.9789233576642336,
+  "auc_soundscape": 0.8858474979698132,
+  "delta": -0.09307585969442034,
+  "delta_birds": -0.16872127161468986
+ },
+ {
+  "species": "amerob",
+  "k": 2,
+  "auc_focal": 0.7895681265206813,
+  "auc_soundscape": 0.6152726050796673,
+  "delta": -0.174295521441014,
+  "delta_birds": -0.26101532339160705
+ },
+ {
+  "species": "amerob",
+  "k": 3,
+  "auc_focal": 0.8319343065693431,
+  "auc_soundscape": 0.7431043656016354,
+  "delta": -0.08882994096770769,
+  "delta_birds": -0.28441149040245917
+ },
+ {
+  "species": "amerob",
+  "k": 4,
+  "auc_focal": 0.9416362530413626,
+  "auc_soundscape": 0.5978550026602447,
+  "delta": -0.34378125038111784,
+  "delta_birds": -0.4874315594298893
+ },
+ {
+  "species": "amerob",
+  "k": 5,
+  "auc_focal": 0.9568886861313869,
+  "auc_soundscape": 0.5559491473215535,
+  "delta": -0.40093953880983335,
+  "delta_birds": -0.4985770824808002
+ }
+]

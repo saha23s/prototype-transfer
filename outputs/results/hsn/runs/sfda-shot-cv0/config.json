@@ -1,0 +1,46 @@
+{
+ "schema": 1,
+ "run_id": "sfda-shot-cv0",
+ "dataset": "hsn",
+ "args": {
+  "method": "shot",
+  "name": "sfda-shot-cv0",
+  "rung": "sfda-shot",
+  "dataset": "hsn",
+  "splits_dir": "data/HSN/splits",
+  "cv_fold": 0,
+  "epochs": 10,
+  "batch_size": 64,
+  "drop_path": 0.2,
+  "num_workers": 8,
+  "seed": 0,
+  "max_batches": null,
+  "lr": null,
+  "threshold": null,
+  "alpha": null,
+  "lam": null,
+  "knn": null,
+  "beta": null
+ },
+ "effective": {
+  "method": "shot",
+  "lr": 1e-05,
+  "cosine": true,
+  "dropout": false,
+  "beta": 0.0,
+  "epochs": 10,
+  "batch_size": 64,
+  "drop_path": 0.0,
+  "n_adapt_clips": 5520,
+  "adapt_manifest": "data/HSN/splits/soundscape_cv0_train.parquet",
+  "trainable": "backbone LayerNorm scale and shift",
+  "uses_labels": false,
+  "peak_gpu_gb": 15.12
+ },
+ "commit": "62451cfcb22e3dedc1716c5ad773c8ac354b3cb4",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}

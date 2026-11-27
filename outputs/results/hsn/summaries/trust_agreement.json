@@ -1,0 +1,114 @@
+{
+ "species": [
+  {
+   "species": "gcrfin",
+   "positives": 506,
+   "prototype_corr": 0.5203200932233164,
+   "leftover_corr": 0.23329538075414497,
+   "estimated_r": 0.723660400495604,
+   "true_r": 0.536531048048721,
+   "fit_residual": 0.07283264029236255,
+   "rank_estimate": 0.8999999999999998,
+   "rank_weight": 0.0
+  },
+  {
+   "species": "whcspa",
+   "positives": 1927,
+   "prototype_corr": 0.6362641481011566,
+   "leftover_corr": 0.25190907446252725,
+   "estimated_r": 0.8002652578584829,
+   "true_r": 0.6227213963181193,
+   "fit_residual": 0.08072481157809364,
+   "rank_estimate": 0.7,
+   "rank_weight": 0.19999999999999998
+  },
+  {
+   "species": "amepip",
+   "positives": 781,
+   "prototype_corr": 0.5242225360120676,
+   "leftover_corr": 0.2362364408615286,
+   "estimated_r": 0.7289753019462587,
+   "true_r": 0.5406251590949529,
+   "fit_residual": 0.07995225397155224,
+   "rank_estimate": 0.7999999999999999,
+   "rank_weight": 0.8999999999999998
+  },
+  {
+   "species": "rocwre",
+   "positives": 498,
+   "prototype_corr": 0.506445929905104,
+   "leftover_corr": 0.33728541348476127,
+   "estimated_r": 0.7147292851471756,
+   "true_r": 0.41450838840902743,
+   "fit_residual": 0.035755385795259456,
+   "rank_estimate": 0.7999999999999999,
+   "rank_weight": 0.7
+  },
+  {
+   "species": "daejun",
+   "positives": 128,
+   "prototype_corr": 0.42233902388127803,
+   "leftover_corr": 0.3039713584074978,
+   "estimated_r": 0.654313643478914,
+   "true_r": 0.36706002774044527,
+   "fit_residual": 0.10979480314947034,
+   "rank_estimate": 0.9999999999999999,
+   "rank_weight": 0.8999999999999998
+  },
+  {
+   "species": "clanut",
+   "positives": 200,
+   "prototype_corr": 0.47908899029394175,
+   "leftover_corr": 0.27690761249297796,
+   "estimated_r": 0.7015915588916712,
+   "true_r": 0.4622108938354512,
+   "fit_residual": 0.09506939498090795,
+   "rank_estimate": 0.39999999999999997,
+   "rank_weight": 0.3
+  },
+  {
+   "species": "herthr",
+   "positives": 171,
+   "prototype_corr": 0.5924681975976573,
+   "leftover_corr": 0.3623962449695878,
+   "estimated_r": 0.7738340229245344,
+   "true_r": 0.4881378106287017,
+   "fit_residual": 0.05888819010876287,
+   "rank_estimate": 0.7,
+   "rank_weight": 0.49999999999999994
+  },
+  {
+   "species": "amerob",
+   "positives": 88,
+   "prototype_corr": 0.41863848039427554,
+   "leftover_corr": 0.29905455286224386,
+   "estimated_r": 0.6485316793616124,
+   "true_r": 0.3527753261357688,
+   "fit_residual": 0.060823176469477616,
+   "rank_estimate": 0.49999999999999994,
+   "rank_weight": 0.7
+  },
+  {
+   "species": "mouchi",
+   "positives": 46,
+   "prototype_corr": 0.4597219597634309,
+   "leftover_corr": 0.42652190057825334,
+   "estimated_r": 0.6835875321586161,
+   "true_r": 0.18806112073214915,
+   "fit_residual": 0.03143709474313943,
+   "rank_estimate": 0.09999999999999999,
+   "rank_weight": 0.7999999999999999
+  }
+ ],
+ "n_clips": 8400,
+ "mean_estimated_r": 0.7143876313625409,
+ "mean_true_r": 0.4414034634381486,
+ "median_rank_estimate": 0.7,
+ "median_rank_weight": 0.7,
+ "commit": "62451cfcb22e3dedc1716c5ad773c8ac354b3cb4",
+ "dirty": true,
+ "env": {
+  "python": "3.12.12",
+  "torch": "2.5.1+cu121"
+ }
+}
