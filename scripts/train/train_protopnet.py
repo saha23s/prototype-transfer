@@ -10,8 +10,10 @@ Phases (ProtoPNet-style):
 Model selection only ever looks at the training domain's val split; the other domain's val cmAP is
 logged for monitoring transfer during training.
 
-Outputs: outputs/runs/<name>/{best.pt, history.json, push.json, args.json}
-         outputs/results/train_<name>.json (final val metrics both domains)
+Outputs (results store, see docs/RESULTS.md):
+         outputs/results/<dataset>/runs/<name>/{config.json, metrics.json, train_log.csv, push.json}
+         outputs/results/<dataset>/registry.jsonl (the run's index entry: seed, commit, headline val metrics)
+         outputs/checkpoints/<dataset>/<name>/{best.pt, joint_best.pt}
 Launch on filo through the GPU reservation wrapper:
   ~/.local/bin/local-training-3090 python scripts/train/train_protopnet.py --train-domain focal
 """
@@ -19,7 +21,6 @@ Launch on filo through the GPU reservation wrapper:
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import sys
 import time
@@ -32,6 +33,7 @@ from torch.utils.data import DataLoader
 
 from prototype_transfer.data.datasets import HSNInferenceDataset
 from prototype_transfer.evaluation.metrics import compute_cmap, compute_macro_roc_auc
+from prototype_transfer.evaluation import results
 from prototype_transfer.models.protopnet import (build_hsn_protopnet, load_checkpoint, orthogonality_loss, param_groups,
                            push_prototypes, save_checkpoint, set_trainable)
 from prototype_transfer.method.train_dataset import HSNTrainDataset
@@ -91,6 +93,7 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--train-domain", choices=DOMAINS, required=True)
     p.add_argument("--name", default=None, help="run name (default: <train-domain>-only)")
+    p.add_argument("--dataset", default=results.DEFAULT_DATASET, help="results are stored under outputs/results/<dataset>/")
     p.add_argument("--splits-dir", type=Path, default=Path("data/HSN/splits"))
     p.add_argument("--batch-size", type=int, default=32)
     p.add_argument("--num-workers", type=int, default=10)
@@ -107,9 +110,14 @@ def main() -> None:
     p.add_argument("--seed", type=int, default=0)
     args = p.parse_args()
     name = args.name or f"{args.train_domain}-only"
-    run_dir = Path("outputs/runs") / name
-    run_dir.mkdir(parents=True, exist_ok=True)
-    (run_dir / "args.json").write_text(json.dumps({k: str(v) for k, v in vars(args).items()}, indent=1))
+    store = results.Store(args.dataset)
+    ckpt_dir = store.checkpoints(name)
+    ckpt_dir.mkdir(parents=True, exist_ok=True)
+    prov = results.provenance()
+    config = {"args": vars(args), **prov}
+    index = {"seed": args.seed, "commit": prov["commit"], "dirty": prov["dirty"]}
+    results.save_results(store, name, "train", {"status": "running"}, config=config,
+                         entry={**index, "status": "running", "started": results.now()})
     torch.manual_seed(args.seed); np.random.seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -132,7 +140,7 @@ def main() -> None:
         rec = {"phase": phase, "epoch": epoch, "train_loss": loss, "time": time.time(),
                **{f"val_{d}_{k}": v for d in DOMAINS for k, v in ev[d].items()}}
         history.append(rec)
-        (run_dir / "history.json").write_text(json.dumps(history, indent=1))
+        results.write_train_log(store, name, history)
         logger.info(f"[{phase} {epoch}] loss={loss if loss is None else round(loss, 4)} "
                     + " ".join(f"{d}: cmAP {ev[d]['cmAP']:.3f} AUC {ev[d]['macro_auc']:.3f}" for d in DOMAINS))
         return ev
@@ -157,14 +165,13 @@ def main() -> None:
         ev = log_eval("joint", e, run_epoch(model, train_dl, opt, sched, device, args.ortho_weight))
         if ev[in_dom]["cmAP"] > best:
             best, best_ep = ev[in_dom]["cmAP"], e
-            save_checkpoint(model, run_dir / "joint_best.pt", {"epoch": e, "val": ev})
+            save_checkpoint(model, ckpt_dir / "joint_best.pt", {"epoch": e, "val": ev})
     logger.info(f"Best joint epoch {best_ep} ({in_dom} val cmAP {best:.3f})")
-    model = load_checkpoint(run_dir / "joint_best.pt", device)
+    model = load_checkpoint(ckpt_dir / "joint_best.pt", device)
 
     # 3. push onto training patches of the training domain (deterministic windows)
     push_ds = HSNInferenceDataset(args.splits_dir / f"{args.train_domain}_train.parquet", is_soundscape=is_sc)
     push_info = push_prototypes(model, push_ds, device, num_workers=args.num_workers)
-    (run_dir / "push.json").write_text(json.dumps(push_info, indent=1))
     log_eval("push", 0, None)
 
     # 4. last layer
@@ -176,16 +183,17 @@ def main() -> None:
         ev = log_eval("last", e, run_epoch(model, train_dl, opt, sched, device, 0.0))
         if ev[in_dom]["cmAP"] > best:
             best, best_ev = ev[in_dom]["cmAP"], ev
-            save_checkpoint(model, run_dir / "best.pt", {"phase": "last", "epoch": e, "val": ev, "push": "push.json"})
+            save_checkpoint(model, ckpt_dir / "best.pt", {"phase": "last", "epoch": e, "val": ev, "push": "push.json"})
     if args.last_epochs == 0:
         best_ev = history[-1]
-        save_checkpoint(model, run_dir / "best.pt", {"phase": "push", "val": best_ev})
+        save_checkpoint(model, ckpt_dir / "best.pt", {"phase": "push", "val": best_ev})
 
-    res = Path("outputs/results") / f"train_{name}.json"
-    res.parent.mkdir(parents=True, exist_ok=True)
-    res.write_text(json.dumps({"name": name, "train_domain": in_dom, "selected_val": best_ev,
-                               "checkpoint": str(run_dir / "best.pt"), "history": str(run_dir / "history.json")}, indent=1))
-    logger.info(f"Done. checkpoint {run_dir / 'best.pt'}; results {res}")
+    selected = {d: {k: best_ev[d][k] if d in best_ev else best_ev[f"val_{d}_{k}"] for k in ("cmAP", "macro_auc")} for d in DOMAINS}
+    headline = {f"val_{d}_{k}": v for d in DOMAINS for k, v in selected[d].items()}
+    entry = results.save_results(store, name, "train", {"train_domain": in_dom, "selected_val": selected},
+                                 headline=headline, config=config, log=history, files={"push.json": push_info},
+                                 entry={**index, "status": "done", "finished": results.now()})
+    logger.info(f"Done. checkpoint {ckpt_dir / 'best.pt'}; results {entry['paths']['metrics']}")
 
 
 if __name__ == "__main__":

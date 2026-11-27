@@ -32,10 +32,10 @@ Run on a compute node (a GPU is used automatically if available; CPU works but i
 |---|---|---|
 | Download HSN (metadata, audio) | `scripts/data/download_hsn.py` | `data/HSN/raw/` |
 | Build manifests | `scripts/data/preprocess_hsn.py` | `data/HSN/preprocessed/*.parquet` |
-| Inference + metrics | `scripts/eval/run_inference.py` | `outputs/results/*.json`, `eval_cache.pt` |
+| Inference + metrics | `scripts/eval/run_inference.py` | `inference` section of `pretrained-xcl` in the store; `outputs/features/hsn/pretrained-xcl/eval_cache.pt` |
 | Figures | `scripts/report/visualize_analysis.py` | `outputs/figures/fig*.png` |
 | Full manifests (no caps) | `scripts/data/preprocess_hsn.py --full` | `data/HSN/preprocessed/*_full.parquet` |
-| Per-prototype responses | `scripts/analysis/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
+| Per-prototype responses | `scripts/analysis/extract_prototype_activations.py RUN_ID` | `outputs/features/hsn/RUN_ID/responses.pt`, `outputs/results/hsn/runs/RUN_ID/prototype_transfer.json` |
 | Prototype-transfer figures | `scripts/report/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
 | Dashboard data | `scripts/report/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
 
@@ -54,10 +54,18 @@ Spectrograms are computed on the fly from the audio (`src/prototype_transfer/dat
 log-spectrogram, normalised with the model's training mean/std). Pass `--cache-tensors` to
 `preprocess_hsn.py` to pre-compute them to disk.
 
+## Results
+
+Training, inference, prototype extraction and model comparison save their numbers through one writer into
+`outputs/results/hsn/` (runs, summaries and an index, `registry.jsonl`); features and checkpoints go to
+`outputs/features/hsn/<run>/` and `outputs/checkpoints/hsn/<run>/`. None of `outputs/` is committed to git. Find numbers with
+`python scripts/report/results.py list|show|get`; see [docs/RESULTS.md](docs/RESULTS.md). The results committed before the store (scored on the old
+splits) were removed from git: rerun the models under the new protocol.
+
 ## Layout
 
 ```
-configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size, output dirs)
+configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size)
 src/prototype_transfer/   the package (editable install via `uv sync`): data/, models/, method/, evaluation/, analysis/, reporting/
 scripts/                  entry points by stage: data/ analysis/ eval/ report/ train/, plus setup_storage.sh, run_pipeline.sh, slurm/
 ```

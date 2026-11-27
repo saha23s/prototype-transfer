@@ -116,8 +116,9 @@ def generate_frequency_energy_profile(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate visual analysis figures")
-    parser.add_argument("--cache-path", type=Path, default=Path("outputs/results/eval_cache.pt"))
-    parser.add_argument("--summary-path", type=Path, default=Path("outputs/results/comparison_summary.json"))
+    parser.add_argument("--cache-path", type=Path, default=Path("outputs/features/hsn/pretrained-xcl/eval_cache.pt"),
+                        help="written by scripts/eval/run_inference.py")
+    parser.add_argument("--summary-path", type=Path, default=Path("outputs/results/hsn/runs/pretrained-xcl/comparison_summary.json"))
     parser.add_argument("--figures-dir", type=Path, default=Path("outputs/figures"))
     return parser.parse_args()
 

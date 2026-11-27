@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Figures: how AudioProtoPNet's HSN prototypes transfer from focal to soundscape audio.
 
-Reads outputs/features/prototype_responses.pt and outputs/results/prototype_transfer.json
-(written by scripts/analysis/extract_prototype_activations.py) and writes to outputs/figures/:
+Reads the pretrained model's responses_full.pt and prototype_transfer_full.json (written by
+scripts/analysis/extract_prototype_activations.py pretrained-xcl --tag full; see the results store, docs/RESULTS.md) and writes to outputs/figures/:
 
   pt1_prototype_auc_transfer.png   per-prototype detection AUC, focal vs soundscape
   pt2_activation_by_prototype.png  max activation on positives per prototype, both domains
@@ -32,6 +32,7 @@ from sklearn.decomposition import PCA
 
 
 from prototype_transfer.data.preprocessing import AudioPreprocessor
+from prototype_transfer.evaluation import results
 from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -275,8 +276,9 @@ def fig_latent_map(data: dict, payload: dict, species: list[str], sp_list: list[
 # ----------------------------------------------------------------------------
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--features-path", type=Path, default=Path("outputs/features/prototype_responses.pt"))
-    p.add_argument("--results-path", type=Path, default=Path("outputs/results/prototype_transfer.json"))
+    p.add_argument("--dataset", default=results.DEFAULT_DATASET)
+    p.add_argument("--features-path", type=Path, default=None, help="default: the pretrained model's responses_full.pt")
+    p.add_argument("--results-path", type=Path, default=None, help="default: the pretrained model's prototype_transfer_full.json")
     p.add_argument("--figures-dir", type=Path, default=Path("outputs/figures"))
     p.add_argument("--patch-species", nargs="*", default=None,
                    help="Species for pt5 patch galleries (default: top 3 by soundscape positives)")
@@ -286,6 +288,9 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    store = results.Store(args.dataset)
+    args.features_path = args.features_path or store.features("pretrained-xcl") / "responses_full.pt"
+    args.results_path = args.results_path or store.run_dir("pretrained-xcl") / "prototype_transfer_full.json"
     payload = torch.load(args.features_path, map_location="cpu", weights_only=False)
     stats = json.loads(args.results_path.read_text())
     sp_list = payload["species_list"]

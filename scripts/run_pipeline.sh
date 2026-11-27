@@ -20,14 +20,14 @@ export HF_HOME="${HF_HOME:-$REPO_DIR/models/hf}"
 if (( SMOKE )); then
     DOWNLOAD_ARGS=()                                   # first focal shard + soundscapes
     INFER_ARGS=(--max-focal-samples 16 --max-soundscape-samples 16
-                --output-dir outputs/smoke/results)
+                --dataset smoke)
     FIG_DIR=outputs/smoke/figures
-    RES_DIR=outputs/smoke/results
+    FEAT_DIR=outputs/features/smoke/pretrained-xcl RES_DIR=outputs/results/smoke/runs/pretrained-xcl
 else
     DOWNLOAD_ARGS=(--all-focal)
     INFER_ARGS=(--max-focal-samples 1050 --max-soundscape-samples 1000)
     FIG_DIR=outputs/figures
-    RES_DIR=outputs/results
+    FEAT_DIR=outputs/features/hsn/pretrained-xcl RES_DIR=outputs/results/hsn/runs/pretrained-xcl
 fi
 
 echo "[1/4] Download HSN"
@@ -38,7 +38,7 @@ echo "[3/4] Inference"
 python scripts/eval/run_inference.py "${INFER_ARGS[@]}"
 echo "[4/4] Figures"
 python scripts/report/visualize_analysis.py \
-    --cache-path "$RES_DIR/eval_cache.pt" \
+    --cache-path "$FEAT_DIR/eval_cache.pt" \
     --summary-path "$RES_DIR/comparison_summary.json" \
     --figures-dir "$FIG_DIR"
 

@@ -15,5 +15,4 @@ evaluation:
     - macro_roc_auc
     - top1_acc
     - f1_macro
-  output_dir: "outputs/results"
   figures_dir: "outputs/figures"
