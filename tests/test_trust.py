@@ -100,6 +100,23 @@ def test_a_failed_localisation_check_makes_the_result_inconclusive():
     assert not out["passed"]["c0"] and out["decision"].startswith("inconclusive")
 
 
+def test_fast_pair_auc_equals_the_stratified_auc():
+    rng = np.random.default_rng(3)
+    value = np.round(rng.random(600), 2)                                       # rounded, so there are ties
+    is_false = rng.random(600) < 0.3
+    codes = rng.integers(0, 12, 600)
+    codes[:20], is_false[:20] = 12, True                                       # a stratum without any pair
+    assert abs(trust.pooled_pair_auc(value, is_false, codes) - trust.stratified_auc(value, is_false, codes)) < 1e-12
+
+
+def test_location_controls_detect_whether_the_place_matters():
+    m = _matches(0.6, 0.1)
+    rng = np.random.default_rng(4)
+    m["rival_anywhere"] = rng.random(len(m))                                   # the clip-wide rival carries no information
+    out = trust.location_controls(m, n_boot=30)
+    assert out["ci95"]["margin_same_place - margin_anywhere"][0] > 0 and abs(out["auc"]["margin_anywhere"] - 0.5) < 0.1
+
+
 if __name__ == "__main__":
     for name, fn in list(globals().items()):
         if name.startswith("test_"):

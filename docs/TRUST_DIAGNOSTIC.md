@@ -44,11 +44,18 @@ a match is **contested** if `margin >= 0`. Species outside these 21 and a "no bi
 trusted and nothing else is concluded. If C0 passes and any of C1-C3 fails, competition among these 21 species is not pursued in
 this form.
 
+## Checks added after the result (exploratory)
+
+Written after C0-C4 had passed; they do not change the decision. On the same false and correct matches and the same strata as C3:
+the AUC of the margin when the rival is taken **anywhere in the clip** instead of at the match cell, the rival's activation alone,
+and the prototype's own (low) score alone. If "anywhere" does as well as "same cell", the signal does not depend on location.
+
 ## Running it
 
 ```bash
 python scripts/analysis/prototype_trust.py agreement                 # CPU, seconds, from cached responses
 python scripts/analysis/prototype_trust.py extract                   # model forward on the ~2,200 clips that hold the matches
 python scripts/analysis/prototype_trust.py competition               # applies the criteria above
+python scripts/analysis/prototype_trust.py controls                  # the exploratory checks
 ```
-Results go to the results store as summaries `trust_agreement` and `trust_competition`.
+Results go to the results store as summaries `trust_agreement`, `trust_competition` and `trust_controls`.

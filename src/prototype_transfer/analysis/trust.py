@@ -195,3 +195,52 @@ def evaluate_competition(matches: pd.DataFrame, n_boot: int = 1000, seed: int = 
                              "chance": float(m[m.label != "false"].chance_in_box.mean())},
             "counts": {k: int(v) for k, v in m.label.value_counts().items()}, "per_species": per_species,
             "passed": passed, "decision": decision, "criteria": CRITERIA, "n_boot": n_boot, "n_sites": int(len(sites))}
+
+
+# --------------------------------------------------------------------------------- checks added after the result
+def pooled_pair_auc(value: np.ndarray, is_false: np.ndarray, codes: np.ndarray) -> float:
+    """stratified_auc() computed from within-stratum average ranks (Mann-Whitney U), for integer stratum codes.
+    Same number, fast enough to bootstrap several quantities."""
+    rank = pd.Series(value).groupby(codes).rank().to_numpy()
+    size = int(codes.max()) + 1
+    n_false = np.bincount(codes, weights=is_false, minlength=size)
+    n_true = np.bincount(codes, weights=~is_false, minlength=size)
+    u = np.bincount(codes, weights=rank * is_false, minlength=size) - n_false * (n_false + 1) / 2
+    pairs = float((n_false * n_true).sum())
+    return float(u[n_false * n_true > 0].sum() / pairs) if pairs else float("nan")
+
+
+def location_controls(matches: pd.DataFrame, n_boot: int = 1000, seed: int = 0) -> dict:
+    """Two questions the pre-set criteria do not answer, asked AFTER seeing that they passed (so exploratory; they do not
+    change the decision). Does the signal need the rival to be at the SAME location, or is another species anywhere in
+    the clip as informative? And how much does the rival add to the prototype's own score within the same strata?
+
+    Args:
+        matches: as for evaluate_competition, plus rival_anywhere (largest activation of any other species' prototype
+            anywhere in the clip).
+    """
+    m = matches.copy()
+    m["stratum"] = own_score_strata(m)
+    m = m[m.label != "ambiguous"].reset_index(drop=True)
+    codes = pd.factorize(m.stratum)[0]
+    is_false = (m.label == "false").to_numpy()
+    same = (m.margin + m.own).to_numpy()
+    values = {"margin_same_place": m.margin.to_numpy(), "margin_anywhere": m.rival_anywhere.to_numpy() - m.own.to_numpy(),
+              "rival_same_place": same, "rival_anywhere": m.rival_anywhere.to_numpy(), "own_low": -m.own.to_numpy()}
+    differences = (("margin_same_place", "margin_anywhere"), ("rival_same_place", "rival_anywhere"),
+                   ("margin_same_place", "own_low"))
+
+    def quantities(idx: np.ndarray) -> dict[str, float]:
+        out = {k: pooled_pair_auc(v[idx], is_false[idx], codes[idx]) for k, v in values.items()}
+        return out | {f"{a} - {b}": out[a] - out[b] for a, b in differences}
+
+    point = quantities(np.arange(len(m)))
+    sites = np.array(sorted(m.site.unique()))
+    rows_of = {s: np.flatnonzero(m.site.to_numpy() == s) for s in sites}
+    rng = np.random.default_rng(seed)
+    boot = pd.DataFrame([quantities(np.concatenate([rows_of[s] for s in rng.choice(sites, len(sites))])) for _ in range(n_boot)])
+    ci = {k: [float(np.nanpercentile(boot[k], 2.5)), float(np.nanpercentile(boot[k], 97.5))] for k in boot}
+    contested = {name: {lab: float((values[name][is_false == flag] >= 0).mean()) for lab, flag in (("false", True), ("correct", False))}
+                 for name in ("margin_same_place", "margin_anywhere")}
+    return {"auc": point, "ci95": ci, "contested": contested, "n_matches": int(len(m)), "n_boot": n_boot,
+            "added_after_result": True}

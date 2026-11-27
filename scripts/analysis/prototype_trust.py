@@ -6,8 +6,10 @@
                 the activations of all 105 prototypes at that grid cell -> outputs/features/<dataset>/pretrained-xcl/
                 trust_matches.pt. Resumes from its partial file.
   competition   applies the pre-set criteria to those matches, using the call boxes only to evaluate.
+  controls      exploratory checks added after that result: does the rival need to be at the same location? (does not
+                change the decision)
 
-Results are saved to the results store as summaries trust_agreement and trust_competition.
+Results are saved to the results store as summaries trust_agreement, trust_competition and trust_controls.
 """
 
 from __future__ import annotations
@@ -118,6 +120,7 @@ def match_table(pooled: dict, extracted: dict, boxes: dict, manifest: pd.DataFra
     names = [Path(p).name for p in pooled["audio_path"]]
     labels = [set(HSN_SPECIES_LIST.index(c) for c in manifest.loc[n, "hsn_classes"]) for n in names]
     sites = site_of(pd.Series(names)).to_numpy()
+    best = {n: pooled["proto_max"][i].max(axis=1) for i, n in enumerate(names)}   # [21] best activation anywhere in the clip
     rows, empty = [], np.zeros((0, 4))
     for s, k, idx in top_matches(pooled["proto_max"], pooled["targets"]):
         p = s * 5 + k
@@ -140,6 +143,7 @@ def match_table(pooled: dict, extracted: dict, boxes: dict, manifest: pd.DataFra
             rows.append({"species": HSN_SPECIES_LIST[s], "prototype": k, "clip": names[i], "site": sites[i], "own": own,
                          "margin": float(rivals[j] - own), "rival_species": HSN_SPECIES_LIST[j], "rival_index": j,
                          "rival_present": j in here, "present_species": present_species,
+                         "rival_anywhere": float(np.delete(best[names[i]], s).max()),
                          "label": trust.label_match(present, hit), "in_own_box": hit})
         # chance of a hit: this prototype's match cells (of clips with the species) shuffled among those clips
         with_species = [(i, w) for i, (w, present) in zip(idx, cells) if present]
@@ -154,7 +158,7 @@ def match_table(pooled: dict, extracted: dict, boxes: dict, manifest: pd.DataFra
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("step", choices=["agreement", "extract", "competition"])
+    p.add_argument("step", choices=["agreement", "extract", "competition", "controls"])
     p.add_argument("--dataset", default=results.DEFAULT_DATASET)
     p.add_argument("--splits-dir", type=Path, default=Path("data/HSN/splits"))
     p.add_argument("--events", type=Path, default=Path("data/HSN/raw/metadata/HSN_metadata_test.parquet"))
@@ -175,8 +179,12 @@ def main() -> None:
         manifest = non_test_manifest(args.splits_dir)
         extracted = torch.load(store.features("pretrained-xcl") / "trust_matches.pt", weights_only=False)
         table = match_table(pooled, extracted, boxes_by_clip(pd.read_parquet(args.events), manifest), manifest)
-        out = trust.evaluate_competition(table, n_boot=args.n_boot)
-        headline = {"contested_false": out["point"]["c1"], "difference": out["point"]["c2"], "margin_auc": out["point"]["c3"]}
+        if args.step == "controls":
+            out = trust.location_controls(table, n_boot=args.n_boot)
+            headline = {k: out["auc"][k] for k in ("margin_same_place", "margin_anywhere", "own_low")}
+        else:
+            out = trust.evaluate_competition(table, n_boot=args.n_boot)
+            headline = {"contested_false": out["point"]["c1"], "difference": out["point"]["c2"], "margin_auc": out["point"]["c3"]}
     out = {**out, **results.provenance()}
     entry = results.save_summary(store, f"trust_{args.step}", out, headline=headline,
                                  entry={"note": "pretrained model, non-test soundscape clips (docs/TRUST_DIAGNOSTIC.md)"})
