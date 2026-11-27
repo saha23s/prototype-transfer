@@ -21,10 +21,8 @@ import scipy.ndimage
 import seaborn as sns
 import torch
 
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.visualization import (
+from prototype_transfer.reporting.visualization import (
     plot_focal_vs_soundscape_comparison,
     plot_prototype_heatmap_overlay,
     plot_activation_distributions,

@@ -1,6 +1,6 @@
 """Manifest-backed dataset used by the inference/analysis scripts.
 
-Reads a manifest written by scripts/preprocess_hsn.py and returns standardized
+Reads a manifest written by scripts/data/preprocess_hsn.py and returns standardized
 log-mel spectrograms (1, 256, 626) with 21-class HSN multi-hot targets.
 """
 
@@ -14,8 +14,8 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset
 
-from src.model import HSN_SPECIES_LIST
-from src.preprocessing import AudioPreprocessor
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
+from prototype_transfer.data.preprocessing import AudioPreprocessor
 
 CLASS_TO_IDX = {sp: idx for idx, sp in enumerate(HSN_SPECIES_LIST)}
 NUM_CLASSES = len(HSN_SPECIES_LIST)

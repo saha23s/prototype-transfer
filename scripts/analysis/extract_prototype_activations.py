@@ -5,7 +5,7 @@ Writes (see AGENTS.md):
   outputs/features/prototype_responses.pt   responses for both domains + prototype vectors/weights
   outputs/results/prototype_transfer.json   per-prototype focal vs soundscape statistics
 
-Uses the uncapped manifests by default (scripts/preprocess_hsn.py --full).
+Uses the uncapped manifests by default (scripts/data/preprocess_hsn.py --full).
 """
 
 from __future__ import annotations
@@ -13,16 +13,14 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 from pathlib import Path
 
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.inference_dataset import HSNInferenceDataset
-from src.model import HSN_SPECIES_LIST, HSNProtoPNetClassifier
-from src.prototype_analysis import extract_prototype_responses, prototype_transfer_stats
+from prototype_transfer.data.datasets import HSNInferenceDataset
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST, HSNProtoPNetClassifier
+from prototype_transfer.analysis.prototype_responses import extract_prototype_responses, prototype_transfer_stats
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("extract_prototype_activations")
@@ -43,7 +41,7 @@ def parse_args() -> argparse.Namespace:
                    help="Species need at least this many soundscape positives to be analysed")
     p.add_argument("--device", default="auto")
     p.add_argument("--checkpoint", default=None,
-                   help="21-class checkpoint from scripts/train_protopnet.py (default: pretrained XCL model)")
+                   help="21-class checkpoint from scripts/train/train_protopnet.py (default: pretrained XCL model)")
     return p.parse_args()
 
 

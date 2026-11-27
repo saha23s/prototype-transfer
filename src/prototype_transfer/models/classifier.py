@@ -39,7 +39,7 @@ class HSNProtoPNetClassifier(nn.Module):
         revision: str = MODEL_REVISION,
         checkpoint: str | None = None,
     ) -> None:
-        """checkpoint: optional 21-class model trained by scripts/train_protopnet.py; otherwise the
+        """checkpoint: optional 21-class model trained by scripts/train/train_protopnet.py; otherwise the
         pretrained 9736-class XCL model is used (and sliced to the HSN species)."""
         super().__init__()
         self.device = torch.device(device)
@@ -47,7 +47,7 @@ class HSNProtoPNetClassifier(nn.Module):
         self.num_target_classes = len(self.species_list)
 
         if checkpoint:
-            from src.protopnet import load_checkpoint  # local import: src.protopnet imports this module
+            from prototype_transfer.models.protopnet import load_checkpoint  # local import: prototype_transfer.models.protopnet imports this module
             logger.info(f"Loading trained 21-class AudioProtoPNet from {checkpoint}...")
             self.model = load_checkpoint(checkpoint)
             self.config = self.model.config

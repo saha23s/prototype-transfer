@@ -31,13 +31,13 @@ else
 fi
 
 echo "[1/4] Download HSN"
-python scripts/download_hsn.py "${DOWNLOAD_ARGS[@]}"
+python scripts/data/download_hsn.py "${DOWNLOAD_ARGS[@]}"
 echo "[2/4] Preprocess (manifests)"
-python scripts/preprocess_hsn.py
+python scripts/data/preprocess_hsn.py
 echo "[3/4] Inference"
-python scripts/run_inference.py "${INFER_ARGS[@]}"
+python scripts/eval/run_inference.py "${INFER_ARGS[@]}"
 echo "[4/4] Figures"
-python scripts/visualize_analysis.py \
+python scripts/report/visualize_analysis.py \
     --cache-path "$RES_DIR/eval_cache.pt" \
     --summary-path "$RES_DIR/comparison_summary.json" \
     --figures-dir "$FIG_DIR"

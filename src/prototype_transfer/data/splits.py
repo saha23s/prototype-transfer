@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedGroupKFold
 
-from src.model import HSN_SPECIES_LIST
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
 
 
 def focal_split(df: pd.DataFrame, test_frac: float = 0.2, val_frac: float = 0.1, seed: int = 0) -> pd.Series:

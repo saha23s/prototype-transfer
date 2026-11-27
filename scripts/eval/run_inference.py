@@ -27,12 +27,10 @@ import yaml
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.model import HSNProtoPNetClassifier, HSN_SPECIES_LIST
-from src.inference_dataset import HSNInferenceDataset
-from src.metrics import evaluate_predictions
+from prototype_transfer.models.classifier import HSNProtoPNetClassifier, HSN_SPECIES_LIST
+from prototype_transfer.data.datasets import HSNInferenceDataset
+from prototype_transfer.evaluation.metrics import evaluate_predictions
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("run_inference")
