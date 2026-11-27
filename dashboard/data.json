@@ -88,13 +88,13 @@
    0.69,
    0.7
   ],
-  "generated": "2026-11-26",
+  "generated": "2026-11-27",
   "scope": "non-test"
  },
  "findings": [
   {
    "title": "Species-level detection mostly survives",
-   "text": "Mean class AUC 0.987 on focal vs 0.930 on soundscape; 12 of 14 species keep AUC \u2265 0.90 on soundscapes. foxspa collapses (AUC drops by 0.32).",
+   "text": "Mean class AUC 98.7 on focal vs 93.0 on soundscape (out of 100); 12 of 14 species keep AUC \u2265 90 on soundscapes. foxspa collapses (AUC drops by 32 points).",
    "species": "foxspa",
    "prototype": null,
    "evidence": {
@@ -105,23 +105,23 @@
     "stats": [
      [
       "Mean class AUC, focal",
-      "0.987"
+      "98.7"
      ],
      [
       "Mean class AUC, soundscape",
-      "0.930"
+      "93.0"
      ],
      [
-      "Species with soundscape AUC \u2265 0.90",
+      "Species with soundscape AUC \u2265 90",
       "12 / 14"
      ],
      [
-      "Largest drop",
-      "foxspa: 0.32"
+      "Largest drop (points)",
+      "foxspa: 32.2"
      ],
      [
-      "Median drop",
-      "0.042"
+      "Median drop (points)",
+      "4.2"
      ]
     ],
     "method": "Class ROC-AUC of the model's sigmoid output for the species, on the focal clips (negatives = other species) and the 8,400 soundscape clips."
@@ -129,7 +129,7 @@
   },
   {
    "title": "Prototypes transfer unevenly",
-   "text": "30 of 70 prototypes lose more than 0.1 detection AUC on soundscapes while 6 improve; in 8 of 14 species the best- and worst-transferring prototypes differ by \u2265 0.15 AUC.",
+   "text": "30 of 70 prototypes lose more than 10 points of detection AUC on soundscapes while 6 improve; in 8 of 14 species the best- and worst-transferring prototypes differ by at least 15 points of AUC.",
    "species": null,
    "prototype": null,
    "evidence": {
@@ -153,19 +153,19 @@
     },
     "stats": [
      [
-      "Prototypes with \u0394AUC < \u22120.10",
+      "Prototypes with \u0394AUC below \u221210 points",
       "30 / 70"
      ],
      [
-      "Prototypes with \u0394AUC > +0.02",
+      "Prototypes with \u0394AUC above +2 points",
       "6 / 70"
      ],
      [
-      "Median \u0394AUC",
-      "-0.073"
+      "Median \u0394AUC (points)",
+      "\u22127.3"
      ],
      [
-      "Species with within-species spread \u2265 0.15",
+      "Species with within-species spread \u2265 15 points",
       "8 / 14"
      ]
     ],
@@ -174,7 +174,7 @@
   },
   {
    "title": "Activations shrink, ranking survives",
-   "text": "On clips with the species, the median soundscape activation is 42% of the focal one (pooled medians 0.27 \u2192 0.10). On clips without it, activations stay near zero (83% \u2264 0.05), so positives still rank above negatives: median prototype AUC on soundscapes is 0.87.",
+   "text": "On clips with the species, the median soundscape activation is 42% of the focal one (pooled medians 27 \u2192 10 out of 100). On clips without it, activations stay near zero (83% are 5 or less), so positives still rank above negatives: median prototype AUC on soundscapes is 87.",
    "species": null,
    "prototype": null,
    "evidence": {
@@ -563,26 +563,26 @@
     "stats": [
      [
       "Median activation, focal positives",
-      "0.266"
+      "26.6"
      ],
      [
       "Median activation, soundscape positives",
-      "0.101"
+      "10.1"
      ],
      [
       "Median activation, focal negatives",
-      "0.046"
+      "4.6"
      ],
      [
       "Median activation, soundscape negatives",
-      "0.008"
+      "0.8"
      ],
      [
-      "Soundscape negatives \u2264 0.05",
+      "Soundscape negatives at 5 or less",
       "83%"
      ],
      [
-      "Soundscape positives \u2264 0.05",
+      "Soundscape positives at 5 or less",
       "34%"
      ],
      [
@@ -591,7 +591,7 @@
      ],
      [
       "Median prototype AUC, soundscape",
-      "0.868"
+      "86.8"
      ]
     ],
     "method": "Each entry is one prototype's max activation on one clip, pooled over the 70 prototypes of the analysed species. Positives = clips labelled with the prototype's species. n = focal_pos 12,325, focal_neg 288,885, soundscape_pos 22,110, soundscape_neg 565,890."
@@ -637,7 +637,7 @@
   },
   {
    "title": "Some failing prototypes simply go silent",
-   "text": "10 of 30 failing prototypes (\u0394AUC < \u22120.10) have zero activation on more than 25% of the soundscape clips that contain their species, against 1 of the other 40. Only 5 failing prototypes are silent on more than half, so silence accounts for part of the failures, not most. Counting only clips where a prototype fires, the number whose typical peak moves from above 1 kHz on focal clips to below 0.5 kHz on soundscapes is 1 of 70 (clanut P5).",
+   "text": "10 of 30 failing prototypes (\u0394AUC below \u221210 points) have zero activation on more than 25% of the soundscape clips that contain their species, against 1 of the other 40. Only 5 failing prototypes are silent on more than half, so silence accounts for part of the failures, not most. Counting only clips where a prototype fires, the number whose typical peak moves from above 1 kHz on focal clips to below 0.5 kHz on soundscapes is 1 of 70 (clanut P5).",
    "species": "daejun",
    "prototype": 2,
    "evidence": {
@@ -820,7 +820,7 @@
   },
   {
    "title": "Some prototypes match the same acoustic part in both domains",
-   "text": "whcspa P3 (a pure-tone note) and P4 (a series of falling sweeps) mostly fire on the same kind of structure in focal and soundscape clips, with soundscape AUC 0.94 and 0.92. P5's best soundscape matches also resemble its focal ones, but it is usually silent: median soundscape activation 0.00 on clips with the species, and AUC 0.69.",
+   "text": "whcspa P3 (a pure-tone note) and P4 (a series of falling sweeps) mostly fire on the same kind of structure in focal and soundscape clips, with soundscape AUC 94 and 92 (out of 100). P5's best soundscape matches also resemble its focal ones, but it is usually silent: median soundscape activation 0 on clips with the species, and AUC 69.",
    "species": "whcspa",
    "prototype": 3,
    "evidence": {
@@ -836,7 +836,7 @@
   },
   {
    "title": "Top matches can look different across domains",
-   "text": "Two of whcspa P2's three top focal matches are sharp rising sweeps; all three top soundscape matches are a buzz-like band near 6 kHz, which resembles the buzz in the third focal match. The images cannot show whether these are song or noise. Its soundscape AUC is 0.92.",
+   "text": "Two of whcspa P2's three top focal matches are sharp rising sweeps; all three top soundscape matches are a buzz-like band near 6 kHz, which resembles the buzz in the third focal match. The images cannot show whether these are song or noise. Its soundscape AUC is 92.",
    "species": "whcspa",
    "prototype": 2,
    "evidence": {

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from typing import Sequence
 
 import numpy as np
@@ -16,8 +17,8 @@ NAMES = ("pretrained model (0 labels)", *(f"{k:,} labeled clips" for k in LABEL_
 
 
 def curve(per_x: Sequence[Sequence[float]], ticks: Sequence[str], names: Sequence[str], lo: float, hi: float,
-          yticks: Sequence[float], *, width: float = c.W, height: float = 340, fmt=lambda v: f"{v:.2f}",
-          value=lambda v: f"{v:.3f}", refs: Sequence[tuple[float, str, str]] = (), label_means: bool = True,
+          yticks: Sequence[float], *, width: float = c.W, height: float = 340, fmt=lambda v: c.score(v, 0),
+          value=c.score, refs: Sequence[tuple[float, str, str]] = (), label_means: bool = True,
           folds: bool = True, title: str = "", xlabel: str = "Labeled soundscape clips used for training (not to scale)") -> str:
     """Per-fold thin lines and their mean over evenly spaced x positions. per_x[i] = values of the folds at position i."""
     left, right, top, bottom = 56, width - 14, 30 if title else 14, height - 46
@@ -66,11 +67,25 @@ def build(res: Results) -> Page:
     bg = [x["background"] for k in LABEL_BUDGETS for x in sub[k]]
     absent = sorted({s for x in sub[LABEL_BUDGETS[0]] for s, v in x["positives"].items() if v == 0})
 
+    full_clips = [res.splits_cv["n_clips"][str(f)]["train"] for f in FOLDS]
+    for f, n_clips in zip(FOLDS, full_clips):
+        cfg = json.loads((res.store.run_dir(f"{ORACLE}-cv{f}") / "config.json").read_text())
+        assert cfg["effective"]["n_train_clips"] == n_clips and cfg["args"]["train_domain"] == "soundscape" \
+            and cfg["args"]["train_labels"] is None, "the all-labels model no longer matches the explanation of “all”"
+    meaning = c.takeaways([
+        f"<b>“All”</b> is the pretrained model fine-tuned on <b>every labeled soundscape clip of that fold's training sites</b>: "
+        f"{min(full_clips):,}–{max(full_clips):,} clips, empty ones included.",
+        "It does <b>not</b> mean all the data. The held-out sites it is scored on and the test sites are never included, and it uses "
+        "no focal training data.",
+        f"The other points use a random N of those same clips ({LABEL_BUDGETS[0]:,} to {LABEL_BUDGETS[-1]:,}); <b>0</b> is the "
+        "pretrained model, unchanged. “All” is the reference that counts as closing 100% of the gap. It is not a proven upper "
+        "limit.",
+    ], "What “all” means on this page")
     tiles = c.tiles([(f"{half:,}", "smallest tested label budget closing at least half of the gap on average"),
                      (c.pct(gamma[half]["mean"]), f"of the gap closed with {half:,} labels (folds: "
                       + ", ".join(c.pct(v) for v in gamma[half]["folds"]) + ")"),
                      (c.pct(gamma[last]["mean"]), f"closed with {last:,} labels"),
-                     (f"{mean[-1] - mean[0]:.3f}", "total gap in soundscape AP: all labels minus pretrained")])
+                     (c.score(mean[-1] - mean[0]), "total gap in soundscape AP, in points: all labels minus pretrained")])
     take = c.takeaways([
         f"With {LABEL_BUDGETS[0]} labeled clips the effect is small and not reliable ({better[LABEL_BUDGETS[0]]} of 3 folds reliably better; "
         f"mean gap closed {c.pct(gamma[LABEL_BUDGETS[0]]['mean'])}).",
@@ -80,7 +95,7 @@ def build(res: Results) -> Page:
         f"{c.pct(shared_gamma[half])} on the {len(res.shared_species())} primary on all folds and {c.pct(fixed_gamma[half])} on the "
         f"{len(fixed)} eligible on all folds. These budgets are for full fine-tuning; a more "
         "label-efficient method might need fewer, so this is not yet the bar a label-free method must beat.",
-        f"The curve flattens: {last:,} labels average {mean[-2]:.3f}, all labels {mean[-1]:.3f}.",
+        f"The curve flattens: {last:,} labels average {c.score(mean[-2])}, all labels {c.score(mean[-1])}.",
         "<b>The cost:</b> training on soundscapes lowers focal AUC. The focal-retention criterion is met on "
         + ", ".join(f"{focal_pass[k]}/3 folds at {k:,}" for k in LABEL_BUDGETS) + " labels. The absolute drop is small, and these focal "
         "clips were part of the pretraining data, which favours the pretrained model.",
@@ -141,7 +156,7 @@ def build(res: Results) -> Page:
     for key, name in zip(KEYS, NAMES):
         cells = [name]
         v = res.values(key, "sc_ap_primary")
-        cells += [f"{x:.3f}" for x in v] + [f"{np.mean(v):.3f}"]
+        cells += [c.score(x) for x in v] + [c.score(np.mean(v))]
         if key.startswith("lb"):
             g = res.cv[key]["gap_fraction"]
             cells += [c.pct(g["mean"]), c.pct(shared_gamma[int(key[2:])]), c.pct(fixed_gamma[int(key[2:])]),
@@ -161,4 +176,4 @@ def build(res: Results) -> Page:
     that has not been tested.</li></ul>""")
     return Page("label-curve.html", "Label curve", "Label curve",
                 "How many labeled soundscape clips does full fine-tuning need to close the gap?",
-                tiles + take + main_fig + gap_fig + side + species + content + numbers + limits)
+                meaning + tiles + take + main_fig + gap_fig + side + species + content + numbers + limits)

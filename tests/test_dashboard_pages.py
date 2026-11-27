@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 from prototype_transfer.evaluation import results
-from prototype_transfer.reporting import charts, site
+from prototype_transfer.reporting import charts, notation, site
 from prototype_transfer.reporting.runs import BASELINE, FOLDS, METHODS, Results
 
 OUT, SPLITS_DIR = Path("dashboard"), Path("data/HSN/splits")
@@ -41,7 +41,7 @@ def test_pages_have_no_bookkeeping_text():
 def test_pages_carry_the_saved_numbers():
     store = results.Store("hsn")
     out = json.loads(store.summary("canonical_eval").read_text())
-    assert f"{out['models'][BASELINE]['point']['sc_ap_primary']:.3f}" in page("evaluation.html")
+    assert charts.score(out['models'][BASELINE]['point']['sc_ap_primary']) in page("evaluation.html")
     sp = json.loads((store.dataset_dir / "splits.json").read_text())
     for dom in ("focal", "soundscape"):
         for s in ("train", "val", "test"):
@@ -49,10 +49,10 @@ def test_pages_carry_the_saved_numbers():
     for key in METHODS:   # every cross-validated method is on the results page, with its mean soundscape AP
         cv = json.loads(store.summary(f"cv_{key}").read_text())
         assert METHODS[key].label in page("results.html"), key
-        assert f"{cv['run']['sc_ap_primary']['mean']:.3f}" in page("results.html"), key
+        assert charts.score(cv['run']['sc_ap_primary']['mean']) in page("results.html"), key
         if key.startswith("lb"):
             for v in cv["run"]["sc_ap_primary"]["folds"]:
-                assert f"{v:.3f}" in page("label-curve.html"), (key, v)
+                assert charts.score(v) in page("label-curve.html"), (key, v)
 
 
 def test_committed_pages_match_a_fresh_build():
@@ -78,8 +78,37 @@ def test_findings_bundle_leaves_out_the_test_split():
     assert bundle["meta"]["n_clips"] == counts, (bundle["meta"]["n_clips"], counts)
 
 
+# what a reader can meet on a page -> a notation entry (any one of them) that has to explain it
+SYMBOLS = {r"γ": ("gamma", "gh"), r"\bAP\b": ("ap",), r"AUC": ("auc",), r"cmAP": ("cmap",), r"ΔAP": ("dap", "gap"),
+           r"ΔAUC": ("dauc",), r"Δ(?!AP)": ("dauc", "dap"), r"±": ("pm",), r"↑ / ↓": ("updown",), r"✓": ("check",),
+           r"[Ff]ail": ("fail",), r"95% interval": ("ci",), r"\bcross-validation\b|\bfold": ("fold",), r"\bSNR\b": ("snr",),
+           r"\bkHz\b": ("khz",), r"h★": ("h",), r"\bK = ": ("k",), r"\br = ": ("corr",), r"\bq25\b": ("quant",),
+           r"sample-wise": ("map",)}
+SYMBOL_EXEMPT = {"splits.html": {r"AUC"}}
+
+
+def visible_text(html_text: str) -> str:
+    text = re.sub(r"<title>.*?</title>|<nav.*?</nav>|<footer.*?</footer>", " ", html_text, flags=re.S)
+    text = re.sub(r"<section id=\"notation\".*?</section>", " ", text, flags=re.S)
+    return re.sub(r"<[^>]+>", "", text)
+
+
+def test_every_page_ends_with_notation_that_covers_its_symbols():
+    bundle = (OUT / "data.json").read_text()
+    findings = " ".join(f["title"] + " " + f["text"] for f in json.loads(bundle)["findings"])
+    for name, _ in site.PAGE_ORDER:
+        text = page(name)
+        assert text.count('id="notation"') == 1 and text.index('id="notation"') < text.index("</main>"), name
+        assert not text[text.index('id="notation"'):text.index("</main>")].count("<section"), f"{name}: notation is not last"
+        shown = visible_text(text) + (" " + findings if name == "index.html" else "")
+        missing = [pattern for pattern, terms in SYMBOLS.items() if re.search(pattern, shown)
+                   and not set(terms) & set(notation.PAGES[name]) and pattern not in SYMBOL_EXEMPT.get(name, ())]
+        assert not missing, (name, missing)
+
+
 def test_signed_has_no_negative_zero():
-    assert charts.signed(-0.0001) == "±0.000" and charts.signed(-0.002) == "−0.002" and charts.signed(0.15, 2) == "+0.15"
+    assert charts.signed(-0.0001) == "±0.0" and charts.signed(-0.002) == "−0.2" and charts.signed(0.15, 0) == "+15"
+    assert charts.score(0.7104) == "71.0"
 
 
 if __name__ == "__main__":

@@ -56,8 +56,8 @@ def delta_chart(res: Results) -> str:
         return lo > 0 or hi < 0
 
     return dot_rows(res, res.deltas, -0.20, 0.20, (-0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2),
-                    lambda t: "0" if t == 0 else c.signed(t, 2),
-                    "Change in soundscape AP vs the pretrained model, same held-out sites", 0.0, "pretrained model", tip, solid,
+                    lambda t: "0" if t == 0 else c.signed(t, 0),
+                    "Change in soundscape AP vs the pretrained model (points), same held-out sites", 0.0, "pretrained model", tip, solid,
                     c.signed, "mean change")
 
 
@@ -76,7 +76,7 @@ def proto_auc_chart(res: Results) -> str:
     rows = [(None, [BASELINE])] + [(title, [m.key for m in ms]) for _, title, ms in GROUPS]
     height = top + sum((head if t else 0) + row * len(ks) for t, ks in rows)
     base_s = float(np.mean(res.proto_auc(BASELINE, "soundscape")))
-    body = c.x_grid(x, (0.8, 0.85, 0.9, 0.95, 1.0), top, height, lambda t: f"{t:.2f}")
+    body = c.x_grid(x, (0.8, 0.85, 0.9, 0.95, 1.0), top, height, lambda t: c.score(t, 0))
     body += c.line(x(base_s), top, x(base_s), height, "ref-base") + c.text(x(base_s), 12, "pretrained, soundscape", "ref-label", "middle")
     body += c.text(c.W, 12, "focal / sc / sc matched", "", "end")
     y = top
@@ -89,10 +89,10 @@ def proto_auc_chart(res: Results) -> str:
             f, s, mt = (float(np.mean(res.proto_auc(key, d))) for d in ("focal", "soundscape", "matched"))
             body += c.text(x0 - 14, y + 15, label, "row-label", "end")
             body += c.line(x(min(s, mt)), y + 11, x(f), y + 11, "connector")
-            body += c.circle(x(mt), y + 11, 4.2, "dot hollow", f"{label}: mean prototype AUC on soundscapes, other-bird negatives {mt:.3f}")
-            body += c.circle(x(f), y + 11, 4.5, "dot focal", f"{label}: mean prototype AUC on focal clips {f:.3f}")
-            body += c.circle(x(s), y + 11, 4.5, "dot soundscape", f"{label}: mean prototype AUC on soundscapes {s:.3f}")
-            body += c.text(c.W, y + 15, f"{f:.3f} / {s:.3f} / {mt:.3f}", "cell", "end")
+            body += c.circle(x(mt), y + 11, 4.2, "dot hollow", f"{label}: mean prototype AUC on soundscapes, other-bird negatives {c.score(mt)}")
+            body += c.circle(x(f), y + 11, 4.5, "dot focal", f"{label}: mean prototype AUC on focal clips {c.score(f)}")
+            body += c.circle(x(s), y + 11, 4.5, "dot soundscape", f"{label}: mean prototype AUC on soundscapes {c.score(s)}")
+            body += c.text(c.W, y + 15, f"{c.score(f)} / {c.score(s)} / {c.score(mt)}", "cell", "end")
             y += row
     body += c.text((x0 + x1) / 2, height + 36, "Mean prototype detection AUC (axis does not start at 0)", "axis-title", "middle")
     return c.svg(height + 44, "Mean prototype detection AUC on focal and soundscape clips by method", body)
@@ -121,7 +121,7 @@ def species_heatmap(res: Results) -> str:
         for i, w in enumerate(words):
             body += c.text(x, 14 + 14 * i, w, "col-label", "middle")
         base, nf = res.species_mean(BASELINE, s)
-        body += c.text(x, 46, f"{base:.2f}", "cell", "middle") + c.text(x, 59, f"{nf} fold{'s' if nf > 1 else ''}", "", "middle")
+        body += c.text(x, 46, c.score(base), "cell", "middle") + c.text(x, 59, f"{nf} fold{'s' if nf > 1 else ''}", "", "middle")
     body += c.text(x0 - 14, 46, "pretrained AP →", "row-label", "end")
     for r, key in enumerate(HEATMAP_ROWS):
         y = top + r * ch
@@ -131,7 +131,7 @@ def species_heatmap(res: Results) -> str:
             op = 0.06 + 0.54 * math.sqrt(min(abs(d) / 0.3, 1.0))
             cls = "heat-up" if d > 0 else "heat-down"
             body += c.rect(x0 + j * cw + 1, y + 1, cw - 2, ch - 2, cls, f"{METHODS[key].label}, {c.name_of(s)}: {c.signed(d)}", op)
-            body += c.text(x0 + j * cw + cw / 2, y + 18, c.signed(d, 2), "cell", "middle")
+            body += c.text(x0 + j * cw + cw / 2, y + 18, c.signed(d, 0), "cell", "middle")
     return c.svg(top + ch * len(HEATMAP_ROWS) + 6, "Change in soundscape AP per species and method", body)
 
 
@@ -145,10 +145,10 @@ def results_table(res: Results) -> str:
         base = key == BASELINE
         crit = None if base else res.criteria(key)
         bw = "—" if base else "{} / {}".format(*res.folds_better_worse(key))
-        return [label, f"{ms(key, 'sc_ap_primary'):.3f} ± {sd(key):.3f}", "—" if base else c.signed(float(np.mean(res.deltas(key)))),
+        return [label, f"{c.score(ms(key, 'sc_ap_primary'))} ± {c.score(sd(key))}", "—" if base else c.signed(float(np.mean(res.deltas(key)))),
                 "—" if base else c.signed(float(np.mean(res.shared_deltas(key)))),
                 "—" if base else c.signed(float(np.mean(res.set_deltas(key, res.fixed_species())))), bw,
-                f"{ms(key, 'sc_auc_primary'):.3f}", f"{ms(key, 'sc_cmap_12'):.3f}", f"{ms(key, 'f_auc_primary'):.3f}",
+                c.score(ms(key, 'sc_auc_primary')), c.score(ms(key, 'sc_cmap_12')), c.score(ms(key, 'f_auc_primary')),
                 "reference" if crit is None else " · ".join(str(v) for v in crit)]
 
     rows, classes = [row(BASELINE, "<b>Pretrained (no adaptation)</b>")], [""]
@@ -171,7 +171,7 @@ def group_table(res: Results) -> str:
     def row(key: str, label: str) -> list[str]:
         cells = [label]
         for codes in groups:
-            cells.append(f"{np.mean(res.set_ap(key, codes)):.3f}")
+            cells.append(c.score(np.mean(res.set_ap(key, codes))))
             cells.append("—" if key == BASELINE else c.signed(float(np.mean(res.set_deltas(key, codes)))))
         return cells
 
@@ -196,7 +196,7 @@ def per_species_table(res: Results) -> str:
         classes.append("group")
         for s in codes:
             rows.append([c.name_of(s), " · ".join(str(n) for n in positives[s]),
-                         *(f"{np.mean([res.species_ap(k, f)[s] for f in FOLDS]):.3f}" for k, _ in SPECIES_TABLE_KEYS)])
+                         *(c.score(np.mean([res.species_ap(k, f)[s] for f in FOLDS])) for k, _ in SPECIES_TABLE_KEYS)])
             classes.append("")
     return c.table(head, rows, "mini results wrap-head", classes)
 
@@ -239,6 +239,11 @@ def pct_signed(x: float) -> str:
     return f"{round(100 * x)}%".replace("-", "−")
 
 
+def ranked_scores(values: dict[str, float], among) -> dict[str, str]:
+    """ranked() for 0-1 metrics, shown out of 100."""
+    return ranked({k: 100 * v for k, v in values.items()}, among, ".1f")
+
+
 def excludes(ci) -> bool:
     return ci[0] > 0 or ci[1] < 0
 
@@ -250,19 +255,19 @@ def paper_groups(row) -> list[tuple[str, list[list[str]]]]:
 def main_table(res: Results) -> str:
     avg = lambda v: float(np.mean(v))
     keys = [k for _, ks in PAPER_GROUPS for k in ks]
-    cv_ap = ranked({k: avg(res.values(k, "sc_ap_primary")) for k in keys}, RANKED, ".3f")
+    cv_ap = ranked_scores({k: avg(res.values(k, "sc_ap_primary")) for k in keys}, RANKED)
     point = {k: res.final["models"][k]["point"] for k in TEST_MODELS}
-    test_ap = ranked({k: point[k]["sc_ap_primary"] for k in TEST_MODELS}, [k for k in RANKED if k in TEST_MODELS], ".3f")
+    test_ap = ranked_scores({k: point[k]["sc_ap_primary"] for k in TEST_MODELS}, [k for k in RANKED if k in TEST_MODELS])
     full = avg(res.deltas(ORACLE))
 
     def row(k: str) -> list[str]:
-        cells = [label_of(k), f"{cv_ap[k]} <small>± {np.std(res.values(k, 'sc_ap_primary'), ddof=1):.3f}</small>"]
+        cells = [label_of(k), f"{cv_ap[k]} <small>± {c.score(np.std(res.values(k, 'sc_ap_primary'), ddof=1))}</small>"]
         if k == BASELINE:
             cells += [DASH] * 3
         else:
             d = res.deltas(k)
             better, worse = res.folds_better_worse(k)
-            cells += [f"{c.signed(avg(d))} <small>± {np.std(d, ddof=1):.3f}</small>", f"{better} / {worse}", f"{round(100 * avg(d) / full)}".replace("-", "−")]
+            cells += [f"{c.signed(avg(d))} <small>± {c.score(np.std(d, ddof=1))}</small>", f"{better} / {worse}", f"{round(100 * avg(d) / full)}".replace("-", "−")]
         if k not in TEST_MODELS:
             return cells + [DASH, DASH]
         e = res.final["models"][k]
@@ -278,10 +283,10 @@ def main_table(res: Results) -> str:
         "ΔAP of the model trained on all labeled clips.",
         [["", ("Cross-validation", 4), ("Test", 2)], ["Method", "AP", "ΔAP", "↑ / ↓", "γ (%)", "AP", "ΔAP [95% CI]"]],
         paper_groups(row),
-        "How to read: AP is 1 when every clip with a species is ranked above every other clip "
+        "All scores are out of 100 and changes are in points. How to read: AP is 100 when every clip with a species is ranked above every other clip "
         '(<a href="index.html#headline">worked example</a>). '
         f"A ΔAP of {c.signed(avg(res.deltas('sfda-dropout_student')))} means the mean AP moved from "
-        f"{avg(res.values(BASELINE, 'sc_ap_primary')):.3f} to {avg(res.values('sfda-dropout_student', 'sc_ap_primary')):.3f}. "
+        f"{c.score(avg(res.values(BASELINE, 'sc_ap_primary')))} to {c.score(avg(res.values('sfda-dropout_student', 'sc_ap_primary')))}. "
         "<b>Bold</b> / <u>underline</u>: best / second best among methods that use no soundscape labels; in the test columns, among "
         "those scored on test. They do not indicate significance. ±: standard deviation over the 3 folds (for AP it mostly reflects "
         "how hard each fold is; one training seed). ↑ / ↓: folds whose paired 95% interval lies above / below zero. "
@@ -292,13 +297,12 @@ def secondary_table(res: Results) -> str:
     avg = lambda v: float(np.mean(v))
     keys = [k for _, ks in PAPER_GROUPS for k in ks]
     on_test = [k for k in RANKED if k in TEST_MODELS]
-    cv = [({k: avg(res.values(k, m)) for k in keys}, RANKED, ".3f", True) for m in ("sc_auc_primary", "sc_cmap_12")]
-    cols = [ranked(*a) for a in cv]
-    cols.append({k: f"{avg(res.values(k, 'f_auc_primary')):.3f}" for k in keys})
+    cols = [ranked_scores({k: avg(res.values(k, m)) for k in keys}, RANKED) for m in ("sc_auc_primary", "sc_cmap_12")]
+    cols.append({k: c.score(avg(res.values(k, "f_auc_primary"))) for k in keys})
     cols += [ranked({k: 100 * avg(f(k)) for k in keys}, RANKED, ".0f", False) for f in (res.fail_share, res.fail_share_matched)]
     point = {k: res.final["models"][k]["point"] for k in TEST_MODELS}
-    test = [ranked({k: point[k][m] for k in TEST_MODELS}, on_test, ".3f") for m in ("sc_auc_primary", "sc_cmap_12")]
-    test.append({k: f"{point[k]['f_auc_primary']:.3f}" for k in TEST_MODELS})
+    test = [ranked_scores({k: point[k][m] for k in TEST_MODELS}, on_test) for m in ("sc_auc_primary", "sc_cmap_12")]
+    test.append({k: c.score(point[k]["f_auc_primary"]) for k in TEST_MODELS})
     test += [ranked({k: float(point[k][m]) for k in TEST_MODELS}, on_test, ".0f", False) for m in ("n_fail", "n_fail_birds")]
     n_proto = len(res.final["models"][BASELINE]["prototypes"])
     row = lambda k: [label_of(k), *(col[k] for col in cols), *(col.get(k, DASH) for col in test)]
@@ -306,7 +310,7 @@ def secondary_table(res: Results) -> str:
     test_heads = ["AUC", "cmAP", "Focal<br>AUC", f"Fail<br>/{n_proto} ↓", f"Fail matched<br>/{n_proto} ↓"]
     return c.paper_table(
         "res-secondary", "Table 2", "<b>Secondary metrics.</b> Soundscape ROC-AUC (primary species) and cmAP (secondary species), "
-        "focal ROC-AUC as a retention check, and failing prototypes (soundscape AUC more than 0.10 below focal AUC) with all other "
+        "focal ROC-AUC as a retention check, and failing prototypes (soundscape AUC more than 10 points below focal AUC) with all other "
         "soundscape clips as negatives, or only other-bird clips (matched to the focal negatives).",
         [["", ("Cross-validation", 5), ("Test", 5)], ["Method", *heads, *test_heads]], paper_groups(row),
         "Ranking marks as in Table 1; lower is better where marked ↓. Focal AUC is not ranked: focal recordings are part of the "
@@ -322,7 +326,7 @@ def species_test_table(res: Results, scores: dict) -> str:
     among = (BASELINE, *PUBLISHED)
 
     def line(name: str, n: str, values: dict[str, float]) -> list[str]:
-        shown = ranked(values, among, ".3f")
+        shown = ranked_scores(values, among)
         return [name, n, *(shown[k] for k in TEST_SPECIES_MODELS)]
 
     one = lambda s: line(c.name_of(s), str(positives[s]), {k: scores[k][s]["ap"] for k in TEST_SPECIES_MODELS})
@@ -373,6 +377,86 @@ def method_table(res: Results) -> str:
 def appendix_table(tid: str, label: str, caption: str, table_html: str) -> str:
     """An existing wide table under a numbered caption."""
     return f'<div class="ptable" id="{tid}"><p class="pcaption"><b>{label}.</b> {caption}</p>{table_html}</div>'
+
+
+STUDENT = "sfda-dropout_student"
+SUMMARY_ROWS = ((BASELINE, "Starting model", "sum-start"),
+                (STUDENT, "Best without soundscape labels (Dropout Student)", "sum-free"),
+                ("lb250", "Trained with 250 labeled soundscape clips", "sum-labels"),
+                (ORACLE, "Trained with all labeled soundscape clips (reference)", "sum-labels"))
+
+
+def gap_chart(res: Results) -> str:
+    """The four development scores that carry the main result, with each one's gain and share of the gap closed."""
+    ap = {k: float(np.mean(res.values(k, "sc_ap_primary"))) for k, _, _ in SUMMARY_ROWS}
+    x0, x1, row, top = 330, 640, 40, 30
+    x = c.linear(0.0, 1.0, x0, x1)
+    bottom = top + row * len(SUMMARY_ROWS)
+    body = c.x_grid(x, (0.0, 0.25, 0.5, 0.75, 1.0), top, bottom, lambda t: c.score(t, 0))
+    for xpos, head in ((690, "AP"), (785, "Gain (points)"), (c.W, "Share of gap closed")):
+        body += c.text(xpos, 16, head, "col-label", "end")
+    for i, (key, label, cls) in enumerate(SUMMARY_ROWS):
+        y = top + i * row + 9
+        gain = ap[key] - ap[BASELINE]
+        body += c.text(x0 - 12, y + 15, label, "row-label", "end")
+        body += c.rect(x0, y, x(ap[key]) - x0, 22, cls, f"{label}: soundscape AP {c.score(ap[key])}", rx=2)
+        body += c.text(690, y + 15, c.score(ap[key]), "big-cell", "end")
+        body += c.text(785, y + 15, DASH if key == BASELINE else c.signed(gain), "big-cell", "end")
+        body += c.text(c.W, y + 15, f"{gain / (ap[ORACLE] - ap[BASELINE]):.0%}", "big-cell", "end")
+    body += c.text((x0 + x1) / 2, bottom + 34, "Soundscape average precision (out of 100)", "axis-title", "middle")
+    return c.svg(bottom + 42, "Soundscape average precision on development sites: starting model, best method without labels, "
+                 "and training with labels", body)
+
+
+def test_gain_chart(diff: float, ci: list[float]) -> str:
+    """One estimate and its 95% interval against the no-change line."""
+    x0, x1 = 60, 840
+    limit = 0.15
+    assert -limit < ci[0] <= diff <= ci[1] < limit, "the test interval does not fit the summary chart"
+    x = c.linear(-limit, limit, x0, x1)
+    body = c.x_grid(x, (-0.15, -0.1, -0.05, 0.0, 0.05, 0.1, 0.15), 26, 78, lambda t: "0" if t == 0 else c.signed(t, 0))
+    body += c.line(x(0), 22, x(0), 78, "ref-base") + c.text(x(0), 14, "no change", "ref-label", "middle")
+    body += c.text(x0, 14, "← worse than the starting model", "ref-label")
+    body += c.text(x1, 14, "better →", "ref-label", "end")
+    body += c.line(x(ci[0]), 52, x(ci[1]), 52, "whisker soundscape")
+    for end in ci:
+        body += c.line(x(end), 45, x(end), 59, "whisker soundscape")
+        body += c.text(x(end), 40, c.signed(end), "big-cell", "middle")
+    body += c.circle(x(diff), 52, 7, "dot soundscape", f"Estimated gain {c.signed(diff)} points")
+    body += c.text(x(diff), 40, c.signed(diff), "big-cell strong", "middle")
+    body += c.text((x0 + x1) / 2, 112, "Change in soundscape AP on the test sites (points)", "axis-title", "middle")
+    return c.svg(120, "Dropout Student's change in soundscape AP on the test sites, with its 95% interval", body)
+
+
+def summary_section(res: Results) -> str:
+    """The main result before the paper-style detail: one sentence, the development scores, then the test check.
+    build() asserts the claims made here."""
+    ap = {k: float(np.mean(res.values(k, "sc_ap_primary"))) for k, _, _ in SUMMARY_ROWS}
+    base, student = (res.final["models"][k]["point"]["sc_ap_primary"] for k in (BASELINE, STUDENT))
+    held = res.final["models"][STUDENT]["vs_baseline"]["sc_ap_primary"]
+    n_sites = res.test["n_clusters"]["sites"]
+    lead = ('<p class="lead">Without soundscape labels, Dropout Student looked promising in development, but '
+            "<b>its gain was not confirmed at the test sites</b>. None of the five adaptation methods tested there showed a "
+            "reliable gain.</p>")
+    dev = c.figure(
+        "summary-dev", "Development sites: how much of the gap can be closed?",
+        f"The <b>gap</b> is what training on all soundscape labels adds to the starting model: "
+        f"{c.score(ap[ORACLE])} − {c.score(ap[BASELINE])} = {c.score(ap[ORACLE] - ap[BASELINE])} points. Scores are means of 3 "
+        f"cross-validation folds. Dropout Student is the best of {len(LABEL_FREE)} methods without soundscape labels, picked after "
+        "seeing these scores, so expect its number to be on the favourable side. Training with 250 labels did better than all of "
+        "them here; it was not scored on the test sites.",
+        gap_chart(res), c.legend([("sum-start-key", "starting model"), ("soundscape", "no soundscape labels"),
+                                  ("sum-labels-key", "uses soundscape labels")]))
+    test = c.figure(
+        "summary-test", f"Test sites: does Dropout Student's gain hold at {n_sites} other sites?",
+        f"It goes from {c.score(base)} to {c.score(student)}, a gain of <b>{c.signed(held['diff'])} points</b>. The bar is the "
+        f"plausible range (95% interval), {c.signed(held['ci95'][0])} to {c.signed(held['ci95'][1])} points. It includes zero, so "
+        "we cannot tell whether the method helps or hurts. This does not show that it has no effect. Compare with the test "
+        "starting score, not with the development scores: the sites differ.",
+        test_gain_chart(held["diff"], held["ci95"]))
+    guide = ('<p class="more">New to these numbers? See <a href="evaluation.html#metrics">the metrics and how to read them</a>, '
+             'and <a href="formulation.html#data-use">which data is used for training and scoring</a>.</p>')
+    return '<div class="summary">' + lead + dev + test + guide + "</div>"
 
 
 def sec(sid: str, title: str, *parts: str) -> str:
@@ -481,7 +565,7 @@ def build(res: Results) -> Page:
     primary_by_fold = [len(x["primary"]) for x in res.species]
     S, V = canonical.PRIMARY_MIN_POS, canonical.MIN_POS
     name = lambda k: METHODS[k].label
-    sg = c.signed
+    sg = lambda x: f"{c.signed(x)}&nbsp;points"
 
     setup = sec(
         "res-setup", "1&ensp;Experimental setup",
@@ -494,7 +578,7 @@ def build(res: Results) -> Page:
             f"({sp['soundscape']['test']['n_clips']:,} clips). Development uses 3-fold site-grouped cross-validation (CV), holding out "
             f"{' / '.join(map(str, heldout))} sites. Adaptation is <i>inductive</i>: a method may use unlabeled audio of training "
             "sites, is then frozen, and is scored on sites it has not heard."),
-        par("Metrics.", f"The headline metric is soundscape macro AP over <i>primary</i> species, those with at least {S} positive clips "
+        par("Metrics.", f"All scores are shown out of 100 and changes in points. The headline metric is soundscape macro AP over <i>primary</i> species, those with at least {S} positive clips "
             f"in the scored split ({', '.join(map(str, primary_by_fold))} species on the three folds; {len(main)} on test). We also "
             f"report ROC-AUC, cmAP over <i>secondary</i> species (at least {V} positives in both domains), focal ROC-AUC, and the number "
             "of prototypes that fail to transfer. Intervals are paired 95% cluster bootstraps (soundscape clips resampled by site, "
@@ -538,7 +622,7 @@ def build(res: Results) -> Page:
             f"{sg(mean_d[smoothed])} with no fold reliably better, and {sg(avg(res.set_deltas(smoothed, fixed)))} on the same "
             f"{len(fixed)} species, whereas its authors report it ahead of Dropout Student on all six of their test sets by sample-wise "
             "mAP, with a different model. In the binary form used for multi-label data, the smoothing term lowers a species' target "
-            "unless similar clips score it above 0.5 on average. We have not tested whether this explains the difference."),
+            "unless similar clips score it above 50% on average. We have not tested whether this explains the difference."),
         fold_fig)
 
     proto_fig = c.paper_figure(
@@ -548,20 +632,20 @@ def build(res: Results) -> Page:
                   ("hollow-key", "soundscape, other-bird negatives (matched to focal)")]))
     proto_sec = sec(
         "res-prototypes", "3&ensp;Do the prototypes transfer better?", secondary_table(res),
-        par("Prototype detection.", f"Training on labels raises mean soundscape prototype AUC from {proto(BASELINE, 'soundscape'):.3f} "
-            f"to {proto(ORACLE, 'soundscape'):.3f} (matched negatives: {proto(BASELINE, 'matched'):.3f} to "
-            f"{proto(ORACLE, 'matched'):.3f}) while focal AUC barely moves. {name(student)} raises it without labels, to "
-            f"{proto(student, 'soundscape'):.3f} (matched: {proto(student, 'matched'):.3f}), with prototype vectors and class weights "
+        par("Prototype detection.", f"Training on labels raises mean soundscape prototype AUC from {c.score(proto(BASELINE, 'soundscape'))} "
+            f"to {c.score(proto(ORACLE, 'soundscape'))} (matched negatives: {c.score(proto(BASELINE, 'matched'))} to "
+            f"{c.score(proto(ORACLE, 'matched'))}) while focal AUC barely moves. {name(student)} raises it without labels, to "
+            f"{c.score(proto(student, 'soundscape'))} (matched: {c.score(proto(student, 'matched'))}), with prototype vectors and class weights "
             f"unchanged; on test its failing prototypes fall from {point[BASELINE]['n_fail']} to {point[student]['n_fail']}."),
         par("Better prototypes are not sufficient.", f"A frozen-backbone fine-tune raises soundscape prototype AUC "
-            f"({proto(BASELINE, 'soundscape'):.3f} to {proto('r0', 'soundscape'):.3f}), as does full focal fine-tuning with matched "
-            f"negatives ({proto(BASELINE, 'matched'):.3f} to {proto('focal-only', 'matched'):.3f}); neither improves class AP. These "
+            f"({c.score(proto(BASELINE, 'soundscape'))} to {c.score(proto('r0', 'soundscape'))}), as does full focal fine-tuning with matched "
+            f"negatives ({c.score(proto(BASELINE, 'matched'))} to {c.score(proto('focal-only', 'matched'))}); neither improves class AP. These "
             "comparisons are observational and do not show that prototype quality causes AP."),
         par("The failure count depends on the negatives.", f"With real background mixing, the failing share rises from "
             f"{c.pct(share(BASELINE))} to {c.pct(share('r1b'))} under the protocol, but with matched negatives it is "
             f"{c.pct(matched('r1b'))}, against {c.pct(matched(BASELINE))} for the source model."),
         par("Focal retention.", f"On test, {name(smoothed)} is the only source-free method that loses more than "
-            f"{res.test['thresholds']['focal_tolerance']:.2f} of focal AUC."),
+            f"{c.score(res.test['thresholds']['focal_tolerance'], 0)} point of focal AUC."),
         proto_fig)
 
     heat_fig = c.paper_figure(
@@ -579,7 +663,7 @@ def build(res: Results) -> Page:
             f"clips per held-out fold, often from one site. For {name(student)} their mean CV change is {sg(other_gain)}. Even the model "
             f"trained on all labels gains {sg(test_five)} on them on test but {sg(cv_five)} in cross-validation (folds "
             f"{', '.join(sg(v) for v in oracle_fold)}), mostly through {' and '.join(c.name_of(s) for s in top)} on test, although its "
-            f"CV AUC on them rises from {five_auc[BASELINE]:.3f} to {five_auc[ORACLE]:.3f}. We do not rank methods on them."),
+            f"CV AUC on them rises from {c.score(five_auc[BASELINE])} to {c.score(five_auc[ORACLE])}. We do not rank methods on them."),
         heat_fig)
 
     r4_all, r4_fixed = mean_of("r4", "r3", "primary"), mean_of("r4", "r3", "fixed")
@@ -605,7 +689,7 @@ def build(res: Results) -> Page:
     hyperparameters with labels on a High Sierras soundscape set, with a different model; we have not checked whether its recordings
     overlap ours. The results are not the best each method could reach.</li>
     <li><b>Adapted implementations.</b> Layer-normalisation weights replace batch-normalisation weights. Student noise is random
-    skipping of network blocks (probability 0.2); the authors' additional dropout on a pooled feature has no counterpart here.
+    skipping of network blocks (probability 20%); the authors' additional dropout on a pooled feature has no counterpart here.
     Test-time methods that adapt on the scored audio are outside this protocol, and the training-free baselines are simple ones.</li>
     <li><b>The test split has now been seen</b> for these methods. A method changed after this can no longer claim a clean held-out
     score.</li>
@@ -620,7 +704,7 @@ def build(res: Results) -> Page:
         method_table(res),
         par("Training details.", "All fine-tuning starts from the source model: 2 warm-up epochs (prototypes and last layer), 12 epochs "
             "of the whole network (skipped when frozen), prototype projection onto training patches, then 4 last-layer epochs; the last "
-            "epoch is used. Mixing is applied with probability 0.5 (background at −5 to 20 dB SNR; the overlaid species 0 to 10 dB "
+            "epoch is used. Mixing is applied with probability 50% (background at −5 to 20 dB SNR; the overlaid species 0 to 10 dB "
             "below the original). Source-free adaptation makes 10 passes over the unlabeled clips in batches of 64 with no checkpoint "
             "selection."),
         appendix_table("res-all", "Table A2", f"<b>All cross-validated methods and metrics</b> (means over folds). Two columns repeat "
@@ -634,6 +718,9 @@ def build(res: Results) -> Page:
         appendix_table("res-fail", "Table A5", "<b>Failing-prototype share under both choices of negatives</b> (cross-validation).",
                        fail_table(res)))
 
-    body = '<div class="paper-body">' + setup + results_sec + proto_sec + species_sec + ablation_sec + limits + appendix + "</div>"
+    detail = ('<div class="detail-start"><h2 id="detailed-results">Detailed results</h2><p>Everything behind the summary: setup, '
+              "every method and metric, per-species results, limitations and appendix.</p></div>")
+    body = ('<div class="paper-body">' + summary_section(res) + detail + setup + results_sec + proto_sec + species_sec
+            + ablation_sec + limits + appendix + "</div>")
     return Page("results.html", "Initial results", "Initial results",
                 "Can unlabeled soundscape audio close the focal-to-soundscape gap of a prototype-based bird classifier?", body)

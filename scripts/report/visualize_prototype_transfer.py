@@ -39,7 +39,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("visualize_prototype_transfer")
 
 # Validated categorical palette (dataviz reference, light mode), fixed order.
-FOCAL, SOUNDSCAPE = "#2a78d6", "#eb6834"
+FOCAL, SOUNDSCAPE = "#eb6834", "#2a78d6"
 PROTO_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4"]
 INK, MUTED, GRID = "#1f1f1e", "#6b6b68", "#e4e4e1"
 DOMAIN_COLOR = {"focal": FOCAL, "soundscape": SOUNDSCAPE}

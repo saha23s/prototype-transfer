@@ -58,5 +58,5 @@ BODY = """
 def build(res: Results) -> Page:
     return Page("explorer.html", "Species explorer", "Species explorer",
                 "Appendix. The pretrained model on focal and soundscape clips outside the test split, species by species and prototype "
-                "by prototype (species with at least 10 soundscape positives there).",
+                "by prototype (species with at least 10 soundscape positives there). AUC and activations are out of 100; changes are in points.",
                 BODY, ("data.js", "names.js", "app.js"))

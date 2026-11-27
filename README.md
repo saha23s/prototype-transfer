@@ -128,7 +128,8 @@ outputs/results/<dataset>/ committed results; outputs/features and outputs/check
 ### Dashboard
 
 `dashboard/index.html` is a static, offline site (open it in a browser). Pages: motivation, data exploration, splits, evaluation,
-problem formulation, label curve, initial results, and an interactive species explorer. Rebuild the pages after results or splits
+problem formulation, label curve, initial results, prototype trust, and an interactive species explorer. Each page ends with the
+notation it uses (defined once in `reporting/notation.py`). Rebuild the pages after results or splits
 change with `python scripts/report/build_dashboard.py` (CPU; reads the results store, `data/HSN/splits` and the cached responses in
 `outputs/features/`; `--gallery` also redraws the example spectrograms from the audio). A new cross-validated method appears once it
 is added to the registry in `src/prototype_transfer/reporting/runs.py`; the build stops if new results contradict a stated

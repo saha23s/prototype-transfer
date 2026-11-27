@@ -33,8 +33,14 @@ def pct(x: float) -> str:
     return f"{100 * x:.0f}%"
 
 
-def signed(x: float, d: int = 3) -> str:
-    shown = f"{abs(x):.{d}f}"
+def score(x: float, d: int = 1) -> str:
+    """A 0-1 metric (AP, AUC, cmAP, activation) as shown on the dashboard: out of 100."""
+    return f"{100 * x:.{d}f}"
+
+
+def signed(x: float, d: int = 1) -> str:
+    """A change of a 0-1 metric, in points on the 0-100 scale."""
+    shown = f"{abs(100 * x):.{d}f}"
     return ("±" if float(shown) == 0 else "+" if x > 0 else "−") + shown
 
 

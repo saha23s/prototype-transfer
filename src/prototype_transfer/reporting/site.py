@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from prototype_transfer.reporting import notation
 from prototype_transfer.reporting.charts import esc
 
 SITE_TITLE = "Prototype transfer: focal → soundscape bird recognition"
@@ -27,6 +28,7 @@ PAGE_ORDER = (  # (file, navigation label)
     ("formulation.html", "Problem formulation"),
     ("label-curve.html", "Label curve"),
     ("results.html", "Initial results"),
+    ("trust.html", "Prototype trust"),
     ("explorer.html", "Species explorer"),
 )
 
@@ -61,6 +63,7 @@ def render(page: Page) -> str:
   <header><h1>{page.title}</h1><p class="lede">{page.lede}</p></header>
   <main>
 {page.body}
+{notation.section(page.file)}
   </main>
   <footer class="pager">{prev}{nxt}</footer>{tooltip}{scripts}
 </body>

@@ -4,8 +4,8 @@
   --ink: #1f1f1e;
   --ink-2: #6b6b68;
   --grid: #e4e4e1;
-  --focal: #2a78d6;
-  --soundscape: #eb6834;
+  --focal: #eb6834;
+  --soundscape: #2a78d6;
   --sel: #1f1f1e;
   --muted-dot: #b9b9b5;
   --better: #2a78d6;
@@ -18,8 +18,8 @@
     --ink: #ececea;
     --ink-2: #a3a3a0;
     --grid: #3a3a38;
-    --focal: #3987e5;
-    --soundscape: #d95926;
+    --focal: #d95926;
+    --soundscape: #3987e5;
     --sel: #ececea;
     --muted-dot: #5a5a57;
     --better: #3987e5;
@@ -282,12 +282,6 @@ svg rect.heat-down { fill: var(--worse); }
 .swatch.up-key { background: var(--better); border-radius: 2px; }
 .swatch.down-key { background: var(--worse); border-radius: 2px; }
 .swatch.hollow-key { background: var(--card); border: 2px solid var(--soundscape); }
-svg .box-node { fill: var(--card); stroke: var(--grid); stroke-width: 1.5; }
-svg .box-node.soundscape-edge { stroke: var(--soundscape); }
-svg .box-node.dashed-edge { stroke: var(--ink-2); stroke-dasharray: 5 4; }
-svg .node-title { fill: var(--ink); font-size: 13px; font-weight: 650; }
-svg .arrow { stroke: var(--ink-2); stroke-width: 1.5; }
-svg .arrow-head { fill: var(--ink-2); }
 
 .finding .tag { white-space: nowrap; display: inline-block; }
 
@@ -313,3 +307,54 @@ figure.pfigure figcaption { margin: 10px 0 0; }
 
 table.headline td { white-space: normal; vertical-align: top; }
 table.headline td:first-child { max-width: 34ch; }
+
+/* Results summary and the metric guide */
+.summary .lead { font-size: 1.2rem; line-height: 1.5; max-width: 68ch; margin: 6px 0 0; padding: 12px 18px; background: var(--card);
+  border: 1px solid var(--grid); border-left: 4px solid var(--ink); border-radius: 8px; }
+.summary figure.chart { margin-top: 18px; }
+.summary .hint { max-width: 100ch; }
+svg rect.sum-start { fill: var(--muted-dot); }
+svg rect.sum-free { fill: var(--soundscape); }
+svg rect.sum-labels { fill: var(--soundscape); fill-opacity: 0.3; stroke: var(--soundscape); stroke-width: 1.5; }
+.swatch.sum-start-key { background: var(--muted-dot); border-radius: 2px; }
+.swatch.sum-labels-key { background: color-mix(in srgb, var(--soundscape) 30%, transparent); border: 1.5px solid var(--soundscape); border-radius: 2px; }
+svg .big-cell { fill: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+svg .big-cell.strong { font-weight: 700; }
+.detail-start { margin: 40px 0 24px; padding-top: 18px; border-top: 2px solid var(--ink); }
+.detail-start p { margin: 4px 0 0; color: var(--ink-2); }
+table.words th, table.words td, table.mini.words th:nth-child(2), table.mini.words td:nth-child(2) { text-align: left; white-space: normal; vertical-align: top; }
+table.words td:first-child { min-width: 11em; }
+#metrics h3 { margin: 22px 0 8px; }
+
+/* Which data is used where (problem formulation) */
+svg rect.use-learn-sc { fill: var(--soundscape); fill-opacity: 0.22; stroke: var(--soundscape); stroke-width: 1.2; }
+svg rect.use-score-sc { fill: var(--soundscape); }
+svg rect.use-learn-focal { fill: var(--focal); fill-opacity: 0.22; stroke: var(--focal); stroke-width: 1.2; }
+svg rect.use-score-focal { fill: var(--focal); }
+svg rect.use-off { fill: none; stroke: var(--muted-dot); stroke-width: 1.2; stroke-dasharray: 4 3; }
+svg .seg-label { fill: var(--ink); font-size: 11px; }
+svg .on-solid { fill: #fff; font-size: 11px; font-weight: 700; }
+.swatch.use-learn-sc-key, .swatch.use-learn-focal-key, .swatch.use-off-key { border-radius: 2px; width: 12px; height: 12px; }
+.swatch.use-learn-sc-key { background: color-mix(in srgb, var(--soundscape) 22%, transparent); border: 1.5px solid var(--soundscape); }
+.swatch.use-learn-focal-key { background: color-mix(in srgb, var(--focal) 22%, transparent); border: 1.5px solid var(--focal); }
+.swatch.use-off-key { background: none; border: 1.5px dashed var(--muted-dot); }
+table.mini.words.use th, table.mini.words.use td:nth-child(n+2):nth-child(-n+6),
+table.mini.words.use td:nth-child(2) { text-align: center; }
+#domains h2, #allowed h2, #labels h2 { margin-bottom: 8px; }
+
+/* Notation table closing every page */
+.notation { margin-top: 44px; padding-top: 16px; border-top: 2px solid var(--ink); }
+.notation h2 { font-size: 1.1rem; margin: 0 0 8px; }
+table.notation-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+table.notation-table td { text-align: left; white-space: normal; vertical-align: top; padding: 5px 8px; border-bottom: 1px solid var(--grid); }
+table.notation-table td:first-child { width: 15em; color: var(--ink); font-weight: 600; }
+.notation .code-grid { margin-top: 12px; }
+#data-use > h3 { margin: 24px 0 8px; }
+
+/* Prototype trust page */
+svg .dot.trust-false { fill: var(--worse); }
+svg .dot.trust-correct { fill: var(--ink-2); }
+.swatch.trust-false-key { background: var(--worse); }
+.swatch.trust-correct-key { background: var(--ink-2); }
+#trust-idea .tiles { margin-top: 12px; }
+#trust-rules table.words td:last-child { white-space: nowrap; }

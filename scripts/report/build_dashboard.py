@@ -19,10 +19,10 @@ from pathlib import Path
 from prototype_transfer.evaluation import results
 from prototype_transfer.reporting import charts, site
 from prototype_transfer.reporting.pages import (data, evaluation, explorer, formulation, label_curve, motivation,
-                                                results as results_page, splits)
+                                                results as results_page, splits, trust)
 from prototype_transfer.reporting.runs import Results
 
-BUILDERS = (motivation, data, splits, evaluation, formulation, label_curve, results_page, explorer)
+BUILDERS = (motivation, data, splits, evaluation, formulation, label_curve, results_page, trust, explorer)
 
 
 def build(res: Results) -> dict[str, str]:

@@ -109,6 +109,7 @@ def build(res: Results) -> Page:
         "<b>Soundscape clips are split by recording site.</b> Neighbouring 5 s clips are near-duplicates, and species cluster by site.",
         "<b>Test sites are reserved for final numbers.</b> Methods are compared by cross-validation over the other sites.",
         "<b>Splits are fixed.</b> Every model is trained and scored on the same ones.",
+        '<b>Who learns from which split</b> is set out under <a href="formulation.html#data-use">problem formulation</a>.',
     ], "Splitting rules")
     sizes = c.figure("splits-sizes", "Clips per split", f"{c.pct(sp['soundscape']['train']['background_clips'] / sp['soundscape']['train']['n_clips'])} "
                      "of soundscape training clips contain none of the target species. Lighter to darker: train, validation, test.", sizes_chart(sp))

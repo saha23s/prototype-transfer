@@ -24,6 +24,7 @@ from prototype_transfer.data.preprocessing import AudioPreprocessor
 from prototype_transfer.evaluation import results
 from prototype_transfer.evaluation.canonical import FAIL, IMPROVE
 from prototype_transfer.models.classifier import MODEL_REVISION
+from prototype_transfer.reporting.charts import score, signed
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +39,9 @@ CURATED_FINDINGS = [
     {
         "title": "Some prototypes match the same acoustic part in both domains",
         "text": "whcspa P3 (a pure-tone note) and P4 (a series of falling sweeps) mostly fire on the same kind of structure in "
-                "focal and soundscape clips, with soundscape AUC {auc3:.2f} and {auc4:.2f}. P5's best soundscape matches also "
-                "resemble its focal ones, but it is usually silent: median soundscape activation {act5:.2f} on clips with the "
-                "species, and AUC {auc5:.2f}.",
+                "focal and soundscape clips, with soundscape AUC {auc3:.0f} and {auc4:.0f} (out of 100). P5's best soundscape matches also "
+                "resemble its focal ones, but it is usually silent: median soundscape activation {act5:.0f} on clips with the "
+                "species, and AUC {auc5:.0f}.",
         "species": "whcspa", "prototype": 3,
         "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [3, 4, 5],
                      "method": "Visual inspection of the top-3 activating patches per domain (crop = peak cell "
@@ -51,7 +52,7 @@ CURATED_FINDINGS = [
         "title": "Top matches can look different across domains",
         "text": "Two of whcspa P2's three top focal matches are sharp rising sweeps; all three top soundscape matches are a "
                 "buzz-like band near 6 kHz, which resembles the buzz in the third focal match. The images cannot show whether "
-                "these are song or noise. Its soundscape AUC is {auc2:.2f}.",
+                "these are song or noise. Its soundscape AUC is {auc2:.0f}.",
         "species": "whcspa", "prototype": 2,
         "evidence": {"kind": "patches", "species": "whcspa", "prototypes": [2],
                      "method": "Visual inspection of the top-3 activating patches per domain, without listening to the audio. "
@@ -65,8 +66,8 @@ def fill_curated(curated: list[dict], species: list[dict]) -> list[dict]:
     out = []
     for f in curated:
         s = next(x for x in species if x["code"] == f["species"])
-        values = {f"auc{p['k']}": p["soundscape"]["auc"] for p in s["prototypes"]}
-        values |= {f"act{p['k']}": p["soundscape"]["act_q"][QUANTILES.index(50)] for p in s["prototypes"]}
+        values = {f"auc{p['k']}": 100 * p["soundscape"]["auc"] for p in s["prototypes"]}   # shown out of 100
+        values |= {f"act{p['k']}": 100 * p["soundscape"]["act_q"][QUANTILES.index(50)] for p in s["prototypes"]}
         out.append({**f, "text": f["text"].format(**values)})
     return out
 
@@ -173,16 +174,16 @@ def computed_findings(species: list[dict], dists: dict, n_soundscape: int) -> li
     n_above_09 = sum(s["class_auc"]["soundscape"] >= 0.9 for s in species)
     out.append({
         "title": "Species-level detection mostly survives",
-        "text": f"Mean class AUC {mean_f:.3f} on focal vs {mean_s:.3f} on soundscape; {n_above_09} of "
-                f"{len(species)} species keep AUC ≥ 0.90 on soundscapes. {worst_sp} collapses "
-                f"(AUC drops by {worst_drop:.2f}).",
+        "text": f"Mean class AUC {score(mean_f)} on focal vs {score(mean_s)} on soundscape (out of 100); {n_above_09} of "
+                f"{len(species)} species keep AUC ≥ 90 on soundscapes. {worst_sp} collapses "
+                f"(AUC drops by {score(worst_drop, 0)} points).",
         "species": worst_sp, "prototype": None,
         "evidence": {
             "kind": "class_auc_drop", "highlight": [worst_sp],
-            "stats": [["Mean class AUC, focal", f"{mean_f:.3f}"], ["Mean class AUC, soundscape", f"{mean_s:.3f}"],
-                      ["Species with soundscape AUC ≥ 0.90", f"{n_above_09} / {len(species)}"],
-                      ["Largest drop", f"{worst_sp}: {worst_drop:.2f}"],
-                      ["Median drop", f"{np.median([d for _, d in drops]):.3f}"]],
+            "stats": [["Mean class AUC, focal", score(mean_f)], ["Mean class AUC, soundscape", score(mean_s)],
+                      ["Species with soundscape AUC ≥ 90", f"{n_above_09} / {len(species)}"],
+                      ["Largest drop (points)", f"{worst_sp}: {score(worst_drop)}"],
+                      ["Median drop (points)", score(np.median([d for _, d in drops]))]],
             "method": "Class ROC-AUC of the model's sigmoid output for the species, on the focal clips "
                       f"(negatives = other species) and the {n_soundscape:,} soundscape clips.",
         },
@@ -198,17 +199,17 @@ def computed_findings(species: list[dict], dists: dict, n_soundscape: int) -> li
     n_spread = sum(v >= 0.15 for v in spread.values())
     out.append({
         "title": "Prototypes transfer unevenly",
-        "text": f"{n_drop} of {len(protos)} prototypes lose more than 0.1 detection AUC on soundscapes while "
+        "text": f"{n_drop} of {len(protos)} prototypes lose more than 10 points of detection AUC on soundscapes while "
                 f"{n_gain} improve; in {n_spread} of {len(spread)} species the best- and worst-transferring "
-                f"prototypes differ by ≥ 0.15 AUC.",
+                f"prototypes differ by at least 15 points of AUC.",
         "species": None, "prototype": None,
         "evidence": {
             "kind": "delta_auc", "threshold": -0.1,
             "spread": {sp: r(v, 3) for sp, v in spread.items()},
-            "stats": [["Prototypes with ΔAUC < −0.10", f"{n_drop} / {len(protos)}"],
-                      ["Prototypes with ΔAUC > +0.02", f"{n_gain} / {len(protos)}"],
-                      ["Median ΔAUC", f"{np.median(list(dauc.values())):+.3f}"],
-                      ["Species with within-species spread ≥ 0.15", f"{n_spread} / {len(spread)}"]],
+            "stats": [["Prototypes with ΔAUC below −10 points", f"{n_drop} / {len(protos)}"],
+                      ["Prototypes with ΔAUC above +2 points", f"{n_gain} / {len(protos)}"],
+                      ["Median ΔAUC (points)", signed(np.median(list(dauc.values())))],
+                      ["Species with within-species spread ≥ 15 points", f"{n_spread} / {len(spread)}"]],
             "method": "ΔAUC = soundscape − focal ROC-AUC of each prototype's max activation as a detector of its "
                       "own species. Spread = max − min ΔAUC among a species' prototypes.",
         },
@@ -226,20 +227,20 @@ def computed_findings(species: list[dict], dists: dict, n_soundscape: int) -> li
     out.append({
         "title": "Activations shrink, ranking survives",
         "text": f"On clips with the species, the median soundscape activation is {ratio:.0%} of the focal one "
-                f"(pooled medians {m['focal_pos']:.2f} → {m['soundscape_pos']:.2f}). On clips without it, "
-                f"activations stay near zero ({frac_neg_low:.0%} ≤ 0.05), so positives still rank above "
-                f"negatives: median prototype AUC on soundscapes is {med_sauc:.2f}.",
+                f"(pooled medians {score(m['focal_pos'], 0)} → {score(m['soundscape_pos'], 0)} out of 100). On clips without it, "
+                f"activations stay near zero ({frac_neg_low:.0%} are 5 or less), so positives still rank above "
+                f"negatives: median prototype AUC on soundscapes is {score(med_sauc, 0)}.",
         "species": None, "prototype": None,
         "evidence": {
             "kind": "activation_cdf", "cdf": dists,
-            "stats": [["Median activation, focal positives", f"{m['focal_pos']:.3f}"],
-                      ["Median activation, soundscape positives", f"{m['soundscape_pos']:.3f}"],
-                      ["Median activation, focal negatives", f"{m['focal_neg']:.3f}"],
-                      ["Median activation, soundscape negatives", f"{m['soundscape_neg']:.3f}"],
-                      ["Soundscape negatives ≤ 0.05", f"{frac_neg_low:.0%}"],
-                      ["Soundscape positives ≤ 0.05", f"{frac_pos_low:.0%}"],
+            "stats": [["Median activation, focal positives", score(m['focal_pos'])],
+                      ["Median activation, soundscape positives", score(m['soundscape_pos'])],
+                      ["Median activation, focal negatives", score(m['focal_neg'])],
+                      ["Median activation, soundscape negatives", score(m['soundscape_neg'])],
+                      ["Soundscape negatives at 5 or less", f"{frac_neg_low:.0%}"],
+                      ["Soundscape positives at 5 or less", f"{frac_pos_low:.0%}"],
                       ["Median per-prototype ratio (soundscape / focal median)", f"{ratio:.0%}"],
-                      ["Median prototype AUC, soundscape", f"{med_sauc:.3f}"]],
+                      ["Median prototype AUC, soundscape", score(med_sauc)]],
             "method": "Each entry is one prototype's max activation on one clip, pooled over the 70 prototypes of the "
                       "analysed species. Positives = clips labelled with the prototype's species. "
                       f"n = {', '.join(f'{k} {v:,}' for k, v in dists['n'].items())}.",
@@ -287,7 +288,7 @@ def computed_findings(species: list[dict], dists: dict, n_soundscape: int) -> li
                  and p["focal"]["peak_khz"] is not None and p["focal"]["peak_khz"] > HIGH_KHZ]
         out.append({
             "title": "Some failing prototypes simply go silent",
-            "text": f"{n_fail_silent} of {len(failing)} failing prototypes (ΔAUC < −0.10) have zero activation on more than "
+            "text": f"{n_fail_silent} of {len(failing)} failing prototypes (ΔAUC below −10 points) have zero activation on more than "
                     f"{SILENT_SHARE:.0%} of the soundscape clips that contain their species, against "
                     f"{len(silent) - n_fail_silent} of the other {n_ok}. Only {half} failing prototypes are silent on more than "
                     "half, so silence accounts for part of the failures, not most. Counting only clips where a prototype fires, "

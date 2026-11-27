@@ -17,14 +17,14 @@ def auc_chart(auc: dict[str, dict], primary: list[str]) -> str:
     lo = int(lo * 10) / 10
     x = c.linear(lo, 1.0, x0, x1)
     bottom = top + row * len(order)
-    body = c.x_grid(x, [lo + 0.1 * i for i in range(int(round((1 - lo) * 10)) + 1)], top - 6, bottom, lambda t: f"{t:.1f}")
+    body = c.x_grid(x, [lo + 0.1 * i for i in range(int(round((1 - lo) * 10)) + 1)], top - 6, bottom, lambda t: c.score(t, 0))
     body += c.text((x0 + x1) / 2, bottom + 34, "ROC-AUC (test split; axis does not start at 0)", "axis-title", "middle")
     for i, s in enumerate(order):
         y, d = top + i * row + 10, auc[s]
         body += c.text(x0 - 12, y + 4, c.name_of(s), "row-label" + (" sel" if s in primary else ""), "end")
         body += c.line(x(d["focal"]), y, x(d["soundscape"]), y, "connector")
         for dom in ("focal", "soundscape"):
-            body += c.circle(x(d[dom]), y, 5.5, f"dot {dom}", f"{c.name_of(s)}: {dom} AUC {d[dom]:.3f}")
+            body += c.circle(x(d[dom]), y, 5.5, f"dot {dom}", f"{c.name_of(s)}: {dom} AUC {c.score(d[dom])}")
     return c.svg(bottom + 42, "Pretrained model: ROC-AUC per species on focal and soundscape test clips", body)
 
 
@@ -36,7 +36,7 @@ def headroom_chart(res: Results) -> str:
     x0, x1, row, top = 230, 760, 28, 22
     x = c.linear(0.4, 1.0, x0, x1)
     bottom = top + row * len(order)
-    body = c.x_grid(x, (0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0), top - 6, bottom, lambda t: f"{t:.1f}")
+    body = c.x_grid(x, (0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0), top - 6, bottom, lambda t: c.score(t, 0))
     body += c.text((x0 + x1) / 2, bottom + 34, "Soundscape average precision, same held-out clips (axis does not start at 0)",
                    "axis-title", "middle")
     body += c.text(c.W, top - 10, "change · folds", "", "end")
@@ -44,9 +44,9 @@ def headroom_chart(res: Results) -> str:
         y, (base, top_ap, k) = top + i * row + 10, vals[s]
         body += c.text(x0 - 12, y + 4, c.name_of(s), "row-label", "end")
         body += c.line(x(base), y, x(top_ap), y, "connector")
-        body += c.circle(x(base), y, 5.5, "dot neutral", f"{c.name_of(s)}: pretrained AP {base:.3f}")
-        body += c.circle(x(top_ap), y, 5.5, "dot soundscape", f"{c.name_of(s)}: trained on labeled soundscapes, AP {top_ap:.3f}")
-        body += c.text(c.W, y + 4, f"{c.signed(top_ap - base, 2)} · {k}", "cell", "end")
+        body += c.circle(x(base), y, 5.5, "dot neutral", f"{c.name_of(s)}: pretrained AP {c.score(base)}")
+        body += c.circle(x(top_ap), y, 5.5, "dot soundscape", f"{c.name_of(s)}: trained on labeled soundscapes, AP {c.score(top_ap)}")
+        body += c.text(c.W, y + 4, f"{c.signed(top_ap - base)} · {k}", "cell", "end")
     return c.svg(bottom + 42, "Headroom per species: pretrained model vs soundscape-trained model", body)
 
 
@@ -56,7 +56,7 @@ def closable_chart(res: Results) -> str:
     x0, x1, row, top = 230, 760, 34, 12
     x = c.linear(0.5, 1.0, x0, x1)
     bottom = top + row * len(rows)
-    body = c.x_grid(x, (0.5, 0.6, 0.7, 0.8, 0.9, 1.0), top, bottom, lambda t: f"{t:.1f}")
+    body = c.x_grid(x, (0.5, 0.6, 0.7, 0.8, 0.9, 1.0), top, bottom, lambda t: c.score(t, 0))
     body += c.text((x0 + x1) / 2, bottom + 34, "Soundscape average precision on held-out sites (primary species)", "axis-title", "middle")
     for i, (label, key, cls) in enumerate(rows):
         y = top + i * row + 16
@@ -64,9 +64,9 @@ def closable_chart(res: Results) -> str:
         mean = sum(vals) / len(vals)
         body += c.text(x0 - 12, y + 4, label, "row-label", "end")
         for f, v in enumerate(vals):
-            body += c.circle(x(v), y, 4, cls + " fold", f"{label}, fold {f}: {v:.3f}")
+            body += c.circle(x(v), y, 4, cls + " fold", f"{label}, fold {f}: {c.score(v)}")
         body += c.line(x(mean), y - 11, x(mean), y + 11, "mean-tick")
-        body += c.text(x1 + 16, y + 4, f"mean {mean:.3f}")
+        body += c.text(x1 + 16, y + 4, f"mean {c.score(mean)}")
     return c.svg(bottom + 42, "Pretrained model and soundscape-trained model on the same held-out sites", body)
 
 
@@ -95,17 +95,17 @@ def headline_section(res: Results) -> str:
     worked = c.table(
         [f"{name}: {positives} of {clips:,} held-out clips contain it",
          f"Of the {EXAMPLE_TOP} top-scoring clips,<br>how many contain it?", "Average precision<br>for this species"],
-        [["Pretrained model", f"<b>{hit0}</b>", f"{ap0:.2f}"], ["Same model trained on soundscape labels", f"<b>{hit1}</b>", f"{ap1:.2f}"]],
+        [["Pretrained model", f"<b>{hit0}</b>", c.score(ap0)], ["Same model trained on soundscape labels", f"<b>{hit1}</b>", c.score(ap1)]],
         "mini wrap-head")
 
     def cell(k: str, value, note: str = "") -> str:
-        return f"<b>{value(k):.3f}</b><br><small>{c.signed(value(k) - value(BASELINE))} vs pretrained{note}</small>"
+        return f"<b>{c.score(value(k))}</b><br><small>{c.signed(value(k) - value(BASELINE))} points vs pretrained{note}</small>"
 
-    zero = f"<br>could be zero (95% interval {c.signed(held['ci95'][0])} to {c.signed(held['ci95'][1])})"
+    zero = f"<br>could be zero (95% interval {c.signed(held['ci95'][0])} to {c.signed(held['ci95'][1])} points)"
     numbers = c.table(
         ["Headline: soundscape average precision,<br>averaged over the main species",
          "Development sites<br><small>cross-validation, mean of 3</small>", "Test sites<br><small>final check</small>"],
-        [["Pretrained model (starting point)", f"<b>{mean(BASELINE):.3f}</b>", f"<b>{test(BASELINE):.3f}</b>"],
+        [["Pretrained model (starting point)", f"<b>{c.score(mean(BASELINE))}</b>", f"<b>{c.score(test(BASELINE))}</b>"],
          ["Best method so far without soundscape labels (Dropout Student)", cell(STUDENT, mean), cell(STUDENT, test, zero)],
          ["Trained with soundscape labels (what labels can buy)", cell(ORACLE, mean), cell(ORACLE, test)]],
         "mini wrap-head headline")
@@ -113,18 +113,19 @@ def headline_section(res: Results) -> str:
     return c.section("headline", "The headline number, in plain terms", f"""
     <div class="prose">
     <p>For one species, the model gives every 5-second clip a score. Sort the clips from highest to lowest. <b>Average precision
-    (AP)</b> measures how well the clips that really contain the species are gathered at the top. It is <b>1</b> when every such clip
-    is ranked above every other clip. A random ordering scores about the share of clips with the species, here about
-    {positives / clips:.2f}. Higher is better.</p></div>""" + worked + """
+    (AP)</b> measures how well the clips that really contain the species are gathered at the top. We show it <b>out of 100</b>: it is
+    <b>100</b> when every such clip is ranked above every other clip. A random ordering scores about the share of clips with the
+    species, here about {c.score(positives / clips)}. Higher is better.</p></div>""" + worked + """
     <div class="prose"><p>This species was picked because its gap is easy to see; others differ less (chart further down). The
     <b>headline number</b> is AP averaged over the species with enough examples to score.</p></div>""" + numbers + f"""
     <div class="prose"><ul>
-    <li><b>The gap we want to close</b> is the last row minus the first: {c.signed(mean(ORACLE) - mean(BASELINE))} on development
-    sites.</li>
-    <li>A change such as <b>{c.signed(mean(STUDENT) - mean(BASELINE))}</b> is in AP units, from {mean(BASELINE):.3f} to
-    {mean(STUDENT):.3f}. It is not a percentage of clips.</li>
+    <li><b>The gap we want to close</b> is the last row minus the first: {c.score(mean(ORACLE) - mean(BASELINE))} points on
+    development sites.</li>
+    <li>A change of <b>{c.signed(mean(STUDENT) - mean(BASELINE))} points</b> means the score went from {c.score(mean(BASELINE))} to
+    {c.score(mean(STUDENT))}. It does not mean {c.score(mean(STUDENT) - mean(BASELINE))}% more clips are correct, and it is not a relative
+    improvement (relative to the starting score it is {(mean(STUDENT) - mean(BASELINE)) / mean(BASELINE):.0%}).</li>
     <li>Compare numbers <b>down a column</b>, not across: the two columns use different sites.</li>
-    <li>Changes are computed before rounding, so they can differ by 0.001 from the rounded numbers.</li></ul></div>""")
+    <li>Changes are computed before rounding, so they can differ by 0.1 from the rounded numbers.</li></ul></div>""")
 
 
 def build(res: Results) -> Page:
@@ -154,7 +155,7 @@ def build(res: Results) -> Page:
                         c.legend([("neutral-key", "pretrained model"), ("soundscape", "trained on labeled soundscapes")]))
     gap = c.figure("gap-species", "Focal vs soundscape, pretrained model, test split",
                    "Bold names are the 7 primary species. ROC-AUC is shown because average precision depends on how common a species is, "
-                   f"which differs between the two test sets (macro AP: {point['f_ap_primary']:.3f} focal, {point['sc_ap_primary']:.3f} "
+                   f"which differs between the two test sets (macro AP: {c.score(point['f_ap_primary'])} focal, {c.score(point['sc_ap_primary'])} "
                    "soundscape, not directly comparable). The negatives also differ: soundscapes include many clips with no target bird. "
                    "Focal recordings come from Xeno-Canto, which the model was pretrained on, so focal scores are an in-domain reference.",
                    auc_chart(res.test_species_auc(), res.test["species"]["primary"]),
@@ -166,13 +167,11 @@ def build(res: Results) -> Page:
         "recordists; 14 species with at least 10 soundscape positives, 70 prototypes), so counts differ from the test-split numbers "
         "above. It uses soundscape labels, and its sites are the cross-validation sites: a method designed from these findings would "
         "have an optimistic cross-validation score. Treat them as hypotheses. Click a finding to see its data.")
-    codes = "".join(f"<span><code>{k}</code> {c.esc(v)}</span>" for k, v in c.SPECIES_NAMES.items())
-    key = f'<details class="codes"><summary>Species codes used in the evidence charts</summary><div class="code-grid">{codes}</div></details>'
     take = c.takeaways([
-        f"On identical held-out soundscape clips, training on soundscape labels raises AP from {base:.3f} to {top:.3f}. This is the "
+        f"On identical held-out soundscape clips, training on soundscape labels raises AP from {c.score(base)} to {c.score(top)}. This is the "
         "gap we want to close.",
         f"The pretrained model's test AUC (the chance that a clip with a bird is scored above a clip without it) is "
-        f"{point['sc_auc_primary']:.3f} on soundscapes and {point['f_auc_primary']:.3f} on focal clips. "
+        f"{c.score(point['sc_auc_primary'])} on soundscapes and {c.score(point['f_auc_primary'])} on focal clips (out of 100). "
         "Part of this difference may reflect that focal data is in-domain for it and that the negatives differ.",
         f"Prototype detection degrades unevenly, even within one species: on test sites {point['n_fail']} of {n_proto} prototypes are "
         f"clearly worse at detecting their bird on soundscapes than on focal clips ({point['n_fail_birds']} of {n_proto} when both are "
@@ -181,4 +180,4 @@ def build(res: Results) -> Page:
     ], "In short")
     return Page("index.html", "Motivation", "Motivation",
                 "Bird-sound models are learned from clean recordings of single birds, but are needed on noisy field recordings.",
-                headline_section(res) + take + why + closable + headroom + gap + findings + key, ("data.js", "app.js"))
+                headline_section(res) + take + why + closable + headroom + gap + findings, ("data.js", "app.js"))

@@ -43,7 +43,7 @@ GROUPS: tuple[tuple[str, str, tuple[Method, ...]], ...] = (
         Method("sfda-tent", "Tent", "unlabeled audio",
                "Minimises the entropy of the predictions (Wang et al., 2021)."),
         Method("sfda-pseudo_label", "Pseudo-labelling", "unlabeled audio",
-               "Pushes up the species the model currently scores above 0.5 on a clip (after Lee, 2013); no pseudo-negatives."),
+               "Pushes up the species the model currently scores above 50% on a clip (after Lee, 2013); no pseudo-negatives."),
         Method("sfda-dropout_student", "Dropout Student", "unlabeled audio",
                "A noisy copy of the model matches the soft predictions of the noise-free model, renewed every epoch."),
         Method("sfda-notela", "NOTELA", "unlabeled audio",
