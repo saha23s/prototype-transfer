@@ -84,6 +84,25 @@ responses of `scripts/analysis/diagnose_shift.py --task extract`. Cross-validati
 intervals between two cross-validated runs: `scripts/eval/paired_contrasts.py` (CPU). The next planned reruns (more seeds, a
 frozen-backbone label curve) are listed by `scripts/slurm/submit_replications.sh`, which only prints unless given `--submit`.
 
+### Published adaptation baselines
+
+`scripts/method/adapt_sfda.py` runs five source-free domain adaptation methods (`tent`, `pseudo_label`, `dropout_student`,
+`notela`, `shot`) on unlabeled soundscape audio of the training sites; the model is then frozen and scored on held-out sites
+(inductive, as protocol v1 requires). The multi-label math is a port of the audio code of Boudiaf et al. (ICML 2023,
+[sfda-codebase-snapshot](https://github.com/google-research/perch/tree/sfda-codebase-snapshot/chirp/projects/sfda), commit 7412704),
+with their audio settings, untuned. When ported, its labels, neighbour graphs, losses, loss gradients and optimiser steps matched the
+authors' JAX functions to floating-point precision on random inputs; `tests/test_sfda.py` covers the math and the loop without JAX.
+Because this model is a ConvNeXt, the LayerNorm scale and shift are trained (there is no BatchNorm) and the student noise is
+stochastic depth 0.2 (details in `src/prototype_transfer/training/adapt.py`). Test-time methods that need the evaluated audio (e.g.
+LAME) are not run, and T3A, DUST and NRC are not implemented.
+
+```bash
+sbatch scripts/slurm/smoke_sfda.sbatch                          # GPU check of all five (a few batches; peak memory in the log)
+TRAIN_SCRIPT=scripts/method/adapt_sfda.py sbatch --array=0-2 --constraint="48gb|80gb" --time=03:00:00 \
+    scripts/slurm/run_recipe.sbatch sfda-notela sfda-notela --method notela   # adapt + extract + score, 3 folds
+python scripts/eval/cv_aggregate.py sfda-notela
+```
+
 ## Layout
 
 ```
@@ -100,8 +119,8 @@ outputs/results/<dataset>/ committed results; outputs/features and outputs/check
 |---|---|
 | `data/` | loading, preprocessing (32 kHz, 5 s, 256-mel log-spectrogram, model's mean/std), splits and their checksums |
 | `models/` | the 21-class ProtoPNet and its checkpointing / prototype push |
-| `training/` | the four-phase trainer and losses |
-| `method/` | background mixing, species overlap, pseudo-label dataset, label-free background / pseudo-label manifests (the recipe components) |
+| `training/` | the four-phase trainer and losses; the source-free adaptation loop |
+| `method/` | background mixing, species overlap, pseudo-label dataset, label-free background / pseudo-label manifests (the recipe components); training-free and source-free adaptation baselines |
 | `evaluation/` | the canonical evaluation, CV aggregation, intervals between runs, the results store |
 | `analysis/` | per-prototype responses and the domain-shift diagnostics |
 | `reporting/` | the dashboard: page builders (`pages/`), SVG charts, and the interactive data bundle |

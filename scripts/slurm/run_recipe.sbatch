@@ -10,6 +10,9 @@
 # Other examples:
 #   sbatch scripts/slurm/run_recipe.sbatch r0 R0 --train-domain focal --anchored
 #   sbatch --array=0-2 scripts/slurm/run_recipe.sbatch lb500 label-budget-500 --train-domain soundscape --train-labels 500 --select last
+# TRAIN_SCRIPT replaces the trainer with a script that takes --name, --rung, --num-workers and --cv-fold, e.g. the
+# source-free adaptation baselines:
+#   TRAIN_SCRIPT=scripts/method/adapt_sfda.py sbatch --array=0-2 scripts/slurm/run_recipe.sbatch sfda-tent sfda-tent --method tent
 # Needs data/HSN/splits (scripts/data/make_splits.py), outputs/features/hsn/pretrained-xcl/responses.pt (the baseline on test; see
 # scripts/eval/evaluate_models.sh) and, for background / pseudo-label rungs, the manifests of scripts/method/make_background_manifest.py
 # (per fold with --fold F). Pretrained responses on each held-out fold are extracted here if missing.
@@ -59,7 +62,7 @@ if [[ ! -f $BASE ]]; then   # pretrained responses on the held-out fold are chea
 fi
 hostname; nvidia-smi --query-gpu=name,memory.total --format=csv
 
-python scripts/train/train_protopnet.py --name "$RUN" --rung "$RUNG" --num-workers "${SLURM_CPUS_PER_TASK:-8}" "${TRAIN_EXTRA[@]}" "$@"
+python "${TRAIN_SCRIPT:-scripts/train/train_protopnet.py}" --name "$RUN" --rung "$RUNG" --num-workers "${SLURM_CPUS_PER_TASK:-8}" "${TRAIN_EXTRA[@]}" "$@"
 extract "$RUN"
 
 ORACLE=soundscape-only${FOLD:+-cv$FOLD}   # a fold is compared with the oracle trained without the same sites
