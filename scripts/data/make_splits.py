@@ -3,6 +3,13 @@
 
 Outputs data/HSN/splits/{focal,soundscape}_{train,val,test}.parquet and a summary
 outputs/results/<dataset>/dataset/splits.json (per-species positives per split, sites, recordists).
+
+Adaptation / test partitions for the inductive UDA protocol (--partitions K, default 3): the soundscape sites are split
+75 / 25 into an unlabeled adaptation pool and test sites, once per seed k = 0..K-1
+(prototype_transfer.data.splits.adaptation_test_split), written as
+  soundscape_p{k}_adapt.parquet   adaptation sites: their audio may be used without labels
+  soundscape_p{k}_test.parquet    test sites: labels are read only to score
+plus outputs/results/<dataset>/dataset/splits_partitions.json. Pin new files with `python scripts/data/check_splits.py --write`.
 """
 
 from __future__ import annotations
@@ -16,7 +23,7 @@ import pandas as pd
 
 
 from prototype_transfer.models.classifier import HSN_SPECIES_LIST
-from prototype_transfer.data.splits import focal_split, soundscape_split
+from prototype_transfer.data.splits import N_PARTITIONS, adaptation_test_split, focal_split, soundscape_split
 from prototype_transfer.evaluation import results
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -31,6 +38,7 @@ def main() -> None:
     p.add_argument("--out-dir", type=Path, default=Path("data/HSN/splits"))
     p.add_argument("--dataset", default=results.DEFAULT_DATASET, help="the split summary goes to outputs/results/<dataset>/dataset/")
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--partitions", type=int, default=N_PARTITIONS, help="adaptation / test site partitions to write (0 = off)")
     args = p.parse_args()
     store = results.Store(args.dataset)
     args.out_dir.mkdir(parents=True, exist_ok=True)
@@ -55,6 +63,21 @@ def main() -> None:
             summary[name][split] = {"n_clips": len(part), **extra,
                                     "positives": {sp: int(counts.get(sp, 0)) for sp in HSN_SPECIES_LIST}}
             logger.info(f"{name}/{split}: {len(part)} clips")
+    parts = {}
+    for k in range(args.partitions):
+        split, info = adaptation_test_split(s.drop(columns="split"), partition=k)
+        assert not set(info["sites"]["adapt"]) & set(info["sites"]["test"]), "a site is on both sides of a partition"
+        counts = {}
+        for part in ("adapt", "test"):
+            df = s.drop(columns="split")[split == part].reset_index(drop=True)
+            df.to_parquet(args.out_dir / f"soundscape_p{k}_{part}.parquet", index=False)
+            c = df["hsn_classes"].explode().dropna().value_counts()
+            counts[part] = {"n_clips": len(df), "n_sites": len(info["sites"][part]),
+                            "positives": {sp: int(c.get(sp, 0)) for sp in HSN_SPECIES_LIST}}
+            logger.info(f"soundscape/p{k}_{part}: {len(df)} clips ({len(info['sites'][part])} sites)")
+        parts[str(k)] = {**info, **counts}
+    if parts:
+        results.atomic_write(store.dataset_dir / "splits_partitions.json", json.dumps(parts, indent=1))
     # recordist leakage check
     rec = {sp: set(f.loc[f["split"] == sp, "recordist"]) for sp in ("train", "val", "test")}
     assert not (rec["train"] & rec["test"]) and not (rec["val"] & rec["test"]), "recordist leakage"

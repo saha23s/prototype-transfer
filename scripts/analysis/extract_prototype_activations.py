@@ -23,6 +23,7 @@ import torch
 from prototype_transfer.data.datasets import HSNInferenceDataset
 from prototype_transfer.models.classifier import HSN_SPECIES_LIST, HSNProtoPNetClassifier
 from prototype_transfer.analysis.prototype_responses import extract_prototype_responses, prototype_transfer_stats
+from prototype_transfer.data.splits import verify_split
 from prototype_transfer.evaluation import results as store_lib
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -51,6 +52,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    for manifest in (args.focal_manifest, args.soundscape_manifest):   # a split file must be the committed one
+        verify_split(manifest)
     device = ("cuda" if torch.cuda.is_available() else "cpu") if args.device == "auto" else args.device
     logger.info(f"Using device: {device}")
     store = store_lib.Store(args.dataset)

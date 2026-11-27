@@ -54,6 +54,15 @@ Spectrograms are computed on the fly from the audio (`src/prototype_transfer/dat
 log-spectrogram, normalised with the model's training mean/std). Pass `--cache-tensors` to
 `preprocess_hsn.py` to pre-compute them to disk.
 
+## Splits
+
+`scripts/data/make_splits.py` writes the leakage-aware splits to `data/HSN/splits/`: focal split by recordist and soundscape
+split by site (train / val / test), plus 3 adaptation / test partitions of the soundscape sites (75 / 25, seeds 0 to 2) for
+unsupervised adaptation: `soundscape_p<k>_adapt.parquet` may be used as unlabeled audio, and `soundscape_p<k>_test.parquet` only to
+score. Their fingerprints are committed in `configs/splits/hsn.json`. `python scripts/data/check_splits.py` verifies them; after
+writing new split files, pin them once with `--write`. Training and prototype extraction refuse a split file that differs from its
+fingerprint, and `prototype_transfer.data.splits.check_no_heldout` refuses adaptation manifests that contain test clips.
+
 ## Results
 
 Training, inference, prototype extraction and model comparison save their numbers through one writer into
