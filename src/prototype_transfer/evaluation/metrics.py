@@ -5,6 +5,7 @@ Implements the official BirdSet benchmark evaluation standards:
   - Macro ROC-AUC: Area under the ROC curve averaged across valid classes
   - Top-1 Accuracy: Fraction of predictions where argmax matches an active label
   - F1 Macro: Macro-averaged F1 score at a specified decision threshold
+birdset_scores() is the soundscape summary used to compare with the published BirdSet / AudioProtoPNet numbers.
 """
 
 from __future__ import annotations
@@ -85,6 +86,24 @@ def compute_top1_accuracy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         if y_true[i, top1_indices[i]] == 1:
             correct += 1
     return float(correct / max(1, total))
+
+
+def birdset_scores(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, Any]:
+    """cmAP, AUROC and top-1 accuracy of soundscape predictions, as compared with the published BirdSet numbers.
+
+    cmAP averages over classes with >= 1 positive, AUROC over classes with positives and negatives. Top-1 is reported over
+    all clips (clips without any label count as wrong) and over clips with >= 1 label. Only the labelled-clips version
+    reproduces the published HSN top-1 of AudioProtoPNet-5 (0.68 against 0.65), so that is the one to compare.
+    """
+    y_true = (np.asarray(y_true) > 0.5).astype(int)
+    y_pred = np.asarray(y_pred, dtype=float)
+    labelled = y_true.sum(1) > 0
+    hit = y_true[np.arange(len(y_true)), y_pred.argmax(1)]
+    return {"n_clips": int(len(y_true)), "n_labelled_clips": int(labelled.sum()),
+            "n_species_with_positives": int((y_true.sum(0) > 0).sum()),
+            "cmAP": compute_cmap(y_true, y_pred)[0], "AUROC": compute_macro_roc_auc(y_true, y_pred)[0],
+            "T1_all_clips": float(hit.mean()) if len(hit) else 0.0,
+            "T1_labelled_clips": float(hit[labelled].mean()) if labelled.any() else 0.0}
 
 
 def evaluate_predictions(

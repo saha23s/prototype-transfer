@@ -63,6 +63,12 @@ score. Their fingerprints are committed in `configs/splits/hsn.json`. `python sc
 writing new split files, pin them once with `--write`. Training and prototype extraction refuse a split file that differs from its
 fingerprint, and `prototype_transfer.data.splits.check_no_heldout` refuses adaptation manifests that contain test clips.
 
+## Reproducing the published numbers
+
+`scripts/eval/reproduce_birdset.sh` scores the published AudioProtoPNet-5-XCL on all HSN soundscapes and on the 3 partitions'
+test sites with BirdSet's metrics (`scripts/eval/birdset_metrics.py`). It matches the model card's cmAP and top-1; the numbers
+and caveats are in [docs/BIRDSET.md](docs/BIRDSET.md).
+
 ## Results
 
 Training, inference, prototype extraction and model comparison save their numbers through one writer into
