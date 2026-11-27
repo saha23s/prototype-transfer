@@ -2,7 +2,7 @@
 """Write leakage-aware train/val/test manifests for one-domain ProtoPNet training.
 
 Outputs data/HSN/splits/{focal,soundscape}_{train,val,test}.parquet and a summary
-outputs/results/splits.json (per-species positives per split, sites, recordists).
+outputs/results/<dataset>/dataset/splits.json (per-species positives per split, sites, recordists).
 """
 
 from __future__ import annotations
@@ -17,6 +17,7 @@ import pandas as pd
 
 from prototype_transfer.models.classifier import HSN_SPECIES_LIST
 from prototype_transfer.data.splits import focal_split, soundscape_split
+from prototype_transfer.evaluation import results
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("make_splits")
@@ -28,9 +29,10 @@ def main() -> None:
     p.add_argument("--focal-manifest", type=Path, default=pre / "focal_manifest_full.parquet")
     p.add_argument("--soundscape-manifest", type=Path, default=pre / "soundscape_manifest_full.parquet")
     p.add_argument("--out-dir", type=Path, default=Path("data/HSN/splits"))
-    p.add_argument("--summary", type=Path, default=Path("outputs/results/splits.json"))
+    p.add_argument("--dataset", default=results.DEFAULT_DATASET, help="the split summary goes to outputs/results/<dataset>/dataset/")
     p.add_argument("--seed", type=int, default=0)
     args = p.parse_args()
+    store = results.Store(args.dataset)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     f = pd.read_parquet(args.focal_manifest)
@@ -56,9 +58,8 @@ def main() -> None:
     # recordist leakage check
     rec = {sp: set(f.loc[f["split"] == sp, "recordist"]) for sp in ("train", "val", "test")}
     assert not (rec["train"] & rec["test"]) and not (rec["val"] & rec["test"]), "recordist leakage"
-    args.summary.parent.mkdir(parents=True, exist_ok=True)
-    args.summary.write_text(json.dumps(summary, indent=1))
-    logger.info(f"Wrote {args.out_dir} and {args.summary} (soundscape objective {sc_info['objective']:.3f})")
+    results.atomic_write(store.dataset_dir / "splits.json", json.dumps(summary, indent=1))
+    logger.info(f"Wrote {args.out_dir} and {store.dataset_dir} (soundscape objective {sc_info['objective']:.3f})")
 
 
 if __name__ == "__main__":

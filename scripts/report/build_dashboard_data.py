@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Export the prototype-transfer results into a self-contained dashboard data bundle.
 
-Reads outputs/features/prototype_responses.pt + outputs/results/prototype_transfer.json and writes
+Reads the pretrained model's responses_full.pt and prototype_transfer_full.json from the results store
+(scripts/analysis/extract_prototype_activations.py pretrained-xcl --tag full; docs/RESULTS.md) and writes
   dashboard/data.json, data.js     per-species / per-prototype stats + findings
   dashboard/patches/<sp>_P<k>_<domain>_<rank>.png   top-activating spectrogram crops
-and, if present, embeds outputs/results/model_comparison.json (test-split comparison of pretrained XCL,
+and, if present, embeds the model_comparison summary of the results store (test-split comparison of pretrained XCL,
 focal-only and soundscape-only models) as `model_comparison`. `--comparison-only` refreshes just that
 block in an existing dashboard/data.json, without the features file or audio.
 
@@ -29,6 +30,7 @@ import torch
 
 from prototype_transfer.models.classifier import MODEL_REVISION
 from prototype_transfer.data.preprocessing import AudioPreprocessor
+from prototype_transfer.evaluation import results
 from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -391,15 +393,20 @@ def write_bundle(out: dict, out_dir: Path) -> None:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--features-path", type=Path, default=Path("outputs/features/prototype_responses.pt"))
-    p.add_argument("--results-path", type=Path, default=Path("outputs/results/prototype_transfer.json"))
+    p.add_argument("--dataset", default=results.DEFAULT_DATASET)
+    p.add_argument("--features-path", type=Path, default=None, help="default: the pretrained model's responses_full.pt")
+    p.add_argument("--results-path", type=Path, default=None, help="default: the pretrained model's prototype_transfer_full.json")
     p.add_argument("--out-dir", type=Path, default=Path("dashboard"))
     p.add_argument("--top", type=int, default=3, help="Patches per prototype and domain")
     p.add_argument("--skip-patches", action="store_true")
-    p.add_argument("--comparison-path", type=Path, default=Path("outputs/results/model_comparison.json"))
+    p.add_argument("--comparison-path", type=Path, default=None, help="default: summaries/model_comparison.json")
     p.add_argument("--comparison-only", action="store_true",
                    help="Only (re)embed --comparison-path into the existing <out-dir>/data.json")
     args = p.parse_args()
+    store = results.Store(args.dataset)
+    args.features_path = args.features_path or store.features("pretrained-xcl") / "responses_full.pt"
+    args.results_path = args.results_path or store.run_dir("pretrained-xcl") / "prototype_transfer_full.json"
+    args.comparison_path = args.comparison_path or store.summary("model_comparison")
 
     if args.comparison_only:
         out = json.loads((args.out_dir / "data.json").read_text())

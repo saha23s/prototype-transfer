@@ -6,8 +6,8 @@
 __pycache__/
 *.pyc
 
-# Generated artifacts (large / reproducible)
-outputs/features/
-outputs/smoke/
+# Generated artifacts: everything a run produces stays out of git (results store, features, checkpoints,
+# figures). Only the split fingerprints in configs/splits/ are committed.
+outputs/
 *.pt
 slurm-*.out

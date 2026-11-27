@@ -1,20 +1,21 @@
 #!/usr/bin/env python3
 """Compare models (pretrained XCL, focal-only, soundscape-only) on the held-out TEST splits.
 
-Inputs: per-model responses from extract_prototype_activations.py run on
+Inputs: per-model responses (outputs/features/<dataset>/<run_id>/responses.pt) from extract_prototype_activations.py run on
 data/HSN/splits/{focal,soundscape}_test.parquet. Species analysed: >= --min-pos positives in BOTH
-test sets. Writes outputs/results/model_comparison.json and prints a summary table.
+test sets. Saves summaries/model_comparison.json in the results store and prints a summary table.
 """
 
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 
 import numpy as np
 import torch
 from sklearn.metrics import average_precision_score, roc_auc_score
+
+from prototype_transfer.evaluation import results
 
 
 DOMAINS = ("focal", "soundscape")
@@ -36,13 +37,17 @@ def domain_metrics(d: dict, cols: list[int]) -> dict:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--model", nargs=3, action="append", metavar=("NAME", "TRAIN_DOMAIN", "FEATURES_PT"), required=True,
-                   help="e.g. --model focal-only focal outputs/features/responses_focal-only.pt (TRAIN_DOMAIN: focal|soundscape|xcl)")
+    p.add_argument("--dataset", default=results.DEFAULT_DATASET)
+    p.add_argument("--model", nargs="+", action="append", metavar=("RUN_ID", "TRAIN_DOMAIN"), required=True,
+                   help="RUN_ID TRAIN_DOMAIN [FEATURES_PT], e.g. --model focal-only focal (TRAIN_DOMAIN: focal|soundscape|xcl); "
+                        "the responses default to outputs/features/<dataset>/<run_id>/responses.pt")
     p.add_argument("--min-pos", type=int, default=5)
-    p.add_argument("--out", type=Path, default=Path("outputs/results/model_comparison.json"))
     args = p.parse_args()
-
-    payloads = {n: (dom, torch.load(f, map_location="cpu", weights_only=False)) for n, dom, f in args.model}
+    if any(len(m) not in (2, 3) for m in args.model):
+        p.error("--model takes RUN_ID TRAIN_DOMAIN [FEATURES_PT]")
+    store = results.Store(args.dataset)
+    payloads = {m[0]: (m[1], torch.load(m[2] if len(m) == 3 else store.features(m[0]) / "responses.pt", map_location="cpu", weights_only=False))
+                for m in args.model}
     first = next(iter(payloads.values()))[1]
     sp_list = first["species_list"]
     n_pos = {d: first[d]["targets"].sum(axis=0) for d in DOMAINS}
@@ -60,8 +65,7 @@ def main() -> None:
             entry["gap_cmAP"] = m[train_dom]["cmAP"] - m[other]["cmAP"]
             entry["gap_proto_auc_median"] = m[train_dom]["proto_auc_median"] - m[other]["proto_auc_median"]
         out["models"][name] = entry
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    args.out.write_text(json.dumps(out, indent=1))
+    saved = results.save_summary(store, "model_comparison", out, headline={"n_species": len(cols)})
 
     print(f"Species ({len(cols)}): {', '.join(out['species'])}")
     print(f"{'model':16} {'train':10} | {'focal cmAP':>10} {'sc cmAP':>8} | {'focal AUC':>9} {'sc AUC':>7} | "
@@ -70,7 +74,7 @@ def main() -> None:
         print(f"{n:16} {e['train_domain']:10} | {e['focal']['cmAP']:10.3f} {e['soundscape']['cmAP']:8.3f} | "
               f"{e['focal']['macro_auc']:9.3f} {e['soundscape']['macro_auc']:7.3f} | "
               f"{e['focal']['proto_auc_median']:10.3f} {e['soundscape']['proto_auc_median']:10.3f}")
-    print(f"Wrote {args.out}")
+    print(f"Saved {saved['paths']['summary']}")
 
 
 if __name__ == "__main__":

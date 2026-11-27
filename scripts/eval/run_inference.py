@@ -9,7 +9,8 @@ Computes official metrics:
   - Macro ROC-AUC
   - Top-1 Accuracy
   - Macro F1
-Saves results to outputs/results/ and caches activations for visual analysis.
+Saves the metrics as the `inference` section of the pretrained-xcl run in the results store (docs/RESULTS.md), and the
+activation cache for visual analysis to outputs/features/<dataset>/pretrained-xcl/eval_cache.pt.
 """
 
 from __future__ import annotations
@@ -30,6 +31,7 @@ from tqdm import tqdm
 
 from prototype_transfer.models.classifier import HSNProtoPNetClassifier, HSN_SPECIES_LIST
 from prototype_transfer.data.datasets import HSNInferenceDataset
+from prototype_transfer.evaluation import results
 from prototype_transfer.evaluation.metrics import evaluate_predictions
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -123,7 +125,7 @@ def parse_args() -> argparse.Namespace:
                         default=Path("data/HSN/preprocessed/focal_manifest.parquet"))
     parser.add_argument("--soundscape-manifest", type=Path,
                         default=Path("data/HSN/preprocessed/soundscape_manifest.parquet"))
-    parser.add_argument("--output-dir", type=Path, default=Path(cfg["evaluation"]["output_dir"]))
+    parser.add_argument("--dataset", default=results.DEFAULT_DATASET, help="results store dataset (e.g. smoke for a test run)")
     parser.add_argument("--batch-size", type=int, default=cfg["model"]["batch_size"])
     parser.add_argument("--max-focal-samples", type=int, default=250)
     parser.add_argument("--max-soundscape-samples", type=int, default=250)
@@ -137,7 +139,8 @@ def main() -> None:
     if args.device == "auto":
         args.device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.info(f"Using device: {args.device}")
-    output_dir = args.output_dir.resolve()
+    store = results.Store(args.dataset)
+    output_dir = store.features("pretrained-xcl")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Load Model
@@ -172,12 +175,6 @@ def main() -> None:
     )
 
     # 4. Save Metrics
-    focal_metrics_path = output_dir / "focal_metrics.json"
-    sc_metrics_path = output_dir / "soundscape_metrics.json"
-    with open(focal_metrics_path, "w") as f:
-        json.dump(focal_res["metrics"], f, indent=2)
-    with open(sc_metrics_path, "w") as f:
-        json.dump(sc_res["metrics"], f, indent=2)
 
     comparison_summary = {
         "focal": {
@@ -195,9 +192,11 @@ def main() -> None:
             "mean_prototype_activation": sc_res["metrics"]["mean_prototype_activation"],
         },
     }
-    summary_path = output_dir / "comparison_summary.json"
-    with open(summary_path, "w") as f:
-        json.dump(comparison_summary, f, indent=2)
+    results.save_results(store, "pretrained-xcl", "inference",
+                         {**comparison_summary, "manifests": {"focal": args.focal_manifest, "soundscape": args.soundscape_manifest}},
+                         kind="reference", headline={f"{d}_cmAP": comparison_summary[d]["cmAP"] for d in ("focal", "soundscape")},
+                         files={"focal_metrics.json": focal_res["metrics"], "soundscape_metrics.json": sc_res["metrics"],
+                                "comparison_summary.json": comparison_summary})
 
     # 5. Cache Activations & Data for Visual Analysis
     cache_path = output_dir / "eval_cache.pt"
