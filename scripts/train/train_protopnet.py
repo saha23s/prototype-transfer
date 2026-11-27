@@ -33,6 +33,7 @@ from torch.utils.data import DataLoader
 
 from prototype_transfer.data.datasets import HSNInferenceDataset
 from prototype_transfer.evaluation.metrics import compute_cmap, compute_macro_roc_auc
+from prototype_transfer.data.splits import verify_split
 from prototype_transfer.evaluation import results
 from prototype_transfer.models.protopnet import (build_hsn_protopnet, load_checkpoint, orthogonality_loss, param_groups,
                            push_prototypes, save_checkpoint, set_trainable)
@@ -109,6 +110,12 @@ def main() -> None:
     p.add_argument("--max-eval-samples", type=int, default=None, help="debug: limit val clips")
     p.add_argument("--seed", type=int, default=0)
     args = p.parse_args()
+    for d in DOMAINS:   # refuse splits that differ from the committed ones (configs/splits/hsn.json)
+        for part in ("train", "val"):
+            try:
+                verify_split(args.splits_dir / f"{d}_{part}.parquet")
+            except ValueError as e:
+                p.error(str(e))
     name = args.name or f"{args.train_domain}-only"
     store = results.Store(args.dataset)
     ckpt_dir = store.checkpoints(name)
