@@ -25,6 +25,30 @@
   "soundscape_test.parquet": {
    "n_clips": 3600,
    "sha256": "5b1510ccbd296495516e64c71a690f3fe0c20de414b57a496ee82204b2be4f61"
+  },
+  "soundscape_p0_adapt.parquet": {
+   "n_clips": 9000,
+   "sha256": "cdd2022d437d54a68923b193d7ba1f55a7cabcbc9eee305b78093e453a11e8d2"
+  },
+  "soundscape_p0_test.parquet": {
+   "n_clips": 3000,
+   "sha256": "f36e833f363e492ed28e34770702553e476df175f96e0764d42a2db41c794970"
+  },
+  "soundscape_p1_adapt.parquet": {
+   "n_clips": 9000,
+   "sha256": "ae1797c53fb4cbad45b39510ba7f89c5f16b8fd5ed3f04d8518af7dc85cc8338"
+  },
+  "soundscape_p1_test.parquet": {
+   "n_clips": 3000,
+   "sha256": "885bdecd693fa628b901ee9400a84e55c0c2b4a6788d0e2d50ac2d4acd469d80"
+  },
+  "soundscape_p2_adapt.parquet": {
+   "n_clips": 9000,
+   "sha256": "6beccd418a22483f53a485bd64c0e49e7118552c4c667dd1a69410362e7522c2"
+  },
+  "soundscape_p2_test.parquet": {
+   "n_clips": 3000,
+   "sha256": "832c38e6e5eebdb05b55335b8ad2184bf48a524eac712f6c025a801ac7e66eed"
   }
  }
 }
