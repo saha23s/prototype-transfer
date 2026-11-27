@@ -30,14 +30,14 @@ Run on a compute node (a GPU is used automatically if available; CPU works but i
 
 | Step | Script | Output |
 |---|---|---|
-| Download HSN (metadata, audio) | `scripts/download_hsn.py` | `data/HSN/raw/` |
-| Build manifests | `scripts/preprocess_hsn.py` | `data/HSN/preprocessed/*.parquet` |
-| Inference + metrics | `scripts/run_inference.py` | `outputs/results/*.json`, `eval_cache.pt` |
-| Figures | `scripts/visualize_analysis.py` | `outputs/figures/fig*.png` |
-| Full manifests (no caps) | `scripts/preprocess_hsn.py --full` | `data/HSN/preprocessed/*_full.parquet` |
-| Per-prototype responses | `scripts/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
-| Prototype-transfer figures | `scripts/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
-| Dashboard data | `scripts/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
+| Download HSN (metadata, audio) | `scripts/data/download_hsn.py` | `data/HSN/raw/` |
+| Build manifests | `scripts/data/preprocess_hsn.py` | `data/HSN/preprocessed/*.parquet` |
+| Inference + metrics | `scripts/eval/run_inference.py` | `outputs/results/*.json`, `eval_cache.pt` |
+| Figures | `scripts/report/visualize_analysis.py` | `outputs/figures/fig*.png` |
+| Full manifests (no caps) | `scripts/data/preprocess_hsn.py --full` | `data/HSN/preprocessed/*_full.parquet` |
+| Per-prototype responses | `scripts/analysis/extract_prototype_activations.py` | `outputs/features/prototype_responses.pt`, `outputs/results/prototype_transfer.json` |
+| Prototype-transfer figures | `scripts/report/visualize_prototype_transfer.py` | `outputs/figures/pt*.png` |
+| Dashboard data | `scripts/report/build_dashboard_data.py` | `dashboard/data.js`, `dashboard/patches/` |
 
 ### Prototype transfer (focal -> soundscape)
 
@@ -50,7 +50,7 @@ Only species with >= 10 soundscape positives are plotted. Note that the focal re
 Xeno-Canto, i.e. part of the model's XCL training data, so focal numbers are an in-domain
 reference rather than a held-out score.
 
-Spectrograms are computed on the fly from the audio (`src/preprocessing.py`: 32 kHz, 5 s, 256-mel
+Spectrograms are computed on the fly from the audio (`src/prototype_transfer/data/preprocessing.py`: 32 kHz, 5 s, 256-mel
 log-spectrogram, normalised with the model's training mean/std). Pass `--cache-tensors` to
 `preprocess_hsn.py` to pre-compute them to disk.
 
@@ -58,11 +58,11 @@ log-spectrogram, normalised with the model's training mean/std). Pass `--cache-t
 
 ```
 configs/   dataset_hsn.yaml (audio/STFT/species), model_protonet.yaml (device, batch size, output dirs)
-src/       dataset, preprocessing, model wrapper, metrics, plotting
-scripts/   entry points + setup_storage.sh, run_pipeline.sh, slurm/pipeline.sbatch
+src/prototype_transfer/   the package (editable install via `uv sync`): data/, models/, method/, evaluation/, analysis/, reporting/
+scripts/                  entry points by stage: data/ analysis/ eval/ report/ train/, plus setup_storage.sh, run_pipeline.sh, slurm/
 ```
 
-`run_inference.py` reads its defaults (device, batch size, output dir) from
+`scripts/eval/run_inference.py` reads its defaults (device, batch size, output dir) from
 `configs/model_protonet.yaml`; any of them can be overridden on the command line.
 
 ### Dashboard
@@ -73,7 +73,7 @@ and a data table. Open it directly in a browser (no server needed). Rebuild its 
 re-running the analysis (needs the audio for the patch crops):
 
 ```bash
-python scripts/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
+python scripts/report/build_dashboard_data.py   # -> dashboard/data.js, data.json, patches/
 ```
 
 Every finding is generated together with its evidence (chart data, key numbers, method note), so the
@@ -98,5 +98,5 @@ Python is pinned by `.python-version`.
 ## Notes
 
 - `transformers` must stay `<5.0`: the model's remote code is incompatible with 5.x (pinned in `pyproject.toml`).
-- The model is loaded with `trust_remote_code=True` from the Hugging Face Hub at a pinned commit (`MODEL_REVISION` in `src/model.py`), so weights and modeling code can't change under you; the HF cache is kept in `models/hf`.
+- The model is loaded with `trust_remote_code=True` from the Hugging Face Hub at a pinned commit (`MODEL_REVISION` in `src/prototype_transfer/models/classifier.py`), so weights and modeling code can't change under you; the HF cache is kept in `models/hf`.
 - `data/`, `models/` and `.venv` are symlinks created by `setup_storage.sh` and are git-ignored.

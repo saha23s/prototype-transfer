@@ -2,7 +2,7 @@
 """Figures: how AudioProtoPNet's HSN prototypes transfer from focal to soundscape audio.
 
 Reads outputs/features/prototype_responses.pt and outputs/results/prototype_transfer.json
-(written by scripts/extract_prototype_activations.py) and writes to outputs/figures/:
+(written by scripts/analysis/extract_prototype_activations.py) and writes to outputs/figures/:
 
   pt1_prototype_auc_transfer.png   per-prototype detection AUC, focal vs soundscape
   pt2_activation_by_prototype.png  max activation on positives per prototype, both domains
@@ -20,7 +20,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 from pathlib import Path
 
 import matplotlib
@@ -31,10 +30,9 @@ import numpy as np
 import torch
 from sklearn.decomposition import PCA
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.preprocessing import AudioPreprocessor
-from src.prototype_analysis import grid_cell_to_spec_slice, grid_row_centers_khz
+from prototype_transfer.data.preprocessing import AudioPreprocessor
+from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("visualize_prototype_transfer")

@@ -13,7 +13,7 @@ logged for monitoring transfer during training.
 Outputs: outputs/runs/<name>/{best.pt, history.json, push.json, args.json}
          outputs/results/train_<name>.json (final val metrics both domains)
 Launch on filo through the GPU reservation wrapper:
-  ~/.local/bin/local-training-3090 python scripts/train_protopnet.py --train-domain focal
+  ~/.local/bin/local-training-3090 python scripts/train/train_protopnet.py --train-domain focal
 """
 
 from __future__ import annotations
@@ -29,13 +29,12 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.inference_dataset import HSNInferenceDataset
-from src.metrics import compute_cmap, compute_macro_roc_auc
-from src.protopnet import (build_hsn_protopnet, load_checkpoint, orthogonality_loss, param_groups,
+from prototype_transfer.data.datasets import HSNInferenceDataset
+from prototype_transfer.evaluation.metrics import compute_cmap, compute_macro_roc_auc
+from prototype_transfer.models.protopnet import (build_hsn_protopnet, load_checkpoint, orthogonality_loss, param_groups,
                            push_prototypes, save_checkpoint, set_trainable)
-from src.train_dataset import HSNTrainDataset
+from prototype_transfer.method.train_dataset import HSNTrainDataset
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("train_protopnet")

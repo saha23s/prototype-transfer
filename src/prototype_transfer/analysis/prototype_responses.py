@@ -22,7 +22,7 @@ from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 
-from src.model import HSNProtoPNetClassifier
+from prototype_transfer.models.classifier import HSNProtoPNetClassifier
 
 logger = logging.getLogger("prototype_analysis")
 

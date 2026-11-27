@@ -2,7 +2,7 @@
 
 Focal recordings: random 5-s crop (partial decode). Soundscape clips: the 5-s clip itself.
 Augmentations (train only): random gain, time/frequency masking on the normalised log-mel.
-Evaluation uses src.inference_dataset.HSNInferenceDataset (peak-energy window for focal).
+Evaluation uses prototype_transfer.data.datasets.HSNInferenceDataset (peak-energy window for focal).
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ import torch
 import torchaudio
 from torch.utils.data import Dataset
 
-from src.model import HSN_SPECIES_LIST
-from src.preprocessing import AudioPreprocessor
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
+from prototype_transfer.data.preprocessing import AudioPreprocessor
 
 CLASS_TO_IDX = {sp: i for i, sp in enumerate(HSN_SPECIES_LIST)}
 

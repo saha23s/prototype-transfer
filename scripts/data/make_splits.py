@@ -10,15 +10,13 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.model import HSN_SPECIES_LIST
-from src.splits import focal_split, soundscape_split
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
+from prototype_transfer.data.splits import focal_split, soundscape_split
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("make_splits")

@@ -20,11 +20,9 @@ import pandas as pd
 import torch
 from tqdm import tqdm
 
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.preprocessing import AudioPreprocessor, DEFAULT_SAMPLE_RATE, DEFAULT_CLIP_SECONDS
-from src.model import HSN_SPECIES_LIST
+from prototype_transfer.data.preprocessing import AudioPreprocessor, DEFAULT_SAMPLE_RATE, DEFAULT_CLIP_SECONDS
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("preprocess_hsn")

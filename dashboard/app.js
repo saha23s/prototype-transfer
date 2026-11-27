@@ -1,5 +1,5 @@
 // Prototype-transfer dashboard. Data: window.DASHBOARD_DATA (data.js, built by
-// scripts/build_dashboard_data.py). Plain DOM + inline SVG, no dependencies.
+// scripts/report/build_dashboard_data.py). Plain DOM + inline SVG, no dependencies.
 (() => {
   "use strict";
   const DATA = window.DASHBOARD_DATA;

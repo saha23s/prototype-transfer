@@ -16,7 +16,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 from datetime import date
 from pathlib import Path
 
@@ -27,11 +26,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.model import MODEL_REVISION
-from src.preprocessing import AudioPreprocessor
-from src.prototype_analysis import grid_cell_to_spec_slice, grid_row_centers_khz
+from prototype_transfer.models.classifier import MODEL_REVISION
+from prototype_transfer.data.preprocessing import AudioPreprocessor
+from prototype_transfer.analysis.prototype_responses import grid_cell_to_spec_slice, grid_row_centers_khz
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("build_dashboard_data")

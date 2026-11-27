@@ -22,7 +22,7 @@ from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
 from transformers import AutoConfig, AutoModelForSequenceClassification
 
-from src.model import HSN_SPECIES_LIST, MODEL_REVISION
+from prototype_transfer.models.classifier import HSN_SPECIES_LIST, MODEL_REVISION
 
 logger = logging.getLogger("protopnet")
 PRETRAINED = "DBD-research-group/AudioProtoPNet-5-BirdSet-XCL"
