@@ -17,7 +17,8 @@ from prototype_transfer.evaluation.metrics import ap_cols, auc_cols
 FOLDS = (0, 1, 2)
 BASELINE, ORACLE = "pretrained-xcl", "soundscape-only"
 LABEL_BUDGETS = (100, 250, 500, 1000, 2000)
-TEST_RUNS = ("focal-only", ORACLE)   # trained models that, besides the baseline, have been scored on the test split
+PUBLISHED = ("sfda-tent", "sfda-pseudo_label", "sfda-dropout_student", "sfda-notela", "sfda-shot")   # source-free adaptation
+TEST_RUNS = (*PUBLISHED, "focal-only", ORACLE)   # besides the baseline, the models scored on the test split
 CHECK_TOL = 1e-6
 
 
@@ -37,6 +38,20 @@ GROUPS: tuple[tuple[str, str, tuple[Method, ...]], ...] = (
         Method("tf-reweight", "Prototype reweighting", "unlabeled audio",
                "Each prototype's class weight is scaled by how much of its contrast (top 5% mean − median) survives on soundscapes; "
                "each species keeps its total weight. A heuristic introduced here."),
+    )),
+    ("sfda", "Published source-free adaptation: update normalisation weights on unlabeled soundscape audio", (
+        Method("sfda-tent", "Tent", "unlabeled audio",
+               "Minimises the entropy of the predictions (Wang et al., 2021)."),
+        Method("sfda-pseudo_label", "Pseudo-labelling", "unlabeled audio",
+               "Pushes up the species the model currently scores above 0.5 on a clip (after Lee, 2013); no pseudo-negatives."),
+        Method("sfda-dropout_student", "Dropout Student", "unlabeled audio",
+               "A noisy copy of the model matches the soft predictions of the noise-free model, renewed every epoch."),
+        Method("sfda-notela", "NOTELA", "unlabeled audio",
+               "Dropout Student whose targets are also pulled towards those of similar clips (mutual nearest neighbours; "
+               "Boudiaf et al., 2023)."),
+        Method("sfda-shot", "SHOT", "unlabeled audio",
+               "Makes predictions confident per clip while keeping them varied across a batch (Liang et al., 2020). With the "
+               "setting used here, its cluster pseudo-labels have zero weight."),
     )),
     ("focal", "Fine-tuning on focal labels only", (
         Method("focal-only", "Full fine-tuning", "none", "Backbone, prototypes and last layer are trained."),
@@ -95,8 +110,8 @@ class Results:
         self.splits = _json(store.dataset_dir / "splits.json")
         self.splits_cv = _json(store.dataset_dir / "splits_cv.json")
         self.test = _json(store.summary("canonical_eval"))
-        # the final baselines: one evaluation holding the pretrained model and both trained ones, on the same resamples
-        self.final = _json(store.summary("canonical_eval_focal-only"))
+        # one evaluation holding every model scored on test, on the same resamples
+        self.final = _json(store.summary("canonical_eval_test_baselines"))
         assert self.final["split"] == "test" and set(self.final["models"]) == {BASELINE, *TEST_RUNS}, "unexpected final evaluation"
         self.cv = {k: _json(store.summary(f"cv_{k}")) for k in METHODS}
         self.folds = {(k, f): _json(store.summary(f"canonical_eval_{k}-cv{f}")) for k in METHODS for f in FOLDS}
@@ -254,7 +269,7 @@ class Results:
         return {s: {"focal": float(auc_f[i]), "soundscape": float(auc_s[i])} for i, s in enumerate(codes)}
 
     def test_scores(self, key: str) -> dict[str, dict]:
-        """One of the three final models on the test split: soundscape AP and AUC of each of the 12 species. The mean AP over the
+        """One of the models scored on the test split: soundscape AP and AUC of each of the 12 species. The mean AP over the
         primary and over all 12 species must equal the two saved values."""
         m = canonical.Model(key, self.store.features(key) / "responses.pt")
         codes = self.final["species"]["secondary"]

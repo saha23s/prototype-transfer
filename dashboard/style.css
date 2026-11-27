@@ -290,3 +290,26 @@ svg .arrow { stroke: var(--ink-2); stroke-width: 1.5; }
 svg .arrow-head { fill: var(--ink-2); }
 
 .finding .tag { white-space: nowrap; display: inline-block; }
+
+/* Paper-style results page: numbered booktabs tables, figures captioned below, running text */
+.paper-body { max-width: 1140px; }
+.paper-body h2 { font-size: 1.2rem; margin: 0 0 10px; }
+.paper-body h3 { font-size: 1.02rem; margin: 22px 0 8px; }
+.paper-body p.par { max-width: 86ch; margin: 10px 0; }
+.paper-body .pcaption { max-width: 110ch; font-size: 0.9rem; margin: 0 0 6px; }
+.ptable { margin: 22px 0 26px; }
+table.paper { width: 100%; border-collapse: collapse; font-size: 0.8rem; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+table.paper th, table.paper td, table.paper th:nth-child(2), table.paper td:nth-child(2) { border: 0; padding: 3px 5px; text-align: right; white-space: nowrap; }
+table.paper th { color: var(--ink); font-weight: 600; vertical-align: bottom; line-height: 1.25; }
+table.paper th:first-child, table.paper td:first-child { text-align: left; }
+table.paper thead tr:last-child th { border-bottom: 1px solid var(--ink); }
+table.paper th.span { text-align: center; border-bottom: 1px solid var(--grid); }
+table.paper tr.group td { text-align: left; font-style: italic; color: var(--ink-2); border-top: 1px solid var(--grid); padding-top: 6px; }
+table.paper tbody tr:first-child.group td { border-top: 0; }
+table.paper small { color: var(--ink-2); }
+table.paper.text td { white-space: normal; text-align: left; vertical-align: top; }
+.tnotes { font-size: 0.8rem; color: var(--ink-2); max-width: 120ch; margin: 6px 0 0; }
+figure.pfigure figcaption { margin: 10px 0 0; }
+
+table.headline td { white-space: normal; vertical-align: top; }
+table.headline td:first-child { max-width: 34ch; }

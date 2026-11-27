@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import numpy as np
+
+from prototype_transfer.evaluation import canonical
 from prototype_transfer.reporting import charts as c
 from prototype_transfer.reporting.runs import BASELINE, LABEL_FREE, ORACLE, Results
 from prototype_transfer.reporting.site import Page
@@ -67,21 +70,70 @@ def closable_chart(res: Results) -> str:
     return c.svg(bottom + 42, "Pretrained model and soundscape-trained model on the same held-out sites", body)
 
 
+EXAMPLE_SPECIES, EXAMPLE_FOLD, EXAMPLE_TOP = "clanut", 0, 100   # the worked example of the headline metric
+STUDENT = "sfda-dropout_student"
+
+
+def headline_section(res: Results) -> str:
+    """The headline metric in plain terms: one worked example on held-out clips, then the few numbers to remember."""
+    def example(key: str) -> tuple[int, int, int, float]:
+        m = canonical.Model(key, res.responses(key, EXAMPLE_FOLD))
+        j = m.species.index(EXAMPLE_SPECIES)
+        order = np.argsort(-m.p_s[:, j], kind="stable")[:EXAMPLE_TOP]
+        return int(m.y_s[order, j].sum()), int(m.y_s[:, j].sum()), len(m.y_s), res.species_ap(key, EXAMPLE_FOLD)[EXAMPLE_SPECIES]
+
+    hit0, positives, clips, ap0 = example(BASELINE)
+    hit1, _, _, ap1 = example(ORACLE)
+    assert hit1 > hit0 and ap1 > ap0, "the worked example no longer shows a gap"
+    assert max(LABEL_FREE, key=lambda k: sum(res.deltas(k))) == STUDENT, "the best method without labels changed"
+    mean = lambda k: float(np.mean(res.values(k, "sc_ap_primary")))
+    test = lambda k: res.final["models"][k]["point"]["sc_ap_primary"]
+    held = res.final["models"][STUDENT]["vs_baseline"]["sc_ap_primary"]
+    assert held["ci95"][0] < 0 < held["ci95"][1], "the headline table says the test gain could be zero"
+    name = c.name_of(EXAMPLE_SPECIES)
+
+    worked = c.table(
+        [f"{name}: {positives} of {clips:,} held-out clips contain it",
+         f"Of the {EXAMPLE_TOP} top-scoring clips,<br>how many contain it?", "Average precision<br>for this species"],
+        [["Pretrained model", f"<b>{hit0}</b>", f"{ap0:.2f}"], ["Same model trained on soundscape labels", f"<b>{hit1}</b>", f"{ap1:.2f}"]],
+        "mini wrap-head")
+
+    def cell(k: str, value, note: str = "") -> str:
+        return f"<b>{value(k):.3f}</b><br><small>{c.signed(value(k) - value(BASELINE))} vs pretrained{note}</small>"
+
+    zero = f"<br>could be zero (95% interval {c.signed(held['ci95'][0])} to {c.signed(held['ci95'][1])})"
+    numbers = c.table(
+        ["Headline: soundscape average precision,<br>averaged over the main species",
+         "Development sites<br><small>cross-validation, mean of 3</small>", "Test sites<br><small>final check</small>"],
+        [["Pretrained model (starting point)", f"<b>{mean(BASELINE):.3f}</b>", f"<b>{test(BASELINE):.3f}</b>"],
+         ["Best method so far without soundscape labels (Dropout Student)", cell(STUDENT, mean), cell(STUDENT, test, zero)],
+         ["Trained with soundscape labels (what labels can buy)", cell(ORACLE, mean), cell(ORACLE, test)]],
+        "mini wrap-head headline")
+
+    return c.section("headline", "The headline number, in plain terms", f"""
+    <div class="prose">
+    <p>For one species, the model gives every 5-second clip a score. Sort the clips from highest to lowest. <b>Average precision
+    (AP)</b> measures how well the clips that really contain the species are gathered at the top. It is <b>1</b> when every such clip
+    is ranked above every other clip. A random ordering scores about the share of clips with the species, here about
+    {positives / clips:.2f}. Higher is better.</p></div>""" + worked + """
+    <div class="prose"><p>This species was picked because its gap is easy to see; others differ less (chart further down). The
+    <b>headline number</b> is AP averaged over the species with enough examples to score.</p></div>""" + numbers + f"""
+    <div class="prose"><ul>
+    <li><b>The gap we want to close</b> is the last row minus the first: {c.signed(mean(ORACLE) - mean(BASELINE))} on development
+    sites.</li>
+    <li>A change such as <b>{c.signed(mean(STUDENT) - mean(BASELINE))}</b> is in AP units, from {mean(BASELINE):.3f} to
+    {mean(STUDENT):.3f}. It is not a percentage of clips.</li>
+    <li>Compare numbers <b>down a column</b>, not across: the two columns use different sites.</li>
+    <li>Changes are computed before rounding, so they can differ by 0.001 from the rounded numbers.</li></ul></div>""")
+
+
 def build(res: Results) -> Page:
     point = res.test["models"][BASELINE]["point"]
     n_proto = len(res.test["models"][BASELINE]["prototypes"])
     base = res.cv["r0"]["baseline_metrics"]["sc_ap_primary"]["mean"]
     top = res.cv[ORACLE]["run"]["sc_ap_primary"]["mean"]
     assert res.folds_better_worse(ORACLE) == (3, 0), "the page says labels help reliably on every fold"
-    free = max(sum(res.deltas(k)) / 3 for k in LABEL_FREE)
     worse = [s for s in res.primary_union() if res.species_mean(ORACLE, s)[0] < res.species_mean(BASELINE, s)[0]]
-    tiles = c.tiles([
-        (f"{base:.3f} → {top:.3f}", "soundscape average precision on the same held-out clips: pretrained → trained on soundscape labels"),
-        (c.signed(free), "best mean change reached so far without any soundscape label (cross-validation)"),
-        (f"{point['f_auc_primary']:.3f} → {point['sc_auc_primary']:.3f}", "pretrained ROC-AUC, focal → soundscape (test)"),
-        (f"{point['n_fail']} of {n_proto}", f"pretrained prototypes losing more than 0.1 AUC on soundscapes (test); "
-         f"{point['n_fail_birds']} of {n_proto} when both domains use other-bird clips as negatives"),
-    ])
     why = c.section("why", "Why bird recognisers struggle in the field", f"""
     <div class="prose">
     <p>Passive acoustic monitoring records whole landscapes for weeks. Most labeled bird audio, in contrast, is <b>focal</b>:
@@ -119,11 +171,14 @@ def build(res: Results) -> Page:
     take = c.takeaways([
         f"On identical held-out soundscape clips, training on soundscape labels raises AP from {base:.3f} to {top:.3f}. This is the "
         "gap we want to close.",
-        f"The pretrained model's test AUC is {point['sc_auc_primary']:.3f} on soundscapes and {point['f_auc_primary']:.3f} on focal clips. "
+        f"The pretrained model's test AUC (the chance that a clip with a bird is scored above a clip without it) is "
+        f"{point['sc_auc_primary']:.3f} on soundscapes and {point['f_auc_primary']:.3f} on focal clips. "
         "Part of this difference may reflect that focal data is in-domain for it and that the negatives differ.",
-        "Prototype detection degrades unevenly, even within one species. This is a hypothesis for where a method could act, not "
-        "evidence that fixing prototypes will raise accuracy.",
+        f"Prototype detection degrades unevenly, even within one species: on test sites {point['n_fail']} of {n_proto} prototypes are "
+        f"clearly worse at detecting their bird on soundscapes than on focal clips ({point['n_fail_birds']} of {n_proto} when both are "
+        "compared against clips of other birds). This is a hypothesis for where a method could act, not evidence that fixing "
+        "prototypes will raise accuracy.",
     ], "In short")
     return Page("index.html", "Motivation", "Motivation",
                 "Bird-sound models are learned from clean recordings of single birds, but are needed on noisy field recordings.",
-                tiles + take + why + closable + headroom + gap + findings + key, ("data.js", "app.js"))
+                headline_section(res) + take + why + closable + headroom + gap + findings + key, ("data.js", "app.js"))

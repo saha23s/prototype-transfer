@@ -107,5 +107,32 @@ def section(sid: str, title: str, body: str, hint: str = "") -> str:
     return f'<section id="{sid}" aria-labelledby="{sid}-title"><h2 id="{sid}-title">{title}</h2>{h}{body}</section>'
 
 
+def paper_table(tid: str, label: str, caption: str, head: Sequence[Sequence[str | tuple[str, int]]],
+                groups: Sequence[tuple[str, Sequence[Sequence[str]]]], notes: str = "") -> str:
+    """A numbered booktabs-style table with the caption above it; cells are trusted HTML.
+
+    head: header rows; a cell is a string or (string, column span). groups: (group title or "", body rows).
+    """
+    def th(cell) -> str:
+        text_, span = cell if isinstance(cell, tuple) else (cell, 1)
+        return f'<th colspan="{span}" class="span">{text_}</th>' if span > 1 else f"<th>{text_}</th>"
+
+    top = "".join("<tr>" + "".join(th(c) for c in row) + "</tr>" for row in head)
+    width = sum(c[1] if isinstance(c, tuple) else 1 for c in head[-1])
+    body = ""
+    for title, rows in groups:
+        if title:
+            body += f'<tr class="group"><td colspan="{width}">{title}</td></tr>'
+        body += "".join("<tr>" + "".join(f"<td>{c}</td>" for c in row) + "</tr>" for row in rows)
+    foot = f'<p class="tnotes">{notes}</p>' if notes else ""
+    return (f'<div class="ptable" id="{tid}"><p class="pcaption"><b>{label}.</b> {caption}</p><div class="table-wrap">'
+            f'<table class="paper"><thead>{top}</thead><tbody>{body}</tbody></table></div>{foot}</div>')
+
+
+def paper_figure(fid: str, label: str, caption: str, body: str, key: str = "") -> str:
+    """A numbered figure with the caption below it."""
+    return f'<figure class="chart pfigure" id="{fid}">{key}{body}<figcaption class="pcaption"><b>{label}.</b> {caption}</figcaption></figure>'
+
+
 def takeaways(items: Sequence[str], title: str = "What this page shows") -> str:
     return f'<aside class="takeaways"><h2>{title}</h2><ul>' + "".join(f"<li>{i}</li>" for i in items) + "</ul></aside>"
