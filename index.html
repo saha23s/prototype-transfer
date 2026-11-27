@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AudioProtoPNet on HSN: published, reproduced and adaptation baselines</title>
+<style>
+  body { font: 16px/1.5 Georgia, "Times New Roman", serif; color: #111; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+  h1 { font-size: 1.5rem; margin-bottom: 0.2rem; }
+  h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.2rem; }
+  .meta { color: #555; font-size: 0.9rem; }
+  table { border-collapse: collapse; margin: 0.8rem 0; font-variant-numeric: tabular-nums; }
+  caption { caption-side: top; text-align: left; font-size: 0.9rem; color: #333; padding-bottom: 0.3rem; }
+  th, td { padding: 0.25rem 0.8rem; text-align: right; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { border-top: 2px solid #111; border-bottom: 1px solid #111; }
+  tbody tr:last-child td { border-bottom: 2px solid #111; }
+  tr.mean td { border-top: 1px solid #999; font-weight: bold; }
+  .note { font-size: 0.9rem; color: #333; }
+  code { font-size: 0.85rem; }
+  .prelim { color: #a33; font-weight: normal; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<h1>AudioProtoPNet-5-XCL on BirdSet HSN</h1>
+<p class="meta">Published numbers, our reproduction, and first unsupervised adaptation baselines on the new site/recordist splits.
+Last updated 2026-11-27. Source: <code>docs/BIRDSET.md</code> and <code>docs/BASELINES.md</code> on branch
+<code>split/5-adaptation-baselines</code>.</p>
+
+<h2>1. Setup</h2>
+<p><b>Model.</b> Published AudioProtoPNet-5-BirdSet-XCL checkpoint (pinned revision), 21 HSN species, scored with BirdSet's metrics in fp32
+(bf16 shifts cmAP by about 0.001).</p>
+<p><b>Splits.</b> Leakage-aware: focal recordings split by recordist, soundscapes split by site (train / val / test).
+For unsupervised adaptation the 100 soundscape sites are split into 3 partitions (seeds 0 to 2), each with 75 adaptation sites
+(9,000 clips, audio only, labels unused) and 25 test sites (3,000 clips, used only for scoring). Split files are fingerprinted
+in <code>configs/splits/hsn.json</code>; adaptation manifests containing test clips are refused.</p>
+<p><b>Metrics.</b> cmAP (class-wise mean average precision), AUROC, and top-1 accuracy (T1) counted over clips with at least one label.</p>
+
+<h2>2. Published vs. reproduced (full HSN test set)</h2>
+<table>
+<caption>Table 1. All 100 sites, 12,000 clips.</caption>
+<thead><tr><th></th><th>cmAP</th><th>AUROC</th><th>T1</th></tr></thead>
+<tbody>
+<tr><td>Published (model card, mean of 5 seeds)</td><td>0.54</td><td>0.92</td><td>0.65</td></tr>
+<tr><td>Reproduced (one checkpoint)</td><td>0.546</td><td>0.895</td><td>0.682</td></tr>
+</tbody>
+</table>
+<p class="note">cmAP and T1 reproduce. T1 matches only when counted over the 5,377 labelled clips (over all 12,000 clips it is 0.305).
+AUROC is 0.025 below the card; a different AUROC averaging in BirdSet is the suspected cause but this is <b>not verified</b>.
+The published row averages 5 seeds, ours is a single checkpoint.</p>
+
+<h2>3. Reproduction on the adaptation partitions (no adaptation)</h2>
+<table>
+<caption>Table 2. Test sites of each partition (25 sites, 3,000 clips).</caption>
+<thead><tr><th>Partition</th><th>Labelled clips</th><th>Species with positives</th><th>cmAP</th><th>AUROC</th><th>T1</th></tr></thead>
+<tbody>
+<tr><td>p0</td><td>1,482</td><td>16</td><td>0.508</td><td>0.898</td><td>0.733</td></tr>
+<tr><td>p1</td><td>1,296</td><td>17</td><td>0.500</td><td>0.898</td><td>0.604</td></tr>
+<tr><td>p2</td><td>1,263</td><td>16</td><td>0.536</td><td>0.917</td><td>0.725</td></tr>
+<tr class="mean"><td>Mean</td><td></td><td></td><td>0.515</td><td>0.904</td><td>0.687</td></tr>
+</tbody>
+</table>
+<p class="note">cmAP averages over the species present in the test sites (16 or 17 of 21), so partition numbers are comparable with each
+other but not with Table 1. The range across partitions (0.036 cmAP, 0.129 T1) is why every result is reported on all three.</p>
+
+<h2>4. Adaptation baselines <span class="prelim">(preliminary: untuned hyperparameters)</span></h2>
+<p>Inductive, source-free: start from the published checkpoint, adapt on a partition's 75 adaptation sites, score its 25 test sites.</p>
+<ul>
+<li><b>No adaptation</b>: the source model as is (Table 2).</li>
+<li><b>Tent</b>: minimise the mean binary entropy of the sigmoid outputs (multi-label Tent).</li>
+<li><b>Pseudo-labels</b>: BCE against hard pseudo-labels from the source model (p &gt; 0.5), fixed before adapting.</li>
+<li><b>Oracle</b>: BCE against the adaptation clips' true labels. Upper bound, not a UDA method.</li>
+<li><b>LayerNorm</b>: only the backbone's LayerNorm affine parameters (40,192) are adapted; <b>full</b>: all 87.7M parameters.
+The ConvNeXt backbone has no BatchNorm, so AdaBN does not apply.</li>
+</ul>
+<table id="baselines">
+<caption>Table 3. Mean over partitions p0 to p2.</caption>
+<thead><tr><th>Method</th><th>Parameters</th><th>cmAP</th><th>AUROC</th><th>T1</th></tr></thead>
+<tbody>
+<tr><td>No adaptation</td><td>none</td><td>0.515</td><td>0.904</td><td>0.687</td></tr>
+<tr><td>Tent</td><td>LayerNorm</td><td>0.197</td><td>0.628</td><td>0.152</td></tr>
+<tr><td>Pseudo-labels</td><td>LayerNorm</td><td>0.268</td><td>0.657</td><td>0.296</td></tr>
+<tr><td>Oracle</td><td>LayerNorm</td><td>0.506</td><td>0.898</td><td>0.742</td></tr>
+<tr><td>Oracle</td><td>full (3 epochs)</td><td>0.593</td><td>0.887</td><td>0.881</td></tr>
+</tbody>
+</table>
+<p class="note">Adam, batch 32, seed 0, one RTX 3090; 1 epoch with lr 1e-4 for LayerNorm runs, 3 epochs with lr 1e-5 for the full fine-tune.
+The ranking is the same on every partition. Tent and pseudo-labelling collapse (only 0.35% of pseudo-labels are positive; both
+objectives appear to push every species towards absent). These learning rates are <b>not tuned</b>: before any comparison, each method
+is to be tuned on BirdSet POW (never on HSN test sites), NOTELA added, and runs repeated over seeds.</p>
+
+<table id="baselines-per-partition">
+<caption>Table 4. Per partition (cmAP / AUROC / T1).</caption>
+<thead><tr><th>Method</th><th>Parameters</th><th>p0</th><th>p1</th><th>p2</th></tr></thead>
+<tbody>
+<tr><td>No adaptation</td><td>none</td><td>0.508 / 0.898 / 0.733</td><td>0.500 / 0.898 / 0.604</td><td>0.536 / 0.917 / 0.725</td></tr>
+<tr><td>Tent</td><td>LayerNorm</td><td>0.189 / 0.638 / 0.138</td><td>0.236 / 0.643 / 0.157</td><td>0.167 / 0.602 / 0.160</td></tr>
+<tr><td>Pseudo-labels</td><td>LayerNorm</td><td>0.272 / 0.671 / 0.309</td><td>0.293 / 0.664 / 0.278</td><td>0.239 / 0.637 / 0.301</td></tr>
+<tr><td>Oracle</td><td>LayerNorm</td><td>0.501 / 0.890 / 0.799</td><td>0.498 / 0.894 / 0.667</td><td>0.519 / 0.910 / 0.761</td></tr>
+<tr><td>Oracle</td><td>full (3 epochs)</td><td>0.585 / 0.892 / 0.911</td><td>0.585 / 0.885 / 0.847</td><td>0.609 / 0.884 / 0.884</td></tr>
+</tbody>
+</table>
+
+</body>
+</html>
